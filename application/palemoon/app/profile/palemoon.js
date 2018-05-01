@@ -169,7 +169,7 @@ pref("app.update.url", "https://aus3.mozilla.org/update/3/%PRODUCT%/%VERSION%/%B
 pref("app.update.idletime", 60);
 
 // Whether or not we show a dialog box informing the user that the update was
-// successfully applied. This is off in Firefox by default since we show a 
+// successfully applied. This is off in Pale Moon by default since we show a 
 // upgrade start page instead! Other apps may wish to show this UI, and supply
 // a whatsNewURL field in their brand.properties that contains a link to a page
 // which tells users what's new in this new update.
@@ -491,7 +491,7 @@ pref("dom.disable_window_move_resize",            false);
 // prevent JS from monkeying with window focus, etc
 pref("dom.disable_window_flip",                   true);
 
-// Disable touch events on Desktop Firefox by default until they are properly
+// Disable touch events on Desktop Pale Moon by default until they are properly
 // supported (bug 736048)
 pref("dom.w3c_touch_events.enabled",        0);
 
@@ -1026,7 +1026,7 @@ pref("services.sync.prefs.sync.xpinstall.whitelist.required", true);
 // Enable the error console
 pref("devtools.errorconsole.enabled", true);
 
-// Whether the character encoding menu is under the main Firefox button. This
+// Whether the character encoding menu is under the main Pale Moon button. This
 // preference is a string so that localizers can alter it.
 pref("browser.menu.showCharacterEncoding", "chrome://browser/locale/browser.properties");
 
@@ -1085,7 +1085,7 @@ pref("security.csp.speccompliant", true);
 pref("security.mixed_content.block_active_content", true);
 
 
-// Override the Goanna-default value of false for Firefox.
+// Override the Goanna-default value of false for Pale Moon.
 pref("plain_text.wrap_long_lines", true);
 
 pref("media.webaudio.enabled", true);
@@ -1115,7 +1115,7 @@ pref("browser.display.standalone_images.background_color", "#2E3B41");
 
 // ****************** domain-specific UAs ******************
 
-// AMO needs "Firefox", obviously - pass on the OS (determined at build time)
+// AMO needs "Pale Moon", obviously - pass on the OS (determined at build time)
 #ifdef XP_UNIX
 #ifdef XP_MACOSX
 pref("general.useragent.override.addons.mozilla.org","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:27.9) Gecko/20100101 Firefox/27.9 (Pale Moon)");

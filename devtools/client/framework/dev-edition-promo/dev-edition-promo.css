@@ -17,7 +17,7 @@ window {
   color: #8fa1b2; /* body text */
 /*
  * Sloppy preprocessing since UNIX_BUT_NOT_MAC is only defined
- * in `browser/app/profile/firefox.js`, which this file cannot
+ * in `browser/app/profile/basilisk.js`, which this file cannot
  * depend on. Must style font-size to target linux.
  */
 %ifdef XP_UNIX

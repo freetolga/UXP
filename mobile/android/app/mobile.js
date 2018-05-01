@@ -264,7 +264,7 @@ pref("accessibility.typeaheadfind.linksonly", false);
 pref("accessibility.typeaheadfind.casesensitive", 0);
 pref("accessibility.browsewithcaret_shortcut.enabled", false);
 
-// Whether the character encoding menu is under the main Firefox button. This
+// Whether the character encoding menu is under the main Basilisk button. This
 // preference is a string so that localizers can alter it.
 pref("browser.menu.showCharacterEncoding", "chrome://browser/locale/browser.properties");
 
@@ -920,7 +920,7 @@ pref("dom.audiochannel.audioCompeting", true);
 pref("dom.audiochannel.mediaControl", true);
 
 // Space separated list of URLS that are allowed to send objects (instead of
-// only strings) through webchannels. This list is duplicated in browser/app/profile/firefox.js
+// only strings) through webchannels. This list is duplicated in browser/app/profile/basilisk.js
 pref("webchannel.allowObject.urlWhitelist", "https://accounts.firefox.com https://content.cdn.mozilla.net https://input.mozilla.org https://support.mozilla.org https://install.mozilla.org");
 
 pref("media.openUnsupportedTypeWithExternalApp", true);

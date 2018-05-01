@@ -9,7 +9,7 @@ DIRS += ['profile/extensions']
 GeckoProgram(CONFIG['MOZ_APP_NAME'])
 
 JS_PREFERENCE_PP_FILES += [
-    'profile/firefox.js',
+    'profile/basilisk.js',
 ]
 
 SOURCES += [
@@ -86,6 +86,6 @@ if CONFIG['HAVE_CLOCK_MONOTONIC']:
 if CONFIG['MOZ_GPSD']:
     DEFINES['MOZ_GPSD'] = True
 
-for icon in ('firefox', 'document', 'newwindow', 'newtab', 'pbmode'):
+for icon in ('basilisk', 'document', 'newwindow', 'newtab', 'pbmode'):
     DEFINES[icon.upper() + '_ICO'] = '"%s/dist/branding/%s.ico"' % (
         TOPOBJDIR, icon)

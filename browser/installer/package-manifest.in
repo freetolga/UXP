@@ -2,7 +2,7 @@
 ; License, v. 2.0. If a copy of the MPL was not distributed with this
 ; file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-; Package file for the Firefox build.
+; Package file for the Basilisk build.
 ;
 ; Packaging manifest is used to copy files from dist/bin
 ; to the staging directory.
@@ -37,7 +37,7 @@
 @APPNAME@/Contents/Info.plist
 @APPNAME@/Contents/Library/LaunchServices
 @APPNAME@/Contents/PkgInfo
-@RESPATH@/firefox.icns
+@RESPATH@/basilisk.icns
 @RESPATH@/document.icns
 @RESPATH@/@LPROJ_ROOT@.lproj/*
 #endif
@@ -52,7 +52,7 @@
 @RESPATH@/fonts/*
 #endif
 @RESPATH@/hyphenation/*
-@RESPATH@/browser/@PREF_DIR@/firefox-l10n.js
+@RESPATH@/browser/@PREF_DIR@/basilisk-l10n.js
 #ifdef HAVE_MAKENSISU
 @BINPATH@/uninstall/helper.exe
 #endif
@@ -650,8 +650,8 @@
 
 ; [Default Preferences]
 ; All the pref files must be part of base to prevent migration bugs
-@RESPATH@/browser/@PREF_DIR@/firefox.js
-@RESPATH@/browser/@PREF_DIR@/firefox-branding.js
+@RESPATH@/browser/@PREF_DIR@/basilisk.js
+@RESPATH@/browser/@PREF_DIR@/basilisk-branding.js
 @RESPATH@/greprefs.js
 @RESPATH@/defaults/autoconfig/prefcalls.js
 @RESPATH@/browser/defaults/permissions

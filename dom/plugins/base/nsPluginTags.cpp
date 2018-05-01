@@ -438,7 +438,7 @@ nsPluginTag::InitSandboxLevel()
 #if defined(_AMD64_)
   // As level 2 is now the default NPAPI sandbox level for 64-bit flash, we
   // don't want to allow a lower setting unless this environment variable is
-  // set. This should be changed if the firefox.js pref file is changed.
+  // set. This should be changed if the basilisk.js pref file is changed.
   if (mIsFlashPlugin &&
       !PR_GetEnv("MOZ_ALLOW_WEAKER_SANDBOX") && mSandboxLevel < 2) {
     mSandboxLevel = 2;
