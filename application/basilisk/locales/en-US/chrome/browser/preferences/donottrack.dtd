@@ -9,5 +9,5 @@
 <!ENTITY doNotTrackCheckbox2.label    "Always apply Do Not Track">
 <!ENTITY doNotTrackCheckbox2.accesskey "A">
 
-<!ENTITY doNotTrackTPInfo.description "&brandShortName; will send a signal that you don’t want to be tracked whenever Tracking Protection is on.">
+<!ENTITY doNotTrackTPInfo.description "&brandShortName; will send a signal that you don’t want to be tracked.">
 <!ENTITY doNotTrackLearnMore.label    "Learn More">

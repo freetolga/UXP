@@ -117,8 +117,7 @@
       </vbox>
     </hbox>
   </vbox>
-  <vbox id="trackingprotectionpbmbox">
-    <caption><label>&tracking.label;</label></caption>
+  <vbox id="trackingprotectionpbmbox" hidden="true">
     <hbox align="center">
       <checkbox id="trackingProtectionPBM"
                 preference="privacy.trackingprotection.pbmode.enabled"
@@ -134,7 +133,8 @@
     </hbox>
   </vbox>
   <vbox>
-    <description>&doNotTrack.pre.label;<label
+    <caption><label>&tracking.label;</label></caption>
+    <description><label
     class="text-link" id="doNotTrackSettings"
     >&doNotTrack.settings.label;</label>&doNotTrack.post.label;</description>
   </vbox>
