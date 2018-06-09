@@ -1067,7 +1067,9 @@ Sync11Service.prototype = {
   // Note: returns false if we failed for a reason other than the server not yet
   // supporting the api.
   _fetchServerConfiguration() {
-#if 0 // FSyncMS doesn't support this and it will break auth if left enabled!
+#if 0
+    // FSyncMS doesn't support this and it will break auth if left enabled!
+
     // This is similar to _fetchInfo, but with different error handling.
 
     let infoURL = this.userBaseURL + "info/configuration";
