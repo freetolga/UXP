@@ -347,7 +347,7 @@ function openLinkIn(url, where, params) {
                                 referrerPolicy: aReferrerPolicy,
                                 postData: aPostData,
                                 }); 
-    browserUsedForLoad = aCurrentBrowser;
+    browserUsedForLoad = w.gBrowser.selectedBrowser;
     break;
   case "tabshifted":
     loadInBackground = !loadInBackground;
