@@ -2423,11 +2423,12 @@ function BrowserOnAboutPageLoad(doc) {
   if (doc.documentURI.toLowerCase() == "about:home") {
     if (!PrivateBrowsingUtils.isWindowPrivate(window)) {
       let wrapper = {};
-      Components.utils.import("resource:///modules/sessionstore/SessionStore.jsm", wrapper);
+      Cu.import("resource:///modules/sessionstore/SessionStore.jsm", wrapper);
       let ss = wrapper.SessionStore;
       ss.promiseInitialized.then(function() {
-        if (ss.canRestoreLastSession)
+        if (ss.canRestoreLastSession) {
           doc.getElementById("launcher").setAttribute("session", "true");
+        }
       }).then(null, function onError(x) {
         Cu.reportError("Error in SessionStore init while processing 'about:home': " + x);
       });
