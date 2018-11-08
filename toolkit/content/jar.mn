@@ -7,7 +7,11 @@ toolkit.jar:
 *  content/global/xul.css
    content/global/textbox.css
    content/global/menulist.css
-   content/global/autocomplete.css
+#ifdef MOZ_AUSTRALIS
+   content/global/autocomplete.css          (autocomplete-australis.css)
+#else
+*  content/global/autocomplete.css          (autocomplete.css)
+#endif
 *  content/global/about.js
    content/global/about.xhtml
    content/global/aboutAbout.js
@@ -78,7 +82,11 @@ toolkit.jar:
    content/global/nsClipboard.js
    content/global/nsUserSettings.js
    content/global/strres.js
-   content/global/bindings/autocomplete.xml    (widgets/autocomplete.xml)
+#ifdef MOZ_AUSTRALIS
+   content/global/bindings/autocomplete.xml    (widgets/autocomplete-australis.xml)
+#else
+*  content/global/bindings/autocomplete.xml    (widgets/autocomplete.xml)
+#endif
    content/global/bindings/browser.xml         (widgets/browser.xml)
    content/global/bindings/button.xml          (widgets/button.xml)
    content/global/bindings/calendar.js         (widgets/calendar.js)

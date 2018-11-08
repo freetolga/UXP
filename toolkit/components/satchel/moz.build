@@ -34,10 +34,11 @@ EXTRA_COMPONENTS += [
 ]
 
 EXTRA_JS_MODULES += [
-    'AutoCompletePopup.jsm',
     'FormHistory.jsm',
     'nsFormAutoCompleteResult.jsm',
 ]
+
+EXTRA_PP_JS_MODULES += ['AutoCompletePopup.jsm']
 
 FINAL_LIBRARY = 'xul'
 

@@ -5,7 +5,11 @@
 #include ../../shared/non-mac.jar.inc.mn
 
 toolkit.jar:
-   skin/classic/global/autocomplete.css
+#ifdef MOZ_AUSTRALIS
+   skin/classic/global/autocomplete.css                       (autocomplete-australis.css)
+#else
+*  skin/classic/global/autocomplete.css                       (autocomplete.css)
+#endif
    skin/classic/global/button.css
    skin/classic/global/checkbox.css
    skin/classic/global/colorpicker.css

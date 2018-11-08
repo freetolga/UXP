@@ -39,7 +39,7 @@ XPCOMUtils.defineLazyServiceGetter(this, "AlertsService",
   ["OS", "resource://gre/modules/osfile.jsm"],
   ["LoginManagerParent", "resource://gre/modules/LoginManagerParent.jsm"],
   ["FormValidationHandler", "resource:///modules/FormValidationHandler.jsm"],
-  ["AutoCompletePopup", "resource:///modules/AutoCompletePopup.jsm"],
+  ["AutoCompletePopup", "resource://gre/modules/AutoCompletePopup.jsm"],
   ["DateTimePickerHelper", "resource://gre/modules/DateTimePickerHelper.jsm"],
   ["ShellService", "resource:///modules/ShellService.jsm"],
 ].forEach(([name, resource]) => XPCOMUtils.defineLazyModuleGetter(this, name, resource));

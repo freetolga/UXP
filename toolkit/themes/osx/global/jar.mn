@@ -8,7 +8,11 @@ toolkit.jar:
   skin/classic/global/10pct_transparent_grey.png
   skin/classic/global/50pct_transparent_grey.png
   skin/classic/global/arrow.css
-  skin/classic/global/autocomplete.css
+#ifdef MOZ_AUSTRALIS
+   skin/classic/global/autocomplete.css                       (autocomplete-australis.css)
+#else
+*  skin/classic/global/autocomplete.css                       (autocomplete.css)
+#endif
   skin/classic/global/button.css
   skin/classic/global/checkbox.css
   skin/classic/global/colorpicker.css

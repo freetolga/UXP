@@ -13,6 +13,7 @@ this.EXPORTED_SYMBOLS = [ "AutoCompletePopup" ];
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://gre/modules/Services.jsm");
 
+#ifdef MOZ_AUSTRALIS
 // AutoCompleteResultView is an abstraction around a list of results
 // we got back up from browser-content.js. It implements enough of
 // nsIAutoCompleteController and nsIAutoCompleteInput to make the
@@ -84,6 +85,68 @@ var AutoCompleteResultView = {
     this.results = results;
   },
 };
+#else
+// nsITreeView implementation that feeds the autocomplete popup
+// with the search data.
+var AutoCompleteTreeView = {
+  // nsISupports
+  QueryInterface: XPCOMUtils.generateQI([Ci.nsITreeView,
+                                         Ci.nsIAutoCompleteController]),
+
+  // Private variables
+  treeBox: null,
+  results: [],
+
+  // nsITreeView
+  selection: null,
+
+  get rowCount()                     { return this.results.length; },
+  setTree: function(treeBox)         { this.treeBox = treeBox; },
+  getCellText: function(idx, column) { return this.results[idx].value },
+  isContainer: function(idx)         { return false; },
+  getCellValue: function(idx, column) { return false },
+  isContainerOpen: function(idx)     { return false; },
+  isContainerEmpty: function(idx)    { return false; },
+  isSeparator: function(idx)         { return false; },
+  isSorted: function()               { return false; },
+  isEditable: function(idx, column)  { return false; },
+  canDrop: function(idx, orientation, dt) { return false; },
+  getLevel: function(idx)            { return 0; },
+  getParentIndex: function(idx)      { return -1; },
+  hasNextSibling: function(idx, after) { return idx < this.results.length - 1 },
+  toggleOpenState: function(idx)     { },
+  getCellProperties: function(idx, column) { return this.results[idx].style || ""; },
+  getRowProperties: function(idx)    { return ""; },
+  getImageSrc: function(idx, column) { return null; },
+  getProgressMode : function(idx, column) { },
+  cycleHeader: function(column) { },
+  cycleCell: function(idx, column) { },
+  selectionChanged: function() { },
+  performAction: function(action) { },
+  performActionOnCell: function(action, index, column) { },
+  getColumnProperties: function(column) { return ""; },
+
+  // nsIAutoCompleteController
+  get matchCount() {
+    return this.rowCount;
+  },
+
+  handleEnter: function(aIsPopupSelection) {
+    AutoCompletePopup.handleEnter(aIsPopupSelection);
+  },
+
+  stopSearch: function() {},
+
+  // Internal JS-only API
+  clearResults: function() {
+    this.results = [];
+  },
+
+  setResults: function(results) {
+    this.results = results;
+  },
+};
+#endif
 
 this.AutoCompletePopup = {
   MESSAGES: [
@@ -117,12 +180,16 @@ this.AutoCompletePopup = {
       }
 
       case "popuphidden": {
+#ifdef MOZ_AUSTRALIS
         AutoCompleteResultView.clearResults();
+#endif
         this.sendMessageToBrowser("FormAutoComplete:PopupClosed");
+#ifdef MOZ_AUSTRALIS
         // adjustHeight clears the height from the popup so that
         // we don't have a big shrink effect if we closed with a
         // large list, and then open on a small one.
         this.openedPopup.adjustHeight();
+#endif
         this.openedPopup = null;
         this.weakBrowser = null;
         evt.target.removeEventListener("popuphidden", this);
@@ -160,13 +227,25 @@ this.AutoCompletePopup = {
     this.openedPopup.setAttribute("width", Math.max(100, rect.width));
     this.openedPopup.style.direction = dir;
 
+#ifdef MOZ_AUSTRALIS
     AutoCompleteResultView.setResults(results);
     this.openedPopup.view = AutoCompleteResultView;
+#else
+    AutoCompleteTreeView.setResults(results);
+    this.openedPopup.view = AutoCompleteTreeView;
+#endif
     this.openedPopup.selectedIndex = -1;
+#ifndef MOZ_AUSTRALIS
+    this.openedPopup.invalidate();
+#endif
 
     if (results.length) {
       // Reset fields that were set from the last time the search popup was open
+#ifdef MOZ_AUSTRALIS
       this.openedPopup.mInput = AutoCompleteResultView;
+#else
+      this.openedPopup.mInput = null;
+#endif
       this.openedPopup.showCommentColumn = false;
       this.openedPopup.showImageColumn = false;
       this.openedPopup.addEventListener("popuphidden", this);
@@ -174,7 +253,9 @@ this.AutoCompletePopup = {
       this.openedPopup.openPopupAtScreenRect("after_start", rect.left, rect.top,
                                              rect.width, rect.height, false,
                                              false);
+#ifdef MOZ_AUSTRALIS
       this.openedPopup.invalidate();
+#endif
     } else {
       this.closePopup();
     }
@@ -188,7 +269,14 @@ this.AutoCompletePopup = {
     if (!results.length) {
       this.closePopup();
     } else {
+#ifdef MOZ_AUSTRALIS
       AutoCompleteResultView.setResults(results);
+#else
+      AutoCompleteTreeView.setResults(results);
+      // We need to re-set the view in order for the
+      // tree to know the view has changed.
+      this.openedPopup.view = AutoCompleteTreeView;
+#endif
       this.openedPopup.invalidate();
     }
   },
@@ -200,6 +288,9 @@ this.AutoCompletePopup = {
       // and handled during this call.
       this.openedPopup.hidePopup();
     }
+#ifndef MOZ_AUSTRALIS
+    AutoCompleteTreeView.clearResults();
+#endif
   },
 
   removeLogin(login) {
@@ -261,7 +352,11 @@ this.AutoCompletePopup = {
         // any cached data.  This is necessary cause otherwise we'd clear data
         // only when starting a new search, but the next input could not support
         // autocomplete and it would end up inheriting the existing data.
+#ifdef MOZ_AUSTRALIS
         AutoCompleteResultView.clearResults();
+#else
+        AutoCompleteTreeView.clearResults();
+#endif
         break;
       }
     }
@@ -303,6 +398,7 @@ this.AutoCompletePopup = {
     }
   },
 
+#ifdef MOZ_AUSTRALIS
   stopSearch: function() {},
 
   /**
@@ -314,4 +410,7 @@ this.AutoCompletePopup = {
       this.sendMessageToBrowser("FormAutoComplete:Focus");
     }
   },
+#else
+  stopSearch: function() {}
+#endif
 }
