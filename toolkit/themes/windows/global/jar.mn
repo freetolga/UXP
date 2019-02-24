@@ -83,3 +83,6 @@ toolkit.jar:
 % override chrome://global/skin/tree/twisty.svg#open-rtl          chrome://global/skin/tree/twisty-preWin10.svg#open-rtl       osversion<=6.3
 % override chrome://global/skin/tree/twisty.svg#open-hover        chrome://global/skin/tree/twisty-preWin10.svg#open-hover     osversion<=6.3
 % override chrome://global/skin/tree/twisty.svg#open-hover-rtl    chrome://global/skin/tree/twisty-preWin10.svg#open-hover-rtl osversion<=6.3
+
+% override chrome://global/skin/arrow/arrow-lft-hov.gif           chrome://global/skin/arrow/arrow-lft.gif
+% override chrome://global/skin/arrow/arrow-rit-hov.gif           chrome://global/skin/arrow/arrow-rit.gif
