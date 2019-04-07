@@ -1312,6 +1312,7 @@ nsIDocument::nsIDocument()
     mDidFireDOMContentLoaded(true),
     mHasScrollLinkedEffect(false),
     mFrameRequestCallbacksScheduled(false),
+    mIsScopedStyleEnabled(eScopedStyle_Unknown),
     mBidiOptions(IBMBIDI_DEFAULT_BIDI_OPTIONS),
     mPartID(0),
     mUserHasInteracted(false)
@@ -12709,6 +12710,18 @@ nsDocument::CheckCustomElementName(const ElementCreationOptions& aOptions,
   }
 
   return is;
+}
+
+bool
+nsIDocument::IsScopedStyleEnabled()
+{
+  if (mIsScopedStyleEnabled == eScopedStyle_Unknown) {
+    mIsScopedStyleEnabled = nsContentUtils::IsChromeDoc(this) ||
+                            nsContentUtils::IsScopedStylePrefEnabled()
+                              ? eScopedStyle_Enabled
+                              : eScopedStyle_Disabled;
+  }
+  return mIsScopedStyleEnabled == eScopedStyle_Enabled;
 }
 
 Selection*

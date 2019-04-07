@@ -2101,6 +2101,14 @@ public:
     return sUseActivityCursor;
   }
 
+   /**
+   * Returns true if the <style scoped> enabling pref is true.
+   */
+  static bool IsScopedStylePrefEnabled()
+  {
+    return sIsScopedStyleEnabled;
+  }
+
   /**
    * Return true if this doc is controlled by a ServiceWorker.
    */
@@ -2851,6 +2859,7 @@ private:
   static bool sPrivacyResistFingerprinting;
   static bool sSendPerformanceTimingNotifications;
   static bool sUseActivityCursor;
+  static bool sIsScopedStyleEnabled;
   static uint32_t sCookiesLifetimePolicy;
   static uint32_t sCookiesBehavior;
 

@@ -289,6 +289,7 @@ bool nsContentUtils::sGettersDecodeURLHash = false;
 bool nsContentUtils::sPrivacyResistFingerprinting = false;
 bool nsContentUtils::sSendPerformanceTimingNotifications = false;
 bool nsContentUtils::sUseActivityCursor = false;
+bool nsContentUtils::sIsScopedStyleEnabled = false;
 
 uint32_t nsContentUtils::sHandlingInputTimeout = 1000;
 
@@ -618,6 +619,9 @@ nsContentUtils::Init()
 
   Preferences::AddBoolVarCache(&sUseActivityCursor,
                                "ui.use_activity_cursor", false);
+
+  Preferences::AddBoolVarCache(&sIsScopedStyleEnabled,
+                               "layout.css.scoped-style.enabled", false);
 
   Element::InitCCCallbacks();
 

@@ -2857,6 +2857,8 @@ public:
   virtual void ScheduleIntersectionObserverNotification() = 0;
   virtual void NotifyIntersectionObservers() = 0;
 
+  bool IsScopedStyleEnabled();
+
 protected:
   bool GetUseCounter(mozilla::UseCounter aUseCounter)
   {
@@ -2999,6 +3001,10 @@ protected:
 
   // container for per-context fonts (downloadable, SVG, etc.)
   RefPtr<mozilla::dom::FontFaceSet> mFontFaceSet;
+
+  // Whether <style scoped> support is enabled in this document.
+  enum { eScopedStyle_Unknown, eScopedStyle_Disabled, eScopedStyle_Enabled };
+  unsigned int mIsScopedStyleEnabled : 2;
 
   // Compatibility mode
   nsCompatibility mCompatMode;

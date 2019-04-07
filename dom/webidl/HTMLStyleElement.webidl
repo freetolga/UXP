@@ -15,7 +15,7 @@ interface HTMLStyleElement : HTMLElement {
            attribute DOMString media;
            [SetterThrows, Pure]
            attribute DOMString type;
-           [SetterThrows, Pure]
+           [SetterThrows, Pure, Pref="layout.css.scoped-style.enabled"]
            attribute boolean scoped;
 };
 HTMLStyleElement implements LinkStyle;
