@@ -2567,7 +2567,7 @@ pref("layout.css.unprefixing-service.globally-whitelisted", false);
 //
 // If disabled, this will also disable the DOM API (HTMLStyleElement.scoped)
 // in chrome documents.
-pref("layout.css.scoped-style.enabled", true);
+pref("layout.css.scoped-style.enabled", false);
 
 // Is support for the :scope selector enabled?
 pref("layout.css.scope-pseudo.enabled", true);
