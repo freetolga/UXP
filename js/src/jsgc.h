@@ -56,7 +56,7 @@ enum class State {
     D(None) \
     D(NonIncrementalRequested) \
     D(AbortRequested) \
-    D(KeepAtomsSet) \
+    D(Unused1) \
     D(IncrementalDisabled) \
     D(ModeChange) \
     D(MallocBytesTrigger) \
@@ -353,7 +353,6 @@ struct SortedArenaListSegment
  * be treated as an invariant, however, as the free lists may be cleared,
  * leaving arenas previously used for allocation partially full. Sorting order
  * is restored during sweeping.
-
  * Arenas following the cursor should not be full.
  */
 class ArenaList {
