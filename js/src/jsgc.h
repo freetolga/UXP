@@ -56,7 +56,7 @@ enum class State {
     D(None) \
     D(NonIncrementalRequested) \
     D(AbortRequested) \
-    D(Unused1) \
+    D(KeepAtomsSet) \
     D(IncrementalDisabled) \
     D(ModeChange) \
     D(MallocBytesTrigger) \
