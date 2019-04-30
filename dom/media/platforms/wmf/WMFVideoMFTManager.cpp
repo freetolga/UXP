@@ -25,7 +25,6 @@
 #include "gfxWindowsPlatform.h"
 #include "IMFYCbCrImage.h"
 #include "mozilla/WindowsVersion.h"
-#include "mozilla/Telemetry.h"
 #include "nsPrintfCString.h"
 #include "GMPUtils.h" // For SplitAt. TODO: Move SplitAt to a central place.
 #include "MP4Decoder.h"
@@ -117,16 +116,7 @@ WMFVideoMFTManager::~WMFVideoMFTManager()
     DeleteOnMainThread(mDXVA2Manager);
   }
 
-  // Record whether the video decoder successfully decoded, or output null
-  // samples but did/didn't recover.
-  uint32_t telemetry = (mNullOutputCount == 0) ? 0 :
-                       (mGotValidOutputAfterNullOutput && mGotExcessiveNullOutput) ? 1 :
-                       mGotExcessiveNullOutput ? 2 :
-                       mGotValidOutputAfterNullOutput ? 3 :
-                       4;
-
   nsCOMPtr<nsIRunnable> task = NS_NewRunnableFunction([=]() -> void {
-    LOG(nsPrintfCString("Reporting telemetry VIDEO_MFT_OUTPUT_NULL_SAMPLES=%d", telemetry).get());
   });
   AbstractThread::MainThread()->Dispatch(task.forget());
 }
