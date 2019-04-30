@@ -60,7 +60,6 @@
 #include "GeckoScreenOrientation.h"
 #include "PrefsHelper.h"
 #include "fennec/MemoryMonitor.h"
-#include "fennec/Telemetry.h"
 #include "fennec/ThumbnailHelper.h"
 
 #ifdef DEBUG_ANDROID_EVENTS
@@ -380,7 +379,6 @@ nsAppShell::nsAppShell()
         if (jni::IsFennec()) {
             mozilla::ANRReporter::Init();
             mozilla::MemoryMonitor::Init();
-            mozilla::widget::Telemetry::Init();
             mozilla::ThumbnailHelper::Init();
         }
 
