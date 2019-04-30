@@ -32,7 +32,6 @@
 #include "nsZipArchive.h"
 #include "mozilla/Omnijar.h"
 #include "prenv.h"
-#include "mozilla/Telemetry.h"
 #include "nsThreadUtils.h"
 #include "nsXULAppAPI.h"
 #include "nsIProtocolHandler.h"
@@ -271,8 +270,6 @@ GetBufferFromZipArchive(nsZipArchive *zip, bool doCRC, const char* id,
 nsresult
 StartupCache::GetBuffer(const char* id, UniquePtr<char[]>* outbuf, uint32_t* length) 
 {
-  PROFILER_LABEL_FUNC(js::ProfileEntry::Category::OTHER);
-
   NS_ASSERTION(NS_IsMainThread(), "Startup cache only available on main thread");
 
   WaitOnWriteThread();
@@ -597,13 +594,6 @@ StartupCache::ResetStartupWriteTimer()
   return NS_OK;
 }
 
-nsresult
-StartupCache::RecordAgesAlways()
-{
-  gPostFlushAgeAction = RECORD_AGE;
-  return NS_OK;
-}
-
 // StartupCacheDebugOutputStream implementation
 #ifdef DEBUG
 NS_IMPL_ISUPPORTS(StartupCacheDebugOutputStream, nsIObjectOutputStream, 
@@ -797,12 +787,6 @@ StartupCacheWrapper::GetObserver(nsIObserver** obv) {
   }
   NS_ADDREF(*obv = sc->mListener);
   return NS_OK;
-}
-
-nsresult
-StartupCacheWrapper::RecordAgesAlways() {
-  StartupCache *sc = StartupCache::GetSingleton();
-  return sc ? sc->RecordAgesAlways() : NS_ERROR_NOT_INITIALIZED;
 }
 
 } // namespace scache
