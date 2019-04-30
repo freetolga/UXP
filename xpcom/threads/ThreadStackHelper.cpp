@@ -99,7 +99,6 @@ ThreadStackHelper::Shutdown()
 }
 
 ThreadStackHelper::ThreadStackHelper()
-  : mStackToFill(nullptr)
 {
 #if defined(XP_LINUX)
   MOZ_ALWAYS_TRUE(!::sem_init(&mSem, 0, 0));
@@ -140,15 +139,11 @@ public:
 } // namespace
 
 void
-ThreadStackHelper::GetStack(Stack& aStack)
+ThreadStackHelper::GetStack()
 {
-  // Always run PrepareStackBuffer first to clear aStack
-  if (!PrepareStackBuffer(aStack)) {
-    // Skip and return empty aStack
+  if (!PrepareStackBuffer()) {
     return;
   }
-
-  ScopedSetPtr<Stack> stackPtr(mStackToFill, &aStack);
 
 #if defined(XP_LINUX)
   if (!sInitialized) {
@@ -214,7 +209,7 @@ ThreadStackHelper::GetStack(Stack& aStack)
 }
 
 void
-ThreadStackHelper::GetNativeStack(Stack& aStack)
+ThreadStackHelper::GetNativeStack()
 {
   /*** STUB ***/
 }
@@ -238,18 +233,14 @@ ThreadStackHelper::FillStackHandler(int aSignal, siginfo_t* aInfo,
 #endif // XP_LINUX
 
 bool
-ThreadStackHelper::PrepareStackBuffer(Stack& aStack)
+ThreadStackHelper::PrepareStackBuffer()
 {
-  // Return false to skip getting the stack and return an empty stack
-  aStack.clear();
   return false;
 }
 
 void
 ThreadStackHelper::FillStackBuffer()
 {
-  MOZ_ASSERT(mStackToFill->empty());
-  /*** STUB ***/
 }
 
 MOZ_ASAN_BLACKLIST void
