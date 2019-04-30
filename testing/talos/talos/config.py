@@ -153,17 +153,12 @@ DEFAULTS = dict(
         'browser.contentHandlers.types.3.uri': 'http://127.0.0.1/rss?url=%s',
         'browser.contentHandlers.types.4.uri': 'http://127.0.0.1/rss?url=%s',
         'browser.contentHandlers.types.5.uri': 'http://127.0.0.1/rss?url=%s',
-        'datareporting.healthreport.about.reportUrl':
-            'http://127.0.0.1/abouthealthreport/',
-        'datareporting.healthreport.documentServerURI':
-            'http://127.0.0.1/healthreport/',
         'datareporting.policy.dataSubmissionPolicyBypassNotification': True,
         'general.useragent.updates.enabled': False,
         'browser.webapps.checkForUpdates': 0,
         'browser.search.geoSpecificDefaults': False,
         'browser.snippets.enabled': False,
         'browser.snippets.syncPromo.enabled': False,
-        'toolkit.telemetry.server': 'https://127.0.0.1/telemetry-dummy/',
         'experiments.manifest.uri':
             'https://127.0.0.1/experiments-dummy/manifest',
         'network.http.speculative-parallel-limit': 0,
