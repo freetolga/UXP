@@ -48,7 +48,6 @@
 #endif
 
 #include "mozilla/IOInterposer.h"
-#include "mozilla/Telemetry.h"
 #include "mozilla/StartupTimeline.h"
 
 static NS_DEFINE_CID(kAppShellCID, NS_APPSHELL_CID);
@@ -383,7 +382,6 @@ nsAppStartup::Quit(uint32_t aMode)
     }
 
     PROFILER_MARKER("Shutdown start");
-    mozilla::RecordShutdownStartTimeStamp();
     mShuttingDown = true;
     if (!mRestart) {
       mRestart = (aMode & eRestart) != 0;
