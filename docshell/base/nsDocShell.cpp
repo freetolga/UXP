@@ -1972,13 +1972,6 @@ nsDocShell::GetCharset(nsACString& aCharset)
 }
 
 NS_IMETHODIMP
-nsDocShell::GatherCharsetMenuTelemetry()
-{
-  /* STUB */
-  return NS_OK;
-}
-
-NS_IMETHODIMP
 nsDocShell::SetCharset(const nsACString& aCharset)
 {
   // set the charset override
