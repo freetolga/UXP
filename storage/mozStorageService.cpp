@@ -372,8 +372,6 @@ Service::shutdown()
   NS_IF_RELEASE(sXPConnect);
 }
 
-sqlite3_vfs *ConstructTelemetryVFS();
-
 #ifdef MOZ_STORAGE_MEMORY
 
 namespace {
@@ -480,15 +478,6 @@ Service::initialize()
   rc = ::sqlite3_initialize();
   if (rc != SQLITE_OK)
     return convertResultCode(rc);
-
-  mSqliteVFS = ConstructTelemetryVFS();
-  if (mSqliteVFS) {
-    rc = sqlite3_vfs_register(mSqliteVFS, 1);
-    if (rc != SQLITE_OK)
-      return convertResultCode(rc);
-  } else {
-    NS_WARNING("Failed to register telemetry VFS");
-  }
 
   // Register for xpcom-shutdown so we can cleanup after ourselves.  The
   // observer service can only be used on the main thread.
