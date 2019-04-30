@@ -710,13 +710,6 @@ interface nsIDocShell : nsIDocShellTreeItem
   attribute ACString charset;
 
   /**
-   * Called when the user chose an encoding override from the character
-   * encoding menu. Separate from the setter for the charset property to avoid
-   * extensions adding noise to the data.
-   */
-  void gatherCharsetMenuTelemetry();
-
-  /**
    * The charset forced by the user.
    */
   attribute ACString forcedCharset;
