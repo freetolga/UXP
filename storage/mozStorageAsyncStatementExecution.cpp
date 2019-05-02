@@ -20,7 +20,6 @@
 #include "mozStorageAsyncStatementExecution.h"
 
 #include "mozilla/DebugOnly.h"
-#include "mozilla/Telemetry.h"
 
 namespace mozilla {
 namespace storage {
