@@ -12,7 +12,6 @@
 #include "mozilla/Preferences.h"
 #include "mozilla/StaticMutex.h"
 #include "mozilla/StaticPtr.h"
-#include "mozilla/Telemetry.h"
 #include "mozilla/Logging.h"
 #include "nsThreadUtils.h"
 #include "CubebUtils.h"
