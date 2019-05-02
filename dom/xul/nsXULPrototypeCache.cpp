@@ -27,7 +27,6 @@
 #include "mozilla/Preferences.h"
 #include "mozilla/scache/StartupCache.h"
 #include "mozilla/scache/StartupCacheUtils.h"
-#include "mozilla/Telemetry.h"
 
 using namespace mozilla;
 using namespace mozilla::scache;
