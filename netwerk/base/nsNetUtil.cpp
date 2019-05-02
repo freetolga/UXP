@@ -10,7 +10,6 @@
 #include "mozilla/LoadContext.h"
 #include "mozilla/LoadInfo.h"
 #include "mozilla/BasePrincipal.h"
-#include "mozilla/Telemetry.h"
 #include "nsNetUtil.h"
 #include "nsNetUtilInlines.h"
 #include "mozIApplicationClearPrivateDataParams.h"
