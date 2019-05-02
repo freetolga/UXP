@@ -44,7 +44,6 @@
 #include "mozilla/Services.h"
 #include "mozilla/UniquePtr.h"
 #include "mozilla/Unused.h"
-#include "mozilla/Telemetry.h"
 
 // Normally, the number of milliseconds that AsyncShutdown waits until
 // it decides to crash is specified as a preference. We use the
@@ -205,7 +204,7 @@ public:
 //
 //
 // The data written by the writer thread will be read by another
-// module upon the next restart and fed to Telemetry.
+// module upon the next restart.
 //
 Atomic<nsCString*> gWriteData(nullptr);
 PRMonitor* gWriteReady = nullptr;
@@ -394,14 +393,10 @@ nsTerminator::StartWatchdog()
 }
 
 // Prepare, allocate and start the writer thread. By design, it will never
-// finish, nor be deallocated. In case of error, we degrade
-// gracefully to not writing Telemetry data.
+// finish, nor be deallocated.
 void
 nsTerminator::StartWriter()
 {
-  if (!Telemetry::CanRecordExtended()) {
-    return;
-  }
   nsCOMPtr<nsIFile> profLD;
   nsresult rv = NS_GetSpecialDirectory(NS_APP_USER_PROFILE_LOCAL_50_DIR,
                                        getter_AddRefs(profLD));
@@ -446,15 +441,6 @@ nsTerminator::Observe(nsISupports *, const char *aTopic, const char16_t *)
     Start();
   }
 
-  UpdateHeartbeat(aTopic);
-#if !defined(DEBUG)
-  // Only allow nsTerminator to write on non-debug builds so we don't get leak warnings on
-  // shutdown for intentional leaks (see bug 1242084). This will be enabled again by bug
-  // 1255484 when 1255478 lands.
-  UpdateTelemetry();
-#endif // !defined(DEBUG)
-  UpdateCrashReport(aTopic);
-
   // Perform a little cleanup
   nsCOMPtr<nsIObserverService> os = mozilla::services::GetObserverService();
   MOZ_RELEASE_ASSERT(os);
@@ -462,84 +448,5 @@ nsTerminator::Observe(nsISupports *, const char *aTopic, const char16_t *)
 
   return NS_OK;
 }
-
-void
-nsTerminator::UpdateHeartbeat(const char* aTopic)
-{
-  // Reset the clock, find out how long the current phase has lasted.
-  uint32_t ticks = gHeartbeat.exchange(0);
-  if (mCurrentStep > 0) {
-    sShutdownSteps[mCurrentStep].mTicks = ticks;
-  }
-
-  // Find out where we now are in the current shutdown.
-  // Don't assume that shutdown takes place in the expected order.
-  int nextStep = -1;
-  for (size_t i = 0; i < ArrayLength(sShutdownSteps); ++i) {
-    if (strcmp(sShutdownSteps[i].mTopic, aTopic) == 0) {
-      nextStep = i;
-      break;
-    }
-  }
-  MOZ_ASSERT(nextStep != -1);
-  mCurrentStep = nextStep;
-}
-
-void
-nsTerminator::UpdateTelemetry()
-{
-  if (!Telemetry::CanRecordExtended() || !gWriteReady) {
-    return;
-  }
-
-  //
-  // We need Telemetry data on the effective duration of each step,
-  // to be able to tune the time-to-crash of each of both the
-  // Terminator and AsyncShutdown. However, at this stage, it is too
-  // late to record such data into Telemetry, so we write it to disk
-  // and read it upon the next startup.
-  //
-
-  // Build JSON.
-  UniquePtr<nsCString> telemetryData(new nsCString());
-  telemetryData->AppendLiteral("{");
-  size_t fields = 0;
-  for (size_t i = 0; i < ArrayLength(sShutdownSteps); ++i) {
-    if (sShutdownSteps[i].mTicks < 0) {
-      // Ignore this field.
-      continue;
-    }
-    if (fields++ > 0) {
-      telemetryData->Append(", ");
-    }
-    telemetryData->AppendLiteral("\"");
-    telemetryData->Append(sShutdownSteps[i].mTopic);
-    telemetryData->AppendLiteral("\": ");
-    telemetryData->AppendInt(sShutdownSteps[i].mTicks);
-  }
-  telemetryData->AppendLiteral("}");
-
-  if (fields == 0) {
-    // Nothing to write
-      return;
-  }
-
-  //
-  // Send data to the worker thread.
-  //
-  delete gWriteData.exchange(telemetryData.release()); // Clear any data that hasn't been written yet
-
-  // In case the worker thread was sleeping, wake it up.
-  PR_EnterMonitor(gWriteReady);
-  PR_Notify(gWriteReady);
-  PR_ExitMonitor(gWriteReady);
-}
-
-void
-nsTerminator::UpdateCrashReport(const char* aTopic)
-{
-  /*** STUB ***/
-}
-
 
 } // namespace mozilla
