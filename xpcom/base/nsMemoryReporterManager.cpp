@@ -24,7 +24,6 @@
 #include "mozilla/PodOperations.h"
 #include "mozilla/Preferences.h"
 #include "mozilla/Services.h"
-#include "mozilla/Telemetry.h"
 #include "mozilla/UniquePtrExtensions.h"
 #include "mozilla/dom/PMemoryReportRequestParent.h" // for dom::MemoryReport
 #include "mozilla/dom/ContentParent.h"
