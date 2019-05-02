@@ -50,7 +50,6 @@
 #include "mozilla/layout/RenderFrameParent.h"
 #include "mozilla/media/MediaSystemResourceService.h" // for MediaSystemResourceService
 #include "mozilla/mozalloc.h"           // for operator new, etc
-#include "mozilla/Telemetry.h"
 #ifdef MOZ_WIDGET_GTK
 #include "basic/X11BasicCompositor.h" // for X11BasicCompositor
 #endif
@@ -71,7 +70,6 @@
 #include "mozilla/Hal.h"
 #include "mozilla/HalTypes.h"
 #include "mozilla/StaticPtr.h"
-#include "mozilla/Telemetry.h"
 #include "mozilla/VsyncDispatcher.h"
 #if defined(XP_WIN) || defined(MOZ_WIDGET_GTK)
 #include "VsyncSource.h"
