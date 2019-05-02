@@ -28,7 +28,6 @@
 #include "nsServiceManagerUtils.h"
 #include "nsILoadContext.h"
 #include "nsIURL.h"
-#include "mozilla/Telemetry.h"
 #include "nsIProxiedChannel.h"
 #include "nsIProxyInfo.h"
 
