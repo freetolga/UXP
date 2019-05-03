@@ -486,7 +486,6 @@ addEventListener("ZoomChangeUsingMouseWheel", function () {
 
 addMessageListener("UpdateCharacterSet", function (aMessage) {
   docShell.charset = aMessage.data.value;
-  docShell.gatherCharsetMenuTelemetry();
 });
 
 /**
