@@ -498,7 +498,6 @@
                 onget="return this.docShell.charset;">
         <setter><![CDATA[
           this.docShell.charset = val;
-          this.docShell.gatherCharsetMenuTelemetry();
         ]]></setter>
       </property>
 
