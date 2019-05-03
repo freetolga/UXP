@@ -14,7 +14,6 @@ Cu.import("resource://gre/modules/Services.jsm", this);
 Cu.import("resource://gre/modules/Task.jsm", this);
 Cu.import("resource://gre/modules/Timer.jsm", this);
 Cu.import("resource://gre/modules/XPCOMUtils.jsm", this);
-Cu.import("resource://gre/modules/TelemetryController.jsm");
 Cu.import("resource://gre/modules/KeyValueParser.jsm");
 
 this.EXPORTED_SYMBOLS = [
@@ -65,8 +64,6 @@ function dateToDays(date) {
  *     Directory we will use for our data store. This instance will write
  *     data files into the directory specified.
  *
- *   telemetryStoreSizeKey (string)
- *     Telemetry histogram to report store size under.
  */
 this.CrashManager = function (options) {
   for (let k of ["pendingDumpsDir", "submittedDumpsDir", "eventsDirs",
@@ -96,10 +93,6 @@ this.CrashManager = function (options) {
 
       case "storeDir":
         this._storeDir = v;
-        break;
-
-      case "telemetryStoreSizeKey":
-        this._telemetryStoreSizeKey = v;
         break;
 
       default:
@@ -537,18 +530,6 @@ this.CrashManager.prototype = Object.freeze({
           let sessionId = null;
           let stackTraces = null;
           let reportMeta = Cu.cloneInto(metadata, myScope);
-          if ('TelemetryEnvironment' in reportMeta) {
-            try {
-              crashEnvironment = JSON.parse(reportMeta.TelemetryEnvironment);
-            } catch (e) {
-              Cu.reportError(e);
-            }
-            delete reportMeta.TelemetryEnvironment;
-          }
-          if ('TelemetrySessionId' in reportMeta) {
-            sessionId = reportMeta.TelemetrySessionId;
-            delete reportMeta.TelemetrySessionId;
-          }
           if ('StackTraces' in reportMeta) {
             try {
               stackTraces = JSON.parse(reportMeta.StackTraces);
@@ -557,22 +538,6 @@ this.CrashManager.prototype = Object.freeze({
             }
             delete reportMeta.StackTraces;
           }
-          TelemetryController.submitExternalPing("crash",
-            {
-              version: 1,
-              crashDate: date.toISOString().slice(0, 10), // YYYY-MM-DD
-              sessionId: sessionId,
-              crashId: entry.id,
-              stackTraces: stackTraces,
-              metadata: reportMeta,
-              hasCrashEnvironment: (crashEnvironment !== null),
-            },
-            {
-              retentionDays: 180,
-              addClientId: true,
-              addEnvironment: true,
-              overrideEnvironment: crashEnvironment,
-            });
           break;
 
         case "crash.submission.1":
@@ -665,8 +630,7 @@ this.CrashManager.prototype = Object.freeze({
             unixMode: OS.Constants.libc.S_IRWXU,
           });
 
-          let store = new CrashStore(this._storeDir,
-                                     this._telemetryStoreSizeKey);
+          let store = new CrashStore(this._storeDir);
           yield store.load();
 
           this._store = store;
@@ -756,13 +720,9 @@ var gCrashManager;
  *
  * @param storeDir (string)
  *        Directory the store should be located in.
- * @param telemetrySizeKey (string)
- *        The telemetry histogram that should be used to store the size
- *        of the data file.
  */
-function CrashStore(storeDir, telemetrySizeKey) {
+function CrashStore(storeDir) {
   this._storeDir = storeDir;
-  this._telemetrySizeKey = telemetrySizeKey;
 
   this._storePath = OS.Path.join(storeDir, "store.json.mozlz4");
 
@@ -950,9 +910,6 @@ CrashStore.prototype = Object.freeze({
       let size = yield OS.File.writeAtomic(this._storePath, data, {
                                            tmpPath: this._storePath + ".tmp",
                                            compression: "lz4"});
-      if (this._telemetrySizeKey) {
-        Services.telemetry.getHistogramById(this._telemetrySizeKey).add(size);
-      }
     }.bind(this));
   },
 
@@ -1209,8 +1166,6 @@ CrashStore.prototype = Object.freeze({
     }
 
     submission.requestDate = date;
-    Services.telemetry.getKeyedHistogramById("PROCESS_CRASH_SUBMIT_ATTEMPT")
-      .add(crash.type, 1);
     return true;
   },
 
@@ -1229,8 +1184,6 @@ CrashStore.prototype = Object.freeze({
 
     submission.responseDate = date;
     submission.result = result;
-    Services.telemetry.getKeyedHistogramById("PROCESS_CRASH_SUBMIT_SUCCESS")
-      .add(crash.type, result == "ok");
     return true;
   },
 
@@ -1333,7 +1286,6 @@ XPCOMUtils.defineLazyGetter(this.CrashManager, "Singleton", function () {
     submittedDumpsDir: OS.Path.join(crPath, "submitted"),
     eventsDirs: [OS.Path.join(crPath, "events"), OS.Path.join(storePath, "events")],
     storeDir: storePath,
-    telemetryStoreSizeKey: "CRASH_STORE_COMPRESSED_BYTES",
   });
 
   // Automatically aggregate event files shortly after startup. This
