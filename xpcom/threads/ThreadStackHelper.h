@@ -7,8 +7,6 @@
 #ifndef mozilla_ThreadStackHelper_h
 #define mozilla_ThreadStackHelper_h
 
-#include "mozilla/ThreadHangStats.h"
-
 #include "GeckoProfiler.h"
 
 #include <stddef.h>
@@ -37,13 +35,8 @@ namespace mozilla {
  */
 class ThreadStackHelper
 {
-public:
-  typedef Telemetry::HangStack Stack;
-
 private:
-  Stack* mStackToFill;
-
-  bool PrepareStackBuffer(Stack& aStack);
+  bool PrepareStackBuffer();
   void FillStackBuffer();
   void FillThreadContext(void* aContext = nullptr);
 
@@ -68,17 +61,15 @@ public:
    * Retrieve the current pseudostack of the thread associated
    * with this ThreadStackHelper.
    *
-   * @param aStack Stack instance to be filled.
    */
-  void GetStack(Stack& aStack);
+  void GetStack();
 
   /**
    * Retrieve the current native stack of the thread associated
    * with this ThreadStackHelper.
    *
-   * @param aNativeStack Stack instance to be filled.
    */
-  void GetNativeStack(Stack& aStack);
+  void GetNativeStack();
 
 #if defined(XP_LINUX)
 private:
