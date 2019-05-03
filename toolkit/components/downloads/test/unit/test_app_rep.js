@@ -95,68 +95,18 @@ function run_test() {
   run_next_test();
 }
 
-function check_telemetry(aCount,
-                         aShouldBlockCount,
-                         aListCounts) {
-  let count = Cc["@mozilla.org/base/telemetry;1"]
-                .getService(Ci.nsITelemetry)
-                .getHistogramById("APPLICATION_REPUTATION_COUNT")
-                .snapshot();
-  do_check_eq(count.counts[1], aCount);
-  let local = Cc["@mozilla.org/base/telemetry;1"]
-                .getService(Ci.nsITelemetry)
-                .getHistogramById("APPLICATION_REPUTATION_LOCAL")
-                .snapshot();
-  do_check_eq(local.counts[ALLOW_LIST], aListCounts[ALLOW_LIST],
-              "Allow list counts don't match");
-  do_check_eq(local.counts[BLOCK_LIST], aListCounts[BLOCK_LIST],
-              "Block list counts don't match");
-  do_check_eq(local.counts[NO_LIST], aListCounts[NO_LIST],
-              "No list counts don't match");
-
-  let shouldBlock = Cc["@mozilla.org/base/telemetry;1"]
-                .getService(Ci.nsITelemetry)
-                .getHistogramById("APPLICATION_REPUTATION_SHOULD_BLOCK")
-                .snapshot();
-  // SHOULD_BLOCK = true
-  do_check_eq(shouldBlock.counts[1], aShouldBlockCount);
-  // Sanity check that SHOULD_BLOCK total adds up to the COUNT.
-  do_check_eq(shouldBlock.counts[0] + shouldBlock.counts[1], aCount);
-}
-
-function get_telemetry_counts() {
-  let count = Cc["@mozilla.org/base/telemetry;1"]
-                .getService(Ci.nsITelemetry)
-                .getHistogramById("APPLICATION_REPUTATION_COUNT")
-                .snapshot();
-  let local = Cc["@mozilla.org/base/telemetry;1"]
-                .getService(Ci.nsITelemetry)
-                .getHistogramById("APPLICATION_REPUTATION_LOCAL")
-                .snapshot();
-  let shouldBlock = Cc["@mozilla.org/base/telemetry;1"]
-                .getService(Ci.nsITelemetry)
-                .getHistogramById("APPLICATION_REPUTATION_SHOULD_BLOCK")
-                .snapshot();
-  return { total: count.counts[1],
-           shouldBlock: shouldBlock.counts[1],
-           listCounts: local.counts };
-}
-
 add_test(function test_nullSourceURI() {
-  let counts = get_telemetry_counts();
   gAppRep.queryReputation({
     // No source URI
     fileSize: 12,
   }, function onComplete(aShouldBlock, aStatus) {
     do_check_eq(Cr.NS_ERROR_UNEXPECTED, aStatus);
     do_check_false(aShouldBlock);
-    check_telemetry(counts.total + 1, counts.shouldBlock, counts.listCounts);
     run_next_test();
   });
 });
 
 add_test(function test_nullCallback() {
-  let counts = get_telemetry_counts();
   try {
     gAppRep.queryReputation({
       sourceURI: createURI("http://example.com"),
@@ -166,8 +116,6 @@ add_test(function test_nullCallback() {
   } catch (ex) {
     if (ex.result != Cr.NS_ERROR_INVALID_POINTER)
       throw ex;
-    // We don't even increment the count here, because there's no callback.
-    check_telemetry(counts.total, counts.shouldBlock, counts.listCounts);
     run_next_test();
   }
 });
@@ -226,16 +174,12 @@ add_test(function test_local_list() {
 add_test(function test_unlisted() {
   Services.prefs.setCharPref(appRepURLPref,
                              "http://localhost:4444/download");
-  let counts = get_telemetry_counts();
-  let listCounts = counts.listCounts;
-  listCounts[NO_LIST]++;
   gAppRep.queryReputation({
     sourceURI: exampleURI,
     fileSize: 12,
   }, function onComplete(aShouldBlock, aStatus) {
     do_check_eq(Cr.NS_OK, aStatus);
     do_check_false(aShouldBlock);
-    check_telemetry(counts.total + 1, counts.shouldBlock, listCounts);
     run_next_test();
   });
 });
@@ -243,8 +187,6 @@ add_test(function test_unlisted() {
 add_test(function test_non_uri() {
   Services.prefs.setCharPref(appRepURLPref,
                              "http://localhost:4444/download");
-  let counts = get_telemetry_counts();
-  let listCounts = counts.listCounts;
   // No listcount is incremented, since the sourceURI is not an nsIURL
   let source = NetUtil.newURI("data:application/octet-stream,ABC");
   do_check_false(source instanceof Ci.nsIURL);
@@ -254,7 +196,6 @@ add_test(function test_non_uri() {
   }, function onComplete(aShouldBlock, aStatus) {
     do_check_eq(Cr.NS_OK, aStatus);
     do_check_false(aShouldBlock);
-    check_telemetry(counts.total + 1, counts.shouldBlock, listCounts);
     run_next_test();
   });
 });
@@ -262,16 +203,12 @@ add_test(function test_non_uri() {
 add_test(function test_local_blacklist() {
   Services.prefs.setCharPref(appRepURLPref,
                              "http://localhost:4444/download");
-  let counts = get_telemetry_counts();
-  let listCounts = counts.listCounts;
-  listCounts[BLOCK_LIST]++;
   gAppRep.queryReputation({
     sourceURI: blocklistedURI,
     fileSize: 12,
   }, function onComplete(aShouldBlock, aStatus) {
     do_check_eq(Cr.NS_OK, aStatus);
     do_check_true(aShouldBlock);
-    check_telemetry(counts.total + 1, counts.shouldBlock + 1, listCounts);
     run_next_test();
   });
 });
@@ -279,9 +216,6 @@ add_test(function test_local_blacklist() {
 add_test(function test_referer_blacklist() {
   Services.prefs.setCharPref(appRepURLPref,
                              "http://localhost:4444/download");
-  let counts = get_telemetry_counts();
-  let listCounts = counts.listCounts;
-  listCounts[BLOCK_LIST]++;
   gAppRep.queryReputation({
     sourceURI: exampleURI,
     referrerURI: blocklistedURI,
@@ -289,7 +223,6 @@ add_test(function test_referer_blacklist() {
   }, function onComplete(aShouldBlock, aStatus) {
     do_check_eq(Cr.NS_OK, aStatus);
     do_check_true(aShouldBlock);
-    check_telemetry(counts.total + 1, counts.shouldBlock + 1, listCounts);
     run_next_test();
   });
 });
@@ -297,9 +230,6 @@ add_test(function test_referer_blacklist() {
 add_test(function test_blocklist_trumps_allowlist() {
   Services.prefs.setCharPref(appRepURLPref,
                              "http://localhost:4444/download");
-  let counts = get_telemetry_counts();
-  let listCounts = counts.listCounts;
-  listCounts[BLOCK_LIST]++;
   gAppRep.queryReputation({
     sourceURI: whitelistedURI,
     referrerURI: blocklistedURI,
@@ -307,7 +237,6 @@ add_test(function test_blocklist_trumps_allowlist() {
   }, function onComplete(aShouldBlock, aStatus) {
     do_check_eq(Cr.NS_OK, aStatus);
     do_check_true(aShouldBlock);
-    check_telemetry(counts.total + 1, counts.shouldBlock + 1, listCounts);
     run_next_test();
   });
 });
@@ -315,10 +244,6 @@ add_test(function test_blocklist_trumps_allowlist() {
 add_test(function test_redirect_on_blocklist() {
   Services.prefs.setCharPref(appRepURLPref,
                              "http://localhost:4444/download");
-  let counts = get_telemetry_counts();
-  let listCounts = counts.listCounts;
-  listCounts[BLOCK_LIST]++;
-  listCounts[ALLOW_LIST]++;
   let secman = Services.scriptSecurityManager;
   let badRedirects = Cc["@mozilla.org/array;1"]
                        .createInstance(Ci.nsIMutableArray);
@@ -336,7 +261,6 @@ add_test(function test_redirect_on_blocklist() {
   }, function onComplete(aShouldBlock, aStatus) {
     do_check_eq(Cr.NS_OK, aStatus);
     do_check_true(aShouldBlock);
-    check_telemetry(counts.total + 1, counts.shouldBlock + 1, listCounts);
     run_next_test();
   });
 });
