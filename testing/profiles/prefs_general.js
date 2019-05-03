@@ -153,11 +153,6 @@ user_pref("network.activity.blipIntervalMilliseconds", 250);
 // should explicitly disable this pref.
 user_pref("datareporting.policy.dataSubmissionPolicyBypassNotification", true);
 
-// Point Firefox Health Report at a local server. We don't care if it actually
-// works. It just can't hit the default production endpoint.
-user_pref("datareporting.healthreport.documentServerURI", "http://%(server)s/healthreport/");
-user_pref("datareporting.healthreport.about.reportUrl", "http://%(server)s/abouthealthreport/v4/");
-
 // Make sure CSS error reporting is enabled for tests
 user_pref("layout.css.report_errors", true);
 
@@ -249,14 +244,6 @@ user_pref('browser.contentHandlers.types.2.uri', 'http://test1.example.org/rss?u
 user_pref('browser.contentHandlers.types.3.uri', 'http://test1.example.org/rss?url=%%s')
 user_pref('browser.contentHandlers.types.4.uri', 'http://test1.example.org/rss?url=%%s')
 user_pref('browser.contentHandlers.types.5.uri', 'http://test1.example.org/rss?url=%%s')
-
-// We want to collect telemetry, but we don't want to send in the results.
-user_pref('toolkit.telemetry.server', 'https://%(server)s/telemetry-dummy/');
-
-// A couple of preferences with default values to test that telemetry preference
-// watching is working.
-user_pref('toolkit.telemetry.test.pref1', true);
-user_pref('toolkit.telemetry.test.pref2', false);
 
 // Increase the APZ content response timeout in tests to 1 minute.
 // This is to accommodate the fact that test environments tends to be slower
