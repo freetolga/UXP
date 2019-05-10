@@ -412,6 +412,9 @@ var gURLBarSettings = {
   },
 
   writePlaceholder: function() {
+    if (!gURLBar)
+      return;
+
     let attribute = "placeholder";
     let prefs = this.prefSuggests.map(pref => {
       return this.prefSuggest + pref;
