@@ -3474,6 +3474,7 @@ function BrowserToolboxCustomizeDone(aToolboxChanged) {
 
   // Update the urlbar
   if (gURLBar) {
+    gURLBarSettings.writePlaceholder();
     URLBarSetURI();
     XULBrowserWindow.asyncUpdateUI();
     BookmarkingUI.updateStarState();
