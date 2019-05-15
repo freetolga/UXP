@@ -12,6 +12,9 @@ Components.utils.import("resource:///modules/RecentWindow.jsm");
 XPCOMUtils.defineLazyModuleGetter(this, "ShellService",
                                   "resource:///modules/ShellService.jsm");
 
+XPCOMUtils.defineLazyModuleGetter(this, "Deprecated",
+                                  "resource://gre/modules/Deprecated.jsm");
+
 XPCOMUtils.defineLazyGetter(this, "BROWSER_NEW_TAB_URL", function () {
   const PREF = "browser.newtab.url";
 
@@ -56,6 +59,14 @@ function getBrowserURL()
 {
   return "chrome://browser/content/browser.xul";
 }
+
+function getBoolPref(pref, defaultValue) {
+  Deprecated.warning("getBoolPref is deprecated and will be removed in a future release. " +
+                     "You should use Services.pref.getBoolPref (Services.jsm).",
+                     "https://github.com/MoonchildProductions/UXP/issues/989");
+  return Services.prefs.getBoolPref(pref, defaultValue);
+}
+
 
 function getTopWin(skipPopups) {
   // If this is called in a browser window, use that window regardless of
@@ -573,10 +584,16 @@ function buildHelpMenu()
   var checkForUpdates = document.getElementById("checkForUpdates");
   var appMenuCheckForUpdates = document.getElementById("appmenu_checkForUpdates");
   var canCheckForUpdates = updates.canCheckForUpdates;
+  
   checkForUpdates.setAttribute("disabled", !canCheckForUpdates);
-  appMenuCheckForUpdates.setAttribute("disabled", !canCheckForUpdates);
-  if (!canCheckForUpdates)
+
+  if (appMenuCheckForUpdates) {
+    appMenuCheckForUpdates.setAttribute("disabled", !canCheckForUpdates);
+  }
+
+  if (!canCheckForUpdates) {
     return;
+  }
 
   var strings = document.getElementById("bundle_browser");
   var activeUpdate = um.activeUpdate;
@@ -612,19 +629,31 @@ function buildHelpMenu()
   }
 
   checkForUpdates.label = getStringWithUpdateName("updatesItem_" + key);
-  appMenuCheckForUpdates.label = getStringWithUpdateName("updatesItem_" + key);
+
+  if (appMenuCheckForUpdates) {
+    appMenuCheckForUpdates.label = getStringWithUpdateName("updatesItem_" + key);
+  }
+
   // updatesItem_default.accesskey, updatesItem_downloading.accesskey,
   // updatesItem_resume.accesskey or updatesItem_pending.accesskey
   checkForUpdates.accessKey = strings.getString("updatesItem_" + key +
                                                 ".accesskey");
-  appMenuCheckForUpdates.accessKey = strings.getString("updatesItem_" + key +
-                                                       ".accesskey");
+
+  if (appMenuCheckForUpdates) {
+    appMenuCheckForUpdates.accessKey = strings.getString("updatesItem_" + key +
+                                                         ".accesskey");
+  }
+
   if (um.activeUpdate && updates.isDownloading) {
     checkForUpdates.setAttribute("loading", "true");
-    appMenuCheckForUpdates.setAttribute("loading", "true");  
+    if (appMenuCheckForUpdates) {
+      appMenuCheckForUpdates.setAttribute("loading", "true");
+    }
   } else {
     checkForUpdates.removeAttribute("loading");
-    appMenuCheckForUpdates.removeAttribute("loading");
+    if (appMenuCheckForUpdates) {
+      appMenuCheckForUpdates.removeAttribute("loading");
+    }
   }
 #else
 #ifndef XP_MACOSX
@@ -689,6 +718,18 @@ function openPreferences(paneID, extraArgs)
 function openAdvancedPreferences(tabID)
 {
   openPreferences("paneAdvanced", { "advancedTab" : tabID });
+}
+
+/**
+ * Opens the release notes page for this version of the application.
+ */
+function openReleaseNotes()
+{ 
+  var relnotesURL = Components.classes["@mozilla.org/toolkit/URLFormatterService;1"]
+                              .getService(Components.interfaces.nsIURLFormatter)
+                              .formatURLPref("app.releaseNotesURL");
+  
+  openUILinkIn(relnotesURL, "tab");
 }
 
 /**

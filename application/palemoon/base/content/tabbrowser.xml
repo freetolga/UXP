@@ -402,10 +402,17 @@
             let promptBox = {
               appendPrompt : function(args, onCloseCallback) {
                 let newPrompt = document.createElementNS(XUL_NS, "tabmodalprompt");
-                stack.appendChild(newPrompt);
+                // stack.appendChild(newPrompt);
+                stack.insertBefore(newPrompt, browser.nextSibling);
                 browser.setAttribute("tabmodalPromptShowing", true);
 
                 newPrompt.clientTop; // style flush to assure binding is attached
+
+                let prompts = this.listPrompts();
+                if (prompts.length > 1) {
+                  // Let's hide ourself behind the current prompt.
+                  newPrompt.hidden = true;
+                }
 
                 let tab = self._getTabForContentWindow(browser.contentWindow);
                 newPrompt.init(args, tab, onCloseCallback);
@@ -418,6 +425,7 @@
                 let prompts = this.listPrompts();
                 if (prompts.length) {
                   let prompt = prompts[prompts.length - 1];
+                  prompt.hidden = false;
                   prompt.Dialog.setDefaultFocus();
                 } else {
                   browser.removeAttribute("tabmodalPromptShowing");
@@ -823,13 +831,8 @@
             }
 
             let sizedIconUrl = browser.mIconURL || "";
-            if (sizedIconUrl) {
-              let size = Math.round(16 * window.devicePixelRatio);
-              sizedIconUrl += (sizedIconUrl.includes("#") ? "&" : "#") +
-                              "-moz-resolution=" + size + "," + size;
-            }
             if (sizedIconUrl != aTab.getAttribute("image")) {
-              if (browser.mIconURL)
+              if (sizedIconUrl)
                 aTab.setAttribute("image", sizedIconUrl);
               else
                 aTab.removeAttribute("image");
@@ -3628,11 +3631,7 @@
           window.addEventListener("resize", this, false);
           window.addEventListener("load", this, false);
 
-          try {
-            this._tabAnimationLoggingEnabled = Services.prefs.getBoolPref("browser.tabs.animationLogging.enabled");
-          } catch (ex) {
-            this._tabAnimationLoggingEnabled = false;
-          }
+          this._tabAnimationLoggingEnabled = Services.prefs.getBoolPref("browser.tabs.animationLogging.enabled", false);
           this._browserNewtabpageEnabled = Services.prefs.getBoolPref("browser.newtabpage.enabled");
         ]]>
       </constructor>

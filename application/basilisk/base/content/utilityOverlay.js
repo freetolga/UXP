@@ -17,6 +17,9 @@ XPCOMUtils.defineLazyServiceGetter(this, "aboutNewTabService",
                                    "@mozilla.org/browser/aboutnewtab-service;1",
                                    "nsIAboutNewTabService");
 
+XPCOMUtils.defineLazyModuleGetter(this, "Deprecated",
+                                  "resource://gre/modules/Deprecated.jsm");
+
 this.__defineGetter__("BROWSER_NEW_TAB_URL", () => {
   if (PrivateBrowsingUtils.isWindowPrivate(window) &&
       !PrivateBrowsingUtils.permanentPrivateBrowsing &&
@@ -34,12 +37,19 @@ var gBidiUI = false;
  * Determines whether the given url is considered a special URL for new tabs.
  */
 function isBlankPageURL(aURL) {
-  return aURL == "about:blank" || aURL == "about:newtab" || aURL == "about:logopage";
+  return aURL == "about:blank" || aURL == BROWSER_NEW_TAB_URL || aURL == "about:logopage";
 }
 
 function getBrowserURL()
 {
   return "chrome://browser/content/browser.xul";
+}
+
+function getBoolPref(pref, defaultValue) {
+  Deprecated.warning("getBoolPref is deprecated and will be removed in a future release. " +
+                     "You should use Services.pref.getBoolPref (Services.jsm).",
+                     "https://github.com/MoonchildProductions/UXP/issues/989");
+  return Services.prefs.getBoolPref(pref, defaultValue);
 }
 
 function getTopWin(skipPopups) {
