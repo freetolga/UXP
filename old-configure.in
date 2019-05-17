@@ -2244,6 +2244,7 @@ MOZ_JETPACK=1
 MOZ_DEVTOOLS_SERVER=1
 MOZ_DEVTOOLS=
 MOZ_PLACES=1
+MOZ_PROXY_BYPASS_PROTECTION=
 MOZ_SERVICES_HEALTHREPORT=1
 MOZ_SERVICES_SYNC=1
 MOZ_USERINFO=1
@@ -4914,6 +4915,18 @@ else
 fi
 
 AC_SUBST(MOZ_XUL)
+
+dnl ========================================================
+dnl enable proxy bypass protection
+dnl ========================================================
+MOZ_ARG_ENABLE_BOOL(proxy-bypass-protection,
+[  --enable-proxy-bypass-protection      Enable proxy bypass protection],
+    MOZ_PROXY_BYPASS_PROTECTION=1,
+    MOZ_PROXY_BYPASS_PROTECTION=)
+if test -n "$MOZ_PROXY_BYPASS_PROTECTION"; then
+  AC_DEFINE(MOZ_PROXY_BYPASS_PROTECTION)
+fi
+AC_SUBST(MOZ_PROXY_BYPASS_PROTECTION)
 
 dnl ========================================================
 dnl necko configuration options
