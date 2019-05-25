@@ -325,13 +325,7 @@ AtomTableMatchKey(const PLDHashEntryHdr* aEntry, const void* aKey)
                          nsDependentAtomString(he->mAtom)) == 0;
   }
 
-  uint32_t length = he->mAtom->GetLength();
-  if (length != k->mLength) {
-    return false;
-  }
-
-  return memcmp(he->mAtom->GetUTF16String(),
-                k->mUTF16String, length * sizeof(char16_t)) == 0;
+  return he->mAtom->Equals(k->mUTF16String, k->mLength);
 }
 
 static void
@@ -368,6 +362,7 @@ static const PLDHashTableOps AtomTableOps = {
 static nsIAtom*
   sRecentlyUsedMainThreadAtoms[RECENTLY_USED_MAIN_THREAD_ATOM_CACHE_SIZE] = {};
 
+
 void
 DynamicAtom::GCAtomTable()
 {
@@ -386,6 +381,7 @@ DynamicAtom::GCAtomTableLocked(const MutexAutoLock& aProofOfLock,
   for (uint32_t i = 0; i < RECENTLY_USED_MAIN_THREAD_ATOM_CACHE_SIZE; ++i) {
     sRecentlyUsedMainThreadAtoms[i] = nullptr;
   }
+
 
   uint32_t removedCount = 0; // Use a non-atomic temporary for cheaper increments.
   nsAutoCString nonZeroRefcountAtoms;
@@ -684,6 +680,8 @@ NS_Atomize(const nsACString& aUTF8String)
 
     return atom.forget();
   }
+
+
 
   // This results in an extra addref/release of the nsStringBuffer.
   // Unfortunately there doesn't seem to be any APIs to avoid that.
