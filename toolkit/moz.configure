@@ -35,6 +35,30 @@ def jack(value):
 set_config('MOZ_JACK', jack)
 set_define('MOZ_JACK', jack)
 
+# SNDIO cubeb backend
+# ==============================================================
+
+@depends(target)
+def sndio_default(target):
+    return target.os == 'OpenBSD'
+
+option('--enable-sndio', env='MOZ_SNDIO', default=sndio_default,
+       help='Enable SNDIO audio backend.')
+
+# TODO: inherit CPPFLAGS from old-configure.in
+have_sndio = check_header('sndio.h', when='--enable-sndio')
+
+@depends('--enable-sndio', have_sndio)
+def sndio(value, have_sndio):
+    if bool(value):
+        if have_sndio:
+            return True
+        else:
+            die("sndio audio backend requires development headers")
+
+set_config('MOZ_SNDIO', sndio)
+set_define('MOZ_SNDIO', sndio)
+
 # Javascript engine
 # ==============================================================
 include('../js/moz.configure')
