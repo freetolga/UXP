@@ -19,7 +19,6 @@
 #include "mozilla/ScopeExit.h"
 #include "mozilla/Services.h"
 #include "mozilla/ServoBindings.h"
-#include "mozilla/Telemetry.h"
 
 #include "nsAppRunner.h"
 #include "mozilla/AppData.h"
@@ -1612,8 +1611,6 @@ ProfileLockedDialog(nsIFile* aProfileDir, nsIFile* aProfileLocalDir,
   rv = xpcom.Initialize();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mozilla::Telemetry::WriteFailedProfileLock(aProfileDir);
-
   rv = xpcom.SetWindowCreator(aNative);
   NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
 
@@ -3162,19 +3159,6 @@ XREMain::XRE_mainStartup(bool* aExitFlag)
 
   SetShutdownChecks();
 
-  // Enable Telemetry IO Reporting on DEBUG, nightly and local builds
-#ifdef DEBUG
-  mozilla::Telemetry::InitIOReporting(gAppData->xreDirectory);
-#else
-  {
-    const char* releaseChannel = NS_STRINGIFY(MOZ_UPDATE_CHANNEL);
-    if (strcmp(releaseChannel, "nightly") == 0 ||
-        strcmp(releaseChannel, "default") == 0) {
-      mozilla::Telemetry::InitIOReporting(gAppData->xreDirectory);
-    }
-  }
-#endif /* DEBUG */
-
 #if defined(MOZ_WIDGET_GTK) || defined(MOZ_ENABLE_XREMOTE)
   // Stash DESKTOP_STARTUP_ID in malloc'ed memory because gtk_init will clear it.
 #define HAVE_DESKTOP_STARTUP_ID
@@ -3489,8 +3473,6 @@ XREMain::XRE_mainStartup(bool* aExitFlag)
   NS_ENSURE_SUCCESS(rv, 1);
 
   //////////////////////// NOW WE HAVE A PROFILE ////////////////////////
-
-  mozilla::Telemetry::SetProfileDir(mProfD);
 
   nsAutoCString version;
   BuildVersion(version);
@@ -3898,15 +3880,6 @@ void XRE_GlibInit()
 }
 #endif
 
-// Separate stub function to let us specifically suppress it in Valgrind
-void
-XRE_CreateStatsObject()
-{
-  // Initialize global variables used by histogram collection
-  // machinery that is used by by Telemetry.  Note: is never de-initialised.
-  Telemetry::CreateStatisticsRecorder();
-}
-
 /*
  * XRE_main - A class based main entry point used by most platforms.
  *            Note that on OSX, aAppData->xreDirectory will point to
@@ -3916,16 +3889,6 @@ int
 XREMain::XRE_main(int argc, char* argv[], const nsXREAppData* aAppData)
 {
   ScopedLogging log;
-
-  // NB: this must happen after the creation of |ScopedLogging log| since
-  // ScopedLogging::ScopedLogging calls NS_LogInit, and
-  // XRE_CreateStatsObject calls Telemetry::CreateStatisticsRecorder,
-  // and NS_LogInit must be called before Telemetry::CreateStatisticsRecorder.
-  // NS_LogInit must be called before Telemetry::CreateStatisticsRecorder
-  // so as to avoid many log messages of the form
-  //   WARNING: XPCOM objects created/destroyed from static ctor/dtor: [..]
-  // See bug 1279614.
-  XRE_CreateStatsObject();
 
   char aLocal;
   GeckoProfilerInitRAII profilerGuard(&aLocal);
@@ -4075,7 +4038,7 @@ XRE_main(int argc, char* argv[], const nsXREAppData* aAppData, uint32_t aFlags)
   XREMain main;
 
   int result = main.XRE_main(argc, argv, aAppData);
-  mozilla::RecordShutdownEndTimeStamp();
+
   return result;
 }
 

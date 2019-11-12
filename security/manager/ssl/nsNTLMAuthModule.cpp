@@ -17,7 +17,6 @@
 #include "mozilla/Logging.h"
 #include "mozilla/Preferences.h"
 #include "mozilla/Sprintf.h"
-#include "mozilla/Telemetry.h"
 #include "nsCOMPtr.h"
 #include "nsComponentManagerUtils.h"
 #include "nsICryptoHMAC.h"
@@ -1006,11 +1005,6 @@ nsNTLMAuthModule::Init(const char      *serviceName,
   mUsername = username;
   mPassword = password;
   mNTLMNegotiateSent = false;
-
-  static bool sTelemetrySent = false;
-  if (!sTelemetrySent) {
-      sTelemetrySent = true;
-  }
 
   return NS_OK;
 }
