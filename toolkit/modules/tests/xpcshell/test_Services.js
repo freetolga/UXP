@@ -59,7 +59,6 @@ function run_test()
   checkService("storage", Ci.mozIStorageService);
   checkService("strings", Ci.nsIStringBundleService);
   checkService("sysinfo", Ci.nsIPropertyBag2);
-  checkService("telemetry", Ci.nsITelemetry);
   checkService("tm", Ci.nsIThreadManager);
   checkService("uriFixup", Ci.nsIURIFixup);
   checkService("urlFormatter", Ci.nsIURLFormatter);

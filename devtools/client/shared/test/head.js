@@ -119,36 +119,6 @@ Task.async(function* (type = "bottom", src = "data:text/html;charset=utf-8,") {
 });
 
 /**
- * Check the correctness of the data recorded in Telemetry after
- * loadTelemetryAndRecordLogs was called.
- */
-function checkTelemetryResults(Telemetry) {
-  let result = Telemetry.prototype.telemetryInfo;
-
-  for (let histId in result) {
-    let value = result[histId];
-
-    if (histId.endsWith("OPENED_COUNT")) {
-      ok(value.length > 1, histId + " has more than one entry");
-
-      let okay = value.every(function (element) {
-        return element === true;
-      });
-
-      ok(okay, "All " + histId + " entries are === true");
-    } else if (histId.endsWith("TIME_ACTIVE_SECONDS")) {
-      ok(value.length > 1, histId + " has more than one entry");
-
-      let okay = value.every(function (element) {
-        return element > 0;
-      });
-
-      ok(okay, "All " + histId + " entries have time > 0");
-    }
-  }
-}
-
-/**
  * Open and close the toolbox in the current browser tab, several times, waiting
  * some amount of time in between.
  * @param {Number} nbOfTimes
