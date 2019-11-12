@@ -25,13 +25,6 @@ class GeckoInstance(object):
         # bug 1210465.
         "apz.content_response_timeout": 60000,
 
-        # Do not send Firefox health reports to the production server
-        "datareporting.healthreport.documentServerURI": "http://%(server)s/dummy/healthreport/",
-        "datareporting.healthreport.about.reportUrl": "http://%(server)s/dummy/abouthealthreport/",
-
-        # Do not show datareporting policy notifications which can interfer with tests
-        "datareporting.policy.dataSubmissionPolicyBypassNotification": True,
-
         # Until Bug 1238095 is fixed, we have to enable CPOWs in order
         # for Marionette tests to work properly.
         "dom.ipc.cpows.forbid-unsafe-from-browser": False,
@@ -101,9 +94,6 @@ class GeckoInstance(object):
 
         # Prevent starting into safe mode after application crashes
         "toolkit.startup.max_resumed_crashes": -1,
-
-        # We want to collect telemetry, but we don't want to send in the results
-        "toolkit.telemetry.server": "https://%(server)s/dummy/telemetry/",
     }
 
     def __init__(self, host=None, port=None, bin=None, profile=None, addons=None,
