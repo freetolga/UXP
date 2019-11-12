@@ -2011,7 +2011,7 @@ DOMGCSliceCallback(JSContext* aCx, JS::GCProgress aProgress, const JS::GCDescrip
       }
 
       if (!sShuttingDown) {
-        if (sPostGCEventsToObserver || Telemetry::CanRecordExtended()) {
+        if (sPostGCEventsToObserver) {
           nsString json;
           json.Adopt(aDesc.formatJSON(aCx, PR_Now()));
           RefPtr<NotifyGCEndRunnable> notify = new NotifyGCEndRunnable(json);
