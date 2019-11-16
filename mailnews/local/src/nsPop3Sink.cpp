@@ -724,15 +724,6 @@ nsresult nsPop3Sink::WriteLineToMailbox(const nsACString& buffer)
         nsString folderName;
         if (localFolder)
           localFolder->GetPrettiestName(folderName);
-        // This merits a console message, it's poor man's telemetry.
-        MsgLogToConsole4(
-          NS_LITERAL_STRING("Unexpected file position change detected") +
-          (folderName.IsEmpty() ? EmptyString() : NS_LITERAL_STRING(" in folder ")) +
-          (folderName.IsEmpty() ? EmptyString() : folderName) + NS_LITERAL_STRING(". "
-          "If you can reliably reproduce this, please report the steps "
-          "you used to dev-apps-thunderbird@lists.mozilla.org or to bug 1308335 at bugzilla.mozilla.org. "
-          "Resolving this problem will allow speeding up message downloads."),
-          NS_LITERAL_STRING(__FILE__), __LINE__, nsIScriptError::errorFlag);
 #ifdef DEBUG
         // Debugging, see bug 1116055.
         if (!folderName.IsEmpty()) {
