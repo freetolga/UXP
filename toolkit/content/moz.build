@@ -19,9 +19,6 @@ if CONFIG['MOZ_ANDROID_CXX_STL'] == 'libc++':
 
 JAR_MANIFESTS += ['jar.mn']
 
-with Files('aboutTelemetry.*'):
-    BUG_COMPONENT = ('Toolkit', 'Telemetry')
-
 with Files('customizeToolbar.*'):
     BUG_COMPONENT = ('Toolkit', 'Toolbars and Toolbar Customization')
 

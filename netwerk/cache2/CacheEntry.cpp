@@ -25,7 +25,6 @@
 #include "nsProxyRelease.h"
 #include "nsSerializationHelper.h"
 #include "nsThreadUtils.h"
-#include "mozilla/Telemetry.h"
 #include <math.h>
 #include <algorithm>
 

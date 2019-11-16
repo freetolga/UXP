@@ -8,7 +8,6 @@
 #include "mozilla/ClearOnShutdown.h"
 #include "mozilla/dom/HTMLMediaElement.h"
 #include "mozilla/Preferences.h"
-#include "mozilla/Telemetry.h"
 #include "nsContentUtils.h"
 #include "nsPrintfCString.h"
 #include "nsSize.h"

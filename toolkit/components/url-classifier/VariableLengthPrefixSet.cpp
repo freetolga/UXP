@@ -9,7 +9,6 @@
 #include "nsPrintfCString.h"
 #include "nsThreadUtils.h"
 #include "mozilla/EndianUtils.h"
-#include "mozilla/Telemetry.h"
 #include "mozilla/Unused.h"
 #include <algorithm>
 

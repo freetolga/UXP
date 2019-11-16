@@ -25,10 +25,6 @@ private:
   void StartWatchdog();
   void StartWriter();
 
-  void UpdateHeartbeat(const char* aTopic);
-  void UpdateTelemetry();
-  void UpdateCrashReport(const char* aTopic);
-
   ~nsTerminator() {}
 
   bool mInitialized;

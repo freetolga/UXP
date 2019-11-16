@@ -10,7 +10,6 @@
 #include "WMFUtils.h"
 #include "nsTArray.h"
 #include "TimeUnits.h"
-#include "mozilla/Telemetry.h"
 #include "mozilla/Logging.h"
 
 #define LOG(...) MOZ_LOG(sPDMLog, mozilla::LogLevel::Debug, (__VA_ARGS__))
@@ -251,7 +250,6 @@ WMFAudioMFTManager::Output(int64_t aStreamOffset,
   if (!sample) {
     LOG("Audio MFTDecoder returned success but null output.");
     nsCOMPtr<nsIRunnable> task = NS_NewRunnableFunction([]() -> void {
-      LOG("Reporting telemetry AUDIO_MFT_OUTPUT_NULL_SAMPLES");
     });
     AbstractThread::MainThread()->Dispatch(task.forget());
     return E_FAIL;
