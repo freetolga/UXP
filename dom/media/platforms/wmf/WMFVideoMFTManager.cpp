@@ -115,8 +115,6 @@ WMFVideoMFTManager::~WMFVideoMFTManager()
   if (mDXVA2Manager) {
     DeleteOnMainThread(mDXVA2Manager);
   }
-
-  AbstractThread::MainThread()->Dispatch(task.forget());
 }
 
 const GUID&

@@ -249,7 +249,7 @@ WMFAudioMFTManager::Output(int64_t aStreamOffset,
 
   if (!sample) {
     LOG("Audio MFTDecoder returned success but null output.");
-    AbstractThread::MainThread()->Dispatch(task.forget());
+
     return E_FAIL;
   }
 
