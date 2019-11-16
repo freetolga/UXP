@@ -26,9 +26,7 @@ namespace mozilla {
 /**
  * ThreadStackHelper is used to retrieve the profiler pseudo-stack of a
  * thread, as an alternative of using the profiler to take a profile.
- * The target thread first declares an ThreadStackHelper instance;
- * then another thread can call ThreadStackHelper::GetStack to retrieve
- * the pseudo-stack of the target thread at that instant.
+ * The target thread declares an ThreadStackHelper instance.
  *
  * Only non-copying labels are included in the stack, which means labels
  * with custom text and markers are not included.
@@ -37,8 +35,6 @@ class ThreadStackHelper
 {
 private:
   bool PrepareStackBuffer();
-  void FillStackBuffer();
-  void FillThreadContext(void* aContext = nullptr);
 
 public:
   /**
@@ -56,18 +52,6 @@ public:
   ThreadStackHelper();
 
   ~ThreadStackHelper();
-
-  /**
-   * Retrieve the current pseudostack of the thread associated
-   * with this ThreadStackHelper.
-   */
-  void GetStack();
-
-  /**
-   * Retrieve the current native stack of the thread associated
-   * with this ThreadStackHelper.
-   */
-  void GetNativeStack();
 
 #if defined(XP_LINUX)
 private:

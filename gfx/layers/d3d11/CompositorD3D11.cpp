@@ -1375,8 +1375,7 @@ DeviceAttachmentsD3D11::InitSyncObject()
   if (FAILED(hr) || !mSyncHandle) {
     gfxCriticalError() << "Failed to get SharedHandle for sync texture. Result: "
                        << hexa(hr);
-    NS_DispatchToMainThread(NS_NewRunnableFunction([] () -> void {
-    }));
+
     return false;
   }
 

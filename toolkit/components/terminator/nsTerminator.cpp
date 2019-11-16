@@ -352,12 +352,6 @@ nsTerminator::Start()
 {
   MOZ_ASSERT(!mInitialized);
   StartWatchdog();
-#if !defined(DEBUG)
-  // Only allow nsTerminator to write on non-debug builds so we don't get leak warnings on
-  // shutdown for intentional leaks (see bug 1242084). This will be enabled again by bug
-  // 1255484 when 1255478 lands.
-  StartWriter();
-#endif // !defined(DEBUG)
   mInitialized = true;
 }
 
@@ -394,39 +388,6 @@ nsTerminator::StartWatchdog()
   DebugOnly<PRThread*> watchdogThread = CreateSystemThread(RunWatchdog,
                                                 options.release());
   MOZ_ASSERT(watchdogThread);
-}
-
-// Prepare, allocate and start the writer thread. By design, it will never
-// finish, nor be deallocated.
-void
-nsTerminator::StartWriter()
-{
-  nsCOMPtr<nsIFile> profLD;
-  nsresult rv = NS_GetSpecialDirectory(NS_APP_USER_PROFILE_LOCAL_50_DIR,
-                                       getter_AddRefs(profLD));
-  if (NS_FAILED(rv)) {
-    return;
-  }
-
-  rv = profLD->Append(NS_LITERAL_STRING("ShutdownDuration.json"));
-  if (NS_FAILED(rv)) {
-    return;
-  }
-
-  nsAutoString path;
-  rv = profLD->GetPath(path);
-  if (NS_FAILED(rv)) {
-    return;
-  }
-
-  gWriteReady = PR_NewMonitor();
-  MOZ_LSAN_INTENTIONALLY_LEAK_OBJECT(gWriteReady); // We will never deallocate this object
-  PRThread* writerThread = CreateSystemThread(RunWriter,
-                                              ToNewUTF8String(path));
-
-  if (!writerThread) {
-    return;
-  }
 }
 
 NS_IMETHODIMP

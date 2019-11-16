@@ -138,82 +138,6 @@ public:
 };
 } // namespace
 
-void
-ThreadStackHelper::GetStack()
-{
-  if (!PrepareStackBuffer()) {
-    return;
-  }
-
-#if defined(XP_LINUX)
-  if (!sInitialized) {
-    MOZ_ASSERT(false);
-    return;
-  }
-  siginfo_t uinfo = {};
-  uinfo.si_signo = sFillStackSignum;
-  uinfo.si_code = SI_QUEUE;
-  uinfo.si_pid = getpid();
-  uinfo.si_uid = getuid();
-  uinfo.si_value.sival_ptr = this;
-  if (::syscall(SYS_rt_tgsigqueueinfo, uinfo.si_pid,
-                mThreadID, sFillStackSignum, &uinfo)) {
-    // rt_tgsigqueueinfo was added in Linux 2.6.31.
-    // Could have failed because the syscall did not exist.
-    return;
-  }
-  MOZ_ALWAYS_TRUE(!::sem_wait(&mSem));
-
-#elif defined(XP_WIN)
-  if (!mInitialized) {
-    MOZ_ASSERT(false);
-    return;
-  }
-  if (::SuspendThread(mThreadID) == DWORD(-1)) {
-    MOZ_ASSERT(false);
-    return;
-  }
-
-  // SuspendThread is asynchronous, so the thread may still be running. Use
-  // GetThreadContext to ensure it's really suspended.
-  // See https://blogs.msdn.microsoft.com/oldnewthing/20150205-00/?p=44743.
-  CONTEXT context;
-  context.ContextFlags = CONTEXT_CONTROL;
-  if (::GetThreadContext(mThreadID, &context)) {
-    FillStackBuffer();
-    FillThreadContext();
-  }
-
-  MOZ_ALWAYS_TRUE(::ResumeThread(mThreadID) != DWORD(-1));
-
-#elif defined(XP_MACOSX)
-# if defined(MOZ_VALGRIND) && defined(RUNNING_ON_VALGRIND)
-  if (RUNNING_ON_VALGRIND) {
-    /* thread_suspend and thread_resume sometimes hang runs on Valgrind,
-       for unknown reasons.  So, just avoid them.  See bug 1100911. */
-    return;
-  }
-# endif
-
-  if (::thread_suspend(mThreadID) != KERN_SUCCESS) {
-    MOZ_ASSERT(false);
-    return;
-  }
-
-  FillStackBuffer();
-  FillThreadContext();
-
-  MOZ_ALWAYS_TRUE(::thread_resume(mThreadID) == KERN_SUCCESS);
-
-#endif
-}
-
-void
-ThreadStackHelper::GetNativeStack()
-{
-  /*** STUB ***/
-}
-
 #ifdef XP_LINUX
 
 int ThreadStackHelper::sInitialized;
@@ -225,8 +149,6 @@ ThreadStackHelper::FillStackHandler(int aSignal, siginfo_t* aInfo,
 {
   ThreadStackHelper* const helper =
     reinterpret_cast<ThreadStackHelper*>(aInfo->si_value.sival_ptr);
-  helper->FillStackBuffer();
-  helper->FillThreadContext(aContext);
   ::sem_post(&helper->mSem);
 }
 
@@ -236,18 +158,6 @@ bool
 ThreadStackHelper::PrepareStackBuffer()
 {
   return false;
-}
-
-void
-ThreadStackHelper::FillStackBuffer()
-{
-  /*** STUB ***/
-}
-
-MOZ_ASAN_BLACKLIST void
-ThreadStackHelper::FillThreadContext(void* aContext)
-{
-  /*** STUB ***/
 }
 
 } // namespace mozilla

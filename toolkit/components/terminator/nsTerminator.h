@@ -23,7 +23,6 @@ private:
   nsresult SelfInit();
   void Start();
   void StartWatchdog();
-  void StartWriter();
 
   ~nsTerminator() {}
 

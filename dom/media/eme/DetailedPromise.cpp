@@ -22,6 +22,10 @@ DetailedPromise::DetailedPromise(nsIGlobalObject* aGlobal,
 
 DetailedPromise::~DetailedPromise()
 {
+  // It would be nice to assert that mResponded is identical to
+  // GetPromiseState() == PromiseState::Rejected.  But by now we've been
+  // unlinked, so don't have a reference to our actual JS Promise object
+  // anymore.
 }
 
 void

@@ -254,7 +254,6 @@ nsresult PeerConnectionCtx::Cleanup() {
 }
 
 PeerConnectionCtx::~PeerConnectionCtx() {
-  MOZ_ASSERT(NS_IsMainThread());
 };
 
 void PeerConnectionCtx::queueJSEPOperation(nsIRunnable* aOperation) {

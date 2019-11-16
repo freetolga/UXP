@@ -404,11 +404,6 @@
 
           let engine = aEngine || this.currentEngine;
           var submission = engine.getSubmission(aData, null, "searchbar");
-          // If we hit here, we come either from a one-off, a plain search or a suggestion.
-          const details = {
-            isOneOff: aOneOff,
-            isSuggestion: (!aOneOff)
-          };
           // null parameter below specifies HTML response for search
           let params = {
             postData: submission.postData,

@@ -116,7 +116,7 @@ LateWriteObserver::Observe(IOInterposeObserver::Observation& aOb)
     MOZ_CRASH();
   }
 
-  // If we have shutdown mode SCM_NOTHING or we can't record then abort
+  // If we have shutdown mode SCM_NOTHING then abort
   if (gShutdownChecks == SCM_NOTHING) {
     return;
   }
@@ -157,10 +157,6 @@ LateWriteObserver::Observe(IOInterposeObserver::Observation& aOb)
   int fd = mkstemp(name);
   stream = fdopen(fd, "w");
 #endif
-
-  SHA1Stream sha1Stream(stream);
-  SHA1Sum::Hash sha1;
-  sha1Stream.Finish(sha1);
 #endif
 }
 

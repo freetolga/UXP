@@ -116,8 +116,6 @@ WMFVideoMFTManager::~WMFVideoMFTManager()
     DeleteOnMainThread(mDXVA2Manager);
   }
 
-  nsCOMPtr<nsIRunnable> task = NS_NewRunnableFunction([=]() -> void {
-  });
   AbstractThread::MainThread()->Dispatch(task.forget());
 }
 
