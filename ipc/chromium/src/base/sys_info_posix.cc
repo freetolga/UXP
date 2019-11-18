@@ -121,7 +121,7 @@ std::wstring SysInfo::GetEnvVar(const wchar_t* var) {
 
 // static
 std::string SysInfo::OperatingSystemName() {
-#ifndef XP_SOLARIS)	
+#ifndef XP_SOLARIS
   utsname info;
 #else
   struct utsname info;
@@ -139,11 +139,11 @@ std::string SysInfo::OperatingSystemName() {
 
 // static
 std::string SysInfo::CPUArchitecture() {
-#ifndef XP_SOLARIS	
+#ifndef XP_SOLARIS
   utsname info;
 #else
   struct utsname info;
-#endif  
+#endif
   if (uname(&info) < 0) {
     NOTREACHED();
     return "";
