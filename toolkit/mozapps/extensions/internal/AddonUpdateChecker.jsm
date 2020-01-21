@@ -24,12 +24,14 @@ const PREFIX_THEME                    = "urn:mozilla:theme:";
 const XMLURI_PARSE_ERROR              = "http://www.mozilla.org/newlayout/xml/parsererror.xml";
 
 const TOOLKIT_ID                      = "toolkit@mozilla.org";
+#ifdef MOZ_PHOENIX_EXTENSIONS
 const FIREFOX_ID                      = "{ec8030f7-c20a-464f-9b0e-13a3a9e97384}";
 const FIREFOX_APPCOMPATVERSION        = "56.9"
+const PREF_PHOENIXCOMPATIBILITY       = "extensions.phoenixCompatibility";
+#endif
 
 const PREF_UPDATE_REQUIREBUILTINCERTS = "extensions.update.requireBuiltInCerts";
 const PREF_EM_MIN_COMPAT_APP_VERSION  = "extensions.minCompatibleAppVersion";
-const PREF_PHOENIXCOMPATIBILITY       = "extensions.phoenixCompatibility";
 
 Components.utils.import("resource://gre/modules/Services.jsm");
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
@@ -499,7 +501,9 @@ function parseJSONManifest(aId, aUpdateKey, aRequest, aManifestData) {
 
   let appID = Services.appinfo.ID;
   let platformVersion = Services.appinfo.platformVersion;
+#ifdef MOZ_PHOENIX_EXTENSIONS
   let phoenixCompat = Services.prefs.getBoolPref(PREF_PHOENIXCOMPATIBILITY, false);
+#endif
 
   // The list of available updates
   let updates = getProperty(addon, "updates", "array", []);
@@ -525,6 +529,7 @@ function parseJSONManifest(aId, aUpdateKey, aRequest, aManifestData) {
         maxVersion: getRequiredProperty(app, "max_version", "string"),
       }
     }
+#ifdef MOZ_PHOENIX_EXTENSIONS
     else if (phoenixCompat && FIREFOX_ID in applications) {
       logger.debug("update.json: Dual-GUID targetApplication");
       app = getProperty(applications, FIREFOX_ID, "object");
@@ -535,6 +540,7 @@ function parseJSONManifest(aId, aUpdateKey, aRequest, aManifestData) {
         maxVersion: getRequiredProperty(app, "max_version", "string"),
       }
     }
+#endif
     else if (TOOLKIT_ID in applications) {
       logger.debug("update.json: Toolkit targetApplication");
       app = getProperty(applications, TOOLKIT_ID, "object");
@@ -560,7 +566,7 @@ function parseJSONManifest(aId, aUpdateKey, aRequest, aManifestData) {
 #endif
         maxVersion: '*',
       };
-#ifdef MOZ_PHOENIX
+#if defined(MOZ_PHOENIX) && defined(MOZ_PHOENIX_EXTENSIONS)
       if (phoenixCompat) {
         appEntry.maxVersion = FIREFOX_APPCOMPATVERSION;
       }
@@ -820,17 +826,21 @@ function matchesVersions(aUpdate, aAppVersion, aPlatformVersion,
   if (aUpdate.strictCompatibility && !aIgnoreStrictCompat)
     aIgnoreMaxVersion = false;
 
+#ifdef MOZ_PHOENIX_EXTENSIONS
   let phoenixCompat = Services.prefs.getBoolPref(PREF_PHOENIXCOMPATIBILITY, false);
+#endif
   let result = false;
   for (let app of aUpdate.targetApplications) {
     if (app.id == Services.appinfo.ID) {
       return (Services.vc.compare(aAppVersion, app.minVersion) >= 0) &&
              (aIgnoreMaxVersion || (Services.vc.compare(aAppVersion, app.maxVersion) <= 0));
     }
+#ifdef MOZ_PHOENIX_EXTENSIONS
     if (phoenixCompat && app.id == FIREFOX_ID) {
       return (Services.vc.compare(aAppVersion, app.minVersion) >= 0) &&
              (aIgnoreMaxVersion || (Services.vc.compare(aAppVersion, app.maxVersion) <= 0));
     }
+#endif
     if (app.id == TOOLKIT_ID) {
       result = (Services.vc.compare(aPlatformVersion, app.minVersion) >= 0) &&
                (aIgnoreMaxVersion || (Services.vc.compare(aPlatformVersion, app.maxVersion) <= 0));
@@ -882,15 +892,20 @@ this.AddonUpdateChecker = {
       aAppVersion = Services.appinfo.version;
     if (!aPlatformVersion)
       aPlatformVersion = Services.appinfo.platformVersion;
+#ifdef MOZ_PHOENIX_EXTENSIONS
     let phoenixCompat = Services.prefs.getBoolPref(PREF_PHOENIXCOMPATIBILITY, false);
+#endif
     for (let update of aUpdates) {
       if (Services.vc.compare(update.version, aVersion) == 0) {
         if (aIgnoreCompatibility) {
           for (let targetApp of update.targetApplications) {
             let id = targetApp.id;
-            if (id == Services.appinfo.ID ||
-                id == TOOLKIT_ID ||
-                (phoenixCompat && id == FIREFOX_ID)) {
+#ifdef MOZ_PHOENIX_EXTENSIONS
+            if (id == Services.appinfo.ID || (phoenixCompat && id == FIREFOX_ID) ||
+                id == TOOLKIT_ID)
+#else
+            if (id == Services.appinfo.ID || id == TOOLKIT_ID)
+#endif
               return update;
             }
           }

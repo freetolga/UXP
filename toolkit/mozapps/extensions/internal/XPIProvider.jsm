@@ -95,7 +95,6 @@ const PREF_INTERPOSITION_ENABLED      = "extensions.interposition.enabled";
 
 const PREF_EM_MIN_COMPAT_APP_VERSION      = "extensions.minCompatibleAppVersion";
 const PREF_EM_MIN_COMPAT_PLATFORM_VERSION = "extensions.minCompatiblePlatformVersion";
-const PREF_PHOENIXCOMPATIBILITY           = "extensions.phoenixCompatibility";
 
 const URI_EXTENSION_SELECT_DIALOG     = "chrome://mozapps/content/extensions/selectAddons.xul";
 const URI_EXTENSION_UPDATE_DIALOG     = "chrome://mozapps/content/extensions/update.xul";
@@ -139,6 +138,7 @@ const TOOLKIT_ID                      = "toolkit@mozilla.org";
 #ifdef MOZ_PHOENIX_EXTENSIONS
 const FIREFOX_ID                      = "{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
 const FIREFOX_APPCOMPATVERSION        = "56.9"
+const PREF_PHOENIXCOMPATIBILITY       = "extensions.phoenixCompatibility";
 #endif
 
 // The value for this is in Makefile.in
@@ -6453,7 +6453,6 @@ AddonInternal.prototype = {
     }
 
     let app = this.matchingTargetApplication;
-    let phoenixCompat = Services.prefs.getBoolPref(PREF_PHOENIXCOMPATIBILITY, false);
     
     if (!app)
       return false;
@@ -6463,11 +6462,15 @@ AddonInternal.prototype = {
     if (!aPlatformVersion)
       aPlatformVersion = Services.appinfo.platformVersion;
 
+#ifdef MOZ_PHOENIX_EXTENSIONS
+    let phoenixCompat = Services.prefs.getBoolPref(PREF_PHOENIXCOMPATIBILITY, false);
     this.native = false;
+#endif
 
     let version;
     if (app.id == Services.appinfo.ID) {
       version = aAppVersion;
+#ifdef MOZ_PHOENIX_EXTENSIONS
       this.native = true;
     }
     else if (phoenixCompat && app.id == FIREFOX_ID) {
@@ -6475,6 +6478,7 @@ AddonInternal.prototype = {
       if (this.type == "locale")
         //Never allow language packs in Firefox compatibility mode
         return false;
+#endif
     }
     else if (app.id == TOOLKIT_ID)
       version = aPlatformVersion
@@ -6498,7 +6502,11 @@ AddonInternal.prototype = {
 
       // Extremely old extensions should not be compatible by default.
       let minCompatVersion;
+#ifdef MOZ_PHOENIX_EXTENSIONS
       if (app.id == Services.appinfo.ID || (phoenixCompat && app.id == FIREFOX_ID))
+#else
+      if (app.id == Services.appinfo.ID)
+#endif
         minCompatVersion = XPIProvider.minCompatibleAppVersion;
       else if (app.id == TOOLKIT_ID)
         minCompatVersion = XPIProvider.minCompatiblePlatformVersion;
@@ -6516,15 +6524,14 @@ AddonInternal.prototype = {
 
   get matchingTargetApplication() {
     let app = null;
-    let phoenixCompat = Services.prefs.getBoolPref(PREF_PHOENIXCOMPATIBILITY, false);
     for (let targetApp of this.targetApplications) {
       if (targetApp.id == Services.appinfo.ID)
         return targetApp;
       if (targetApp.id == TOOLKIT_ID)
         app = targetApp;
     }
-    
-    if (phoenixCompat) {
+#ifdef MOZ_PHOENIX_EXTENSIONS
+    if (Services.prefs.getBoolPref(PREF_PHOENIXCOMPATIBILITY, false)) {
       //Special case: check for Firefox TargetApps. this has to be done AFTER
       //the initial check to make sure appinfo.ID is preferred, even if
       //Firefox is listed before it in the install manifest.
@@ -6533,7 +6540,7 @@ AddonInternal.prototype = {
           return targetApp;
       }
     }
-    
+#endif
     // Return toolkit ID if toolkit.
     return app;
   },
