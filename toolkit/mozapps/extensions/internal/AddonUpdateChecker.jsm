@@ -907,7 +907,6 @@ this.AddonUpdateChecker = {
             if (id == Services.appinfo.ID || id == TOOLKIT_ID)
 #endif
               return update;
-            }
           }
         }
         else if (matchesVersions(update, aAppVersion, aPlatformVersion,
