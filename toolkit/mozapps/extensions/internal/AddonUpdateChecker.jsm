@@ -29,6 +29,7 @@ const FIREFOX_APPCOMPATVERSION        = "56.9"
 
 const PREF_UPDATE_REQUIREBUILTINCERTS = "extensions.update.requireBuiltInCerts";
 const PREF_EM_MIN_COMPAT_APP_VERSION  = "extensions.minCompatibleAppVersion";
+const PREF_PHOENIXCOMPATIBILITY       = "extensions.phoenixCompatibility";
 
 Components.utils.import("resource://gre/modules/Services.jsm");
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
@@ -498,6 +499,7 @@ function parseJSONManifest(aId, aUpdateKey, aRequest, aManifestData) {
 
   let appID = Services.appinfo.ID;
   let platformVersion = Services.appinfo.platformVersion;
+  let phoenixCompat = Services.prefs.getBoolPref(PREF_PHOENIXCOMPATIBILITY, false);
 
   // The list of available updates
   let updates = getProperty(addon, "updates", "array", []);
@@ -523,8 +525,7 @@ function parseJSONManifest(aId, aUpdateKey, aRequest, aManifestData) {
         maxVersion: getRequiredProperty(app, "max_version", "string"),
       }
     }
-#ifdef MOZ_PHOENIX_EXTENSIONS
-    else if (FIREFOX_ID in applications) {
+    else if (phoenixCompat && FIREFOX_ID in applications) {
       logger.debug("update.json: Dual-GUID targetApplication");
       app = getProperty(applications, FIREFOX_ID, "object");
 
@@ -534,7 +535,6 @@ function parseJSONManifest(aId, aUpdateKey, aRequest, aManifestData) {
         maxVersion: getRequiredProperty(app, "max_version", "string"),
       }
     }
-#endif
     else if (TOOLKIT_ID in applications) {
       logger.debug("update.json: Toolkit targetApplication");
       app = getProperty(applications, TOOLKIT_ID, "object");
@@ -558,12 +558,13 @@ function parseJSONManifest(aId, aUpdateKey, aRequest, aManifestData) {
         id: TOOLKIT_ID,
         minVersion: platformVersion,
 #endif
-#if defined(MOZ_PHOENIX) && defined(MOZ_PHOENIX_EXTENSIONS)
-        maxVersion: FIREFOX_APPCOMPATVERSION,
-#else
         maxVersion: '*',
-#endif
       };
+#ifdef MOZ_PHOENIX
+      if (phoenixCompat) {
+        appEntry.maxVersion = FIREFOX_APPCOMPATVERSION;
+      }
+#endif
     }
     else {
       continue;
@@ -819,18 +820,17 @@ function matchesVersions(aUpdate, aAppVersion, aPlatformVersion,
   if (aUpdate.strictCompatibility && !aIgnoreStrictCompat)
     aIgnoreMaxVersion = false;
 
+  let phoenixCompat = Services.prefs.getBoolPref(PREF_PHOENIXCOMPATIBILITY, false);
   let result = false;
   for (let app of aUpdate.targetApplications) {
     if (app.id == Services.appinfo.ID) {
       return (Services.vc.compare(aAppVersion, app.minVersion) >= 0) &&
              (aIgnoreMaxVersion || (Services.vc.compare(aAppVersion, app.maxVersion) <= 0));
     }
-#ifdef MOZ_PHOENIX_EXTENSIONS
-    if (app.id == FIREFOX_ID) {
+    if (phoenixCompat && app.id == FIREFOX_ID) {
       return (Services.vc.compare(aAppVersion, app.minVersion) >= 0) &&
              (aIgnoreMaxVersion || (Services.vc.compare(aAppVersion, app.maxVersion) <= 0));
     }
-#endif
     if (app.id == TOOLKIT_ID) {
       result = (Services.vc.compare(aPlatformVersion, app.minVersion) >= 0) &&
                (aIgnoreMaxVersion || (Services.vc.compare(aPlatformVersion, app.maxVersion) <= 0));
@@ -882,19 +882,17 @@ this.AddonUpdateChecker = {
       aAppVersion = Services.appinfo.version;
     if (!aPlatformVersion)
       aPlatformVersion = Services.appinfo.platformVersion;
-
+    let phoenixCompat = Services.prefs.getBoolPref(PREF_PHOENIXCOMPATIBILITY, false);
     for (let update of aUpdates) {
       if (Services.vc.compare(update.version, aVersion) == 0) {
         if (aIgnoreCompatibility) {
           for (let targetApp of update.targetApplications) {
             let id = targetApp.id;
-#ifdef MOZ_PHOENIX_EXTENSIONS
-            if (id == Services.appinfo.ID || id == FIREFOX_ID ||
-                id == TOOLKIT_ID)
-#else
-            if (id == Services.appinfo.ID || id == TOOLKIT_ID)
-#endif
+            if (id == Services.appinfo.ID ||
+                id == TOOLKIT_ID ||
+                (phoenixCompat && id == FIREFOX_ID)) {
               return update;
+            }
           }
         }
         else if (matchesVersions(update, aAppVersion, aPlatformVersion,

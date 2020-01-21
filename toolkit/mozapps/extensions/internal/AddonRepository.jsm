@@ -45,6 +45,8 @@ const PREF_METADATA_LASTUPDATE           = "extensions.getAddons.cache.lastUpdat
 const PREF_METADATA_UPDATETHRESHOLD_SEC  = "extensions.getAddons.cache.updateThreshold";
 const DEFAULT_METADATA_UPDATETHRESHOLD_SEC = 172800;  // two days
 
+const PREF_PHOENIXCOMPATIBILITY = "extensions.phoenixCompatibility"; // dual-GUID
+
 const XMLURI_PARSE_ERROR  = "http://www.mozilla.org/newlayout/xml/parsererror.xml";
 
 const API_VERSION = "1.5";
@@ -63,10 +65,9 @@ const BLANK_DB = function() {
   };
 }
 
-const TOOLKIT_ID     = "toolkit@mozilla.org";
-#ifdef MOZ_PHOENIX_EXTENSIONS
-const FIREFOX_ID        = "{ec8030f7-c20a-464f-9b0e-13a3a9e97384}";
-#endif
+const TOOLKIT_ID = "toolkit@mozilla.org";
+const FIREFOX_ID = "{ec8030f7-c20a-464f-9b0e-13a3a9e97384}";
+
 Cu.import("resource://gre/modules/Log.jsm");
 const LOGGER_ID = "addons.repository";
 
@@ -1254,12 +1255,9 @@ this.AddonRepository = {
     let results = [];
 
     function isSameApplication(aAppNode) {
-#ifdef MOZ_PHOENIX_EXTENSIONS
+      let phoenixCompat = Services.prefs.getBoolPref(PREF_PHOENIXCOMPATIBILITY, false);
       if (self._getTextContent(aAppNode) == Services.appinfo.ID ||
-          self._getTextContent(aAppNode) == FIREFOX_ID) {
-#else
-      if (self._getTextContent(aAppNode) == Services.appinfo.ID) {
-#endif
+          (phoenixCompat && self._getTextContent(aAppNode) == FIREFOX_ID)) {
         return true;
       }
       return false;

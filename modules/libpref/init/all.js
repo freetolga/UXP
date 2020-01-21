@@ -4671,6 +4671,8 @@ pref("xpinstall.signatures.required", false);
 pref("extensions.alwaysUnpack", false);
 pref("extensions.minCompatiblePlatformVersion", "2.0");
 pref("extensions.webExtensionsMinPlatformVersion", "42.0a1");
+// Additionally allow Firefox-only extensions?
+pref("extensions.phoenixCompatibility", false);
 
 // Other webextensions prefs
 pref("extensions.webextensions.keepStorageOnUninstall", false);
