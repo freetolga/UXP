@@ -1296,22 +1296,6 @@ nsTableFrame::DisplayGenericTablePart(nsDisplayListBuilder* aBuilder,
     }
   }
 
-
-    if (aFrame->GetType() == nsGkAtoms::tableRowGroupFrame) {
-      nsTableRowGroupFrame* rowGroup = static_cast<nsTableRowGroupFrame*>(aFrame);
-      PaintRowGroupBackground(rowGroup, aFrame, aBuilder, aLists, aDirtyRect);
-    } else if (aFrame->GetType() == nsGkAtoms::tableRowFrame) {
-      nsTableRowFrame* row = static_cast<nsTableRowFrame*>(aFrame);
-      PaintRowBackground(row, aFrame, aBuilder, aLists, aDirtyRect);
-    } else if (aFrame->GetType() == nsGkAtoms::tableColGroupFrame) {
-      // Compute background rect by iterating all cell frame.
-      nsTableColGroupFrame* colGroup = static_cast<nsTableColGroupFrame*>(aFrame);
-      // Collecting column index.
-      AutoTArray<int32_t, 1> colIdx;
-      for (nsTableColFrame* col = colGroup->GetFirstColumn(); col; col = col->GetNextCol()) {
-        colIdx.AppendElement(col->GetColIndex());
-      }
-
   // Background visibility for rows, rowgroups, columns, colgroups depends on
   // the visibility of the _cell_, not of the row/col(group).
   // See spec at https://drafts.csswg.org/css-tables-3/#drawing-cell-backgrounds
