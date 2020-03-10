@@ -351,7 +351,7 @@ class MozbuildObject(ProcessExecutionMixin):
         if _config_guess_output:
             return _config_guess_output[0]
 
-        p = os.path.join(self.topsrcdir, 'build', 'autoconf', 'config.guess')
+        p = os.path.join(self.topsrcdir, 'platform', 'build', 'autoconf', 'config.guess')
 
         # This is a little kludgy. We need access to the normalize_command
         # function. However, that's a method of a mach mixin, so we need a
