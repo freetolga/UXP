@@ -1054,6 +1054,10 @@ void nsXULWindow::OnChromeLoaded()
     // trump that override.)
     if (!parentWindow)
       positionSet = false;
+    const char *val = PR_GetEnv("MOZILLA_WINDOW_GEOMETRY");
+    // allow window positioning if the geometry switch is set
+    if (val && *val)
+      positionSet = true;
 #endif
     if (positionSet) {
       // We have to do this before sizing the window, because sizing depends
@@ -1129,8 +1133,11 @@ bool nsXULWindow::LoadPositionFromXUL(int32_t aSpecWidth, int32_t aSpecHeight)
   int32_t currY = 0;
   int32_t currWidth = 0;
   int32_t currHeight = 0;
+  int32_t screenWidth = 0;
+  int32_t screenHeight = 0;
   nsresult errorCode;
-  int32_t temp;
+  int32_t temp, tp, tm, x, y;
+  bool    got_x, got_y, neg_x, neg_y;
 
   GetPositionAndSize(&currX, &currY, &currWidth, &currHeight);
 
@@ -1165,6 +1172,70 @@ bool nsXULWindow::LoadPositionFromXUL(int32_t aSpecWidth, int32_t aSpecHeight)
     gotPosition = true;
   }
 
+  got_x = got_y = neg_x = neg_y = false;
+  nsCString geometryString, part;
+  geometryString.Assign(PR_GetEnv("MOZILLA_WINDOW_GEOMETRY")); 
+  tp = geometryString.FindChar( '+' );
+  tm = geometryString.FindChar( '-' );
+  temp = std::min(tp, tm);
+  if (temp < 0)
+    temp = std::max(tp, tm);
+  if (temp > 0) {
+    geometryString.Cut(0, temp + 1);
+    got_x = true;
+    if (temp == tm)
+      neg_x = true;
+  }
+  if( got_x )
+  {
+    // get the screen dimensions for negative position values
+    nsCOMPtr<mozIDOMWindowProxy> domWindow;
+    GetWindowDOMWindow(getter_AddRefs(domWindow));
+    if (domWindow) {
+      auto* window = nsPIDOMWindowOuter::From(domWindow);
+      nsCOMPtr<nsIDOMScreen> screen = window->GetScreen();
+      if (screen) {
+        screen->GetAvailWidth(&screenWidth); 
+        screen->GetAvailHeight(&screenHeight);
+      }
+    }
+    tp = geometryString.FindChar('+');
+    tm = geometryString.FindChar('-');
+    temp = std::min(tp, tm);
+    if (temp < 0)
+      temp = std::max(tp, tm);
+    if (temp > 0) {
+      got_y = true;
+      if (temp == tm) 
+        neg_y = true;
+    }
+    if (got_y) 
+      geometryString.Left(part,temp);
+    else
+      part = geometryString;
+    x = part.ToInteger(&errorCode);
+    if (NS_SUCCEEDED(errorCode)) {
+      if (neg_x) 
+        specX = screenWidth - aSpecWidth - x;
+      else
+        specX = x;
+      if (specX >= 0)
+        gotPosition = true;
+    }
+    if (got_y) 
+    {
+      geometryString.Cut(0, temp + 1);
+      y = geometryString.ToInteger(&errorCode);
+      if (NS_SUCCEEDED(errorCode)) {
+        if (neg_y)
+          specY = screenHeight - aSpecHeight - y;
+        else
+          specY = y;
+        if (specY >= 0)
+          gotPosition = true;
+      }
+    }
+  }
   if (gotPosition) {
     // our position will be relative to our parent, if any
     nsCOMPtr<nsIBaseWindow> parent(do_QueryReferent(mParentWindow));
@@ -1207,12 +1278,40 @@ nsXULWindow::LoadSizeFromXUL(int32_t& aSpecWidth, int32_t& aSpecHeight)
   NS_ENSURE_TRUE(windowElement, false);
 
   nsresult errorCode;
-  int32_t temp;
+  int32_t temp, tp, tm, w, h;
 
   // Obtain the sizing information from the <xul:window> element.
   aSpecWidth = 100;
   aSpecHeight = 100;
   nsAutoString sizeString;
+  nsCString geometryString;
+  geometryString.Assign(PR_GetEnv("MOZILLA_WINDOW_GEOMETRY")); 
+  tp = geometryString.FindChar('+');
+  tm = geometryString.FindChar('-');
+  temp = std::min(tp, tm);
+  if (temp < 0)
+    temp = std::max(tp, tm);
+  if (temp > 0)
+    geometryString.Truncate( temp );
+  temp = geometryString.FindChar('x');
+  if (temp > 0)
+  {
+    nsCString part;
+    geometryString.Left(part,temp);
+    w = part.ToInteger(&errorCode);
+    if (NS_SUCCEEDED(errorCode) && w > 0) {
+      aSpecWidth = std::max(w, 100);
+      gotSize = true;
+    }
+    geometryString.Cut(0, temp + 1 );
+    h = geometryString.ToInteger(&errorCode);
+    if (NS_SUCCEEDED(errorCode) && h > 0) {
+      aSpecHeight = std::max(h, 100);
+      gotSize = true;
+    }
+    if( gotSize )
+      return gotSize;
+  }
 
   windowElement->GetAttribute(WIDTH_ATTRIBUTE, sizeString);
   temp = sizeString.ToInteger(&errorCode);

@@ -1327,7 +1327,8 @@ DumpHelp()
 #ifdef MOZ_X11
   printf("X11 options\n"
          "  --display=DISPLAY                            X display to use.\n"
-         "  --sync                                       Make X calls synchronous.\n");
+         "  --sync                                       Make X calls synchronous.\n"
+         "  -geometry geometry                           define the initial window geometry; see X(7).\n");
 #endif
 #ifdef XP_UNIX
   printf("  --g-fatal-warnings                           Make all warnings fatal.\n"
@@ -2815,11 +2816,22 @@ XREMain::XRE_mainInit(bool* aExitFlag)
   if (!home || !*home) {
     struct passwd *pw = getpwuid(geteuid());
     if (!pw || !pw->pw_dir) {
-      Output(true, "Could not determine HOME directory");
+      Output(true, "Could not determine HOME directory\n");
       return 1;
     }
     SaveWordToEnv("HOME", nsDependentCString(pw->pw_dir));
   }
+#  ifdef MOZ_X11    
+  const char *geometry;  
+  ar = CheckArg("geometry", false, &geometry );
+  if (ar == ARG_BAD) {
+    Output(true, "Error: geometry requieres an argument\n");
+    return 1;
+  }
+  nsCString window_geometry;
+  window_geometry.Assign(geometry);
+  SaveWordToEnv( "MOZILLA_WINDOW_GEOMETRY", window_geometry );
+#  endif  
 #endif
 
 #ifdef MOZ_ACCESSIBILITY_ATK
