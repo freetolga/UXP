@@ -541,6 +541,74 @@ class Build(MachCommandBase):
                 # as when doing OSX Universal builds)
                 pass
 
+        # Check for un-preprocessed files in dist/bin
+        # The types of files that get preprocessed
+        # css is special so it is treated as such
+        pp_types = [
+            'dtd',
+            'html',
+            'js',
+            'jsm',
+            'xhtml',
+            'xml',
+            'xul',
+            'manifest',
+            'properties',
+            'rdf'
+        ]
+        
+        # Preprocessor directives that we check for
+        pp_directives = [
+            'define',
+            'if',
+            'ifdef',
+            'ifndef',
+            'elif',
+            'elifdef',
+            'endif',
+            'error',
+            'expand',
+            'filter',
+            'include',
+            'literal',
+            'undef',
+            'unfilter'
+        ]
+
+        # We need to construct the find command to work properly on old msys used when building on Windows but still
+        # work acceptably on newer versions of find
+        pp_find = "{0} {1}/{2} -name '*.{3}'".format('find', self.topobjdir, 'dist/bin', "' -o -name '*.".join(pp_types))
+        pp_find_css = "{0} {1}/{2} -name '*.{3}'".format('find', self.topobjdir, 'dist/bin', 'css')
+
+        # grep with xargs because all relevant versions seem to work the same way
+        pp_xargs = 'xargs grep -E "^{0}({1})"'.format('#', '|'.join(pp_directives))
+        pp_xargs_css = 'xargs grep -E "^{0}({1})"'.format('%', '|'.join(pp_directives))
+
+        # Construct the final find command
+        pp_cmd = '{0} | {1}'.format(pp_find, pp_xargs)
+        pp_cmd_css = '{0} | {1}'.format(pp_find_css, pp_xargs_css)
+
+        # Run the final find command and look for stdin messages
+        pp_result = subprocess.Popen(pp_cmd, stdout=subprocess.PIPE, shell=True).communicate()
+        pp_result_css = subprocess.Popen(pp_cmd_css, stdout=subprocess.PIPE, shell=True).communicate()
+
+        # We should only get output if something matched
+        if pp_result[0] or pp_result_css[0]:
+            pp_result_list = pp_result[0] + pp_result_css[0]
+            pp_result_list = pp_result_list.replace(self.topobjdir + '/dist/bin/', '').split('\n')
+            pp_final_list = []
+
+            for result in pp_result_list:
+              pp_final_list += [ result.split(':')[0] ]
+
+            pp_final_list = list(dict.fromkeys(pp_final_list))
+
+            print('\nWARNING: The following files in dist/bin may need to be preprocessed:\n')
+
+            for result in pp_final_list:
+              print(result)
+
+        # Return final status
         return status
 
     @Command('configure', category='build',
