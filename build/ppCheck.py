@@ -63,7 +63,7 @@ for file in PP_FILES:
     else:
       directives = tuple('#' + directive for directive in PP_DIRECTIVES)
       for line in fp:
-        if line.startswith(tuple('#' + directive for directive in PP_DIRECTIVES)):
+        if line.startswith(directives):
           PP_BAD_FILES += [ file.replace(DIST_PATH + '/', '') ]
   fp.close()
 
