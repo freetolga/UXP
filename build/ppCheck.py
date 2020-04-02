@@ -44,7 +44,6 @@ PP_DIRECTIVES = [
 ]
 
 PP_FILES = []
-PP_FILES_CSS = []
 PP_BAD_FILES = []
 
 for root, directories, filenames in os.walk(DIST_PATH):
