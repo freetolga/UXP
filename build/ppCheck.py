@@ -3,11 +3,11 @@
 from __future__ import print_function
 import os, sys
 
-print("\nChecking for un-preprocessed files...", end = ' ')
-
-if not sys.argv[1]:
-  print("\nYou did not supply a path to search")
+if not len(sys.argv) is 2 or not os.path.exists(sys.argv[1]):
+  print("\nYou did not supply a valid path to check.")
+  exit(1)
 else:
+  print("\nChecking for un-preprocessed files...", end = ' ')
   DIST_PATH = sys.argv[1]
 
 PP_FILE_TYPES = (
@@ -51,19 +51,13 @@ for root, directories, filenames in os.walk(DIST_PATH):
     if filename.endswith(PP_FILE_TYPES):
       PP_FILES += [ os.path.join(root, filename).replace(os.sep, '/') ]
 
-
 for file in PP_FILES:
   with open(file) as fp:
-    if file.endswith(PP_SPECIAL_TYPES):
-      directives = tuple('%' + directive for directive in PP_DIRECTIVES)
-      for line in fp:
-        if line.startswith(directives):
-          PP_BAD_FILES += [ file.replace(DIST_PATH + '/', '') ]
-    else:
-      directives = tuple('#' + directive for directive in PP_DIRECTIVES)
-      for line in fp:
-        if line.startswith(directives):
-          PP_BAD_FILES += [ file.replace(DIST_PATH + '/', '') ]
+    marker = '%' if file.endswith(PP_SPECIAL_TYPES) else '#'
+    directives = tuple(marker + directive for directive in PP_DIRECTIVES)
+    for line in fp:
+      if line.startswith(directives):
+        PP_BAD_FILES += [ file.replace(DIST_PATH + '/', '') ]
   fp.close()
 
 PP_BAD_FILES = list(dict.fromkeys(PP_BAD_FILES))
