@@ -11,7 +11,9 @@
 
 #include "MediaInfo.h"
 #include "VPXDecoder.h"
+#ifdef MOZ_FMP4
 #include "MP4Decoder.h"
+#endif
 
 #include "FFmpegVideoDecoder.h"
 #include "FFmpegLog.h"
@@ -422,9 +424,11 @@ FFmpegVideoDecoder<LIBAV_VER>::~FFmpegVideoDecoder()
 AVCodecID
 FFmpegVideoDecoder<LIBAV_VER>::GetCodecId(const nsACString& aMimeType)
 {
+#ifdef MOZ_FMP4
   if (MP4Decoder::IsH264(aMimeType)) {
     return AV_CODEC_ID_H264;
   }
+#endif
 
   if (aMimeType.EqualsLiteral("video/x-vnd.on2.vp6")) {
     return AV_CODEC_ID_VP6F;

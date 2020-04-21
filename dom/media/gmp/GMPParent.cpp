@@ -26,7 +26,7 @@ using mozilla::ipc::GeckoChildProcessHost;
 
 #include "mozilla/Telemetry.h"
 
-#ifdef XP_WIN
+#ifdef MOZ_WMF
 #include "WMFDecoderModule.h"
 #endif
 
@@ -515,7 +515,7 @@ GMPCapability::Supports(const nsTArray<GMPCapability>& aCapabilities,
     }
     for (const nsCString& tag : capabilities.mAPITags) {
       if (tag.Equals(aTag)) {
-#ifdef XP_WIN
+#ifdef MOZ_WMF
         // Clearkey on Windows advertises that it can decode in its GMP info
         // file, but uses Windows Media Foundation to decode. That's not present
         // on Windows N and KN variants without certain services packs.

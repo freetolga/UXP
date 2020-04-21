@@ -12,7 +12,7 @@
 #include "mozilla/layers/ImageClient.h"
 #include "MediaInfo.h"
 #include "VideoDecoderManagerParent.h"
-#ifdef XP_WIN
+#ifdef MOZ_WMF
 #include "WMFDecoderModule.h"
 #endif
 
@@ -76,7 +76,7 @@ VideoDecoderParent::RecvInit(const VideoInfo& aInfo, const layers::TextureFactor
 {
   mKnowsCompositor->IdentifyTextureHost(aIdentifier);
 
-#ifdef XP_WIN
+#ifdef MOZ_WMF
   // TODO: Ideally we wouldn't hardcode the WMF PDM, and we'd use the normal PDM
   // factory logic for picking a decoder.
   WMFDecoderModule::Init();
