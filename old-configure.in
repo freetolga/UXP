@@ -798,6 +798,8 @@ case "$target" in
     MKCSHLIB='$(CC) $(CFLAGS) $(DSO_PIC_CFLAGS) $(DSO_LDOPTS) -o $@'
     MOZ_OPTIMIZE_FLAGS="-O3"
     CXXFLAGS="$CXXFLAGS -stdlib=libc++"
+    # Suppress the clang warning for the inline 'new' and 'delete' in mozalloc
+    CXXFLAGS="$CXXFLAGS -Wno-inline-new-delete"
     DLL_SUFFIX=".dylib"
     DSO_LDOPTS=''
     STRIP_FLAGS="$STRIP_FLAGS -x -S"
