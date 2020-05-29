@@ -25,20 +25,20 @@
 package nu.validator.htmlparser.impl;
 
 // uncomment to regenerate self
-//import java.io.BufferedReader;
-//import java.io.File;
-//import java.io.FileInputStream;
-//import java.io.IOException;
-//import java.io.InputStreamReader;
-//import java.util.Arrays;
-//import java.util.Collections;
-//import java.util.HashMap;
-//import java.util.LinkedList;
-//import java.util.List;
-//import java.util.Map;
-//import java.util.Map.Entry;
-//import java.util.regex.Matcher;
-//import java.util.regex.Pattern;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import nu.validator.htmlparser.annotation.Inline;
 import nu.validator.htmlparser.annotation.Local;
@@ -48,7 +48,7 @@ import nu.validator.htmlparser.common.Interner;
 
 public final class ElementName
 // uncomment when regenerating self
-//        implements Comparable<ElementName>
+        implements Comparable<ElementName>
 {
 
     /**
@@ -275,399 +275,399 @@ public final class ElementName
 
     // START CODE ONLY USED FOR GENERATING CODE uncomment and run to regenerate
 
-//    private static final Pattern HTML_TAG_DEF = Pattern.compile(
-//            "^HTML_TAG\\(([^,]+),\\s*([^,]+),\\s*[^,]+\\).*$");
-//
-//    private static final Pattern HTML_HTMLELEMENT_TAG_DEF = Pattern.compile(
-//            "^HTML_HTMLELEMENT_TAG\\(([^\\)]+)\\).*$");
-//
-//    private static final Pattern SVG_TAG_DEF = Pattern.compile(
-//            "^SVG_(?:FROM_PARSER_)?TAG\\(([^,]+),\\s*([^\\)]+)\\).*$");
-//
-//    private static final Map<String, String> htmlMap = new HashMap<String, String>();
-//
-//    private static final Map<String, String> svgMap = new HashMap<String, String>();
-//
-//    private static void ingestHtmlTags(File htmlList) throws IOException {
-//        // This doesn't need to be efficient, so let's make it easy to write.
-//        BufferedReader htmlReader = new BufferedReader(
-//                new InputStreamReader(new FileInputStream(htmlList), "utf-8"));
-//        try {
-//            String line;
-//            while ((line = htmlReader.readLine()) != null) {
-//                if (!line.startsWith("HTML_")) {
-//                    continue;
-//                }
-//                if (line.startsWith("HTML_OTHER")) {
-//                    continue;
-//                }
-//                Matcher m = HTML_TAG_DEF.matcher(line);
-//                if (m.matches()) {
-//                    String iface = m.group(2);
-//                    if ("Unknown".equals(iface)) {
-//                        continue;
-//                    }
-//                    htmlMap.put(m.group(1), "NS_NewHTML" + iface + "Element");
-//                } else {
-//                    m = HTML_HTMLELEMENT_TAG_DEF.matcher(line);
-//                    if (!m.matches()) {
-//                        throw new RuntimeException(
-//                                "Malformed HTML element definition: " + line);
-//                    }
-//                    htmlMap.put(m.group(1), "NS_NewHTMLElement");
-//                }
-//            }
-//        } finally {
-//            htmlReader.close();
-//        }
-//    }
-//
-//    private static void ingestSvgTags(File svgList) throws IOException {
-//        // This doesn't need to be efficient, so let's make it easy to write.
-//        BufferedReader svgReader = new BufferedReader(
-//                new InputStreamReader(new FileInputStream(svgList), "utf-8"));
-//        try {
-//            String line;
-//            while ((line = svgReader.readLine()) != null) {
-//                if (!line.startsWith("SVG_")) {
-//                    continue;
-//                }
-//                Matcher m = SVG_TAG_DEF.matcher(line);
-//                if (!m.matches()) {
-//                    throw new RuntimeException(
-//                            "Malformed SVG element definition: " + line);
-//                }
-//                String name = m.group(1);
-//                if ("svgSwitch".equals(name)) {
-//                    name = "switch";
-//                }
-//                svgMap.put(name, "NS_NewSVG" + m.group(2) + "Element");
-//            }
-//        } finally {
-//            svgReader.close();
-//        }
-//    }
-//
-//    private static String htmlCreator(String name) {
-//        String creator = htmlMap.remove(name);
-//        if (creator != null) {
-//            return creator;
-//        }
-//        return "NS_NewHTMLUnknownElement";
-//    }
-//
-//    private static String svgCreator(String name) {
-//        String creator = svgMap.remove(name);
-//        if (creator != null) {
-//            return creator;
-//        }
-//        return "NS_NewSVGUnknownElement";
-//    }
-//
-//    /**
-//     * @see java.lang.Object#toString()
-//     */
-//    @Override public String toString() {
-//        return "(\"" + name + "\", \"" + camelCaseName + "\", \n// CPP"
-//                + "ONLY: " + htmlCreator(name) + ",\n// CPP" + "ONLY: "
-//                + svgCreator(camelCaseName) + ", \n" + decomposedFlags() + ")";
-//    }
-//
-//    private String decomposedFlags() {
-//        StringBuilder buf = new StringBuilder("TreeBuilder.");
-//        buf.append(treeBuilderGroupToName());
-//        if ((flags & SPECIAL) != 0) {
-//            buf.append(" | SPECIAL");
-//        }
-//        if ((flags & FOSTER_PARENTING) != 0) {
-//            buf.append(" | FOSTER_PARENTING");
-//        }
-//        if ((flags & SCOPING) != 0) {
-//            buf.append(" | SCOPING");
-//        }
-//        if ((flags & SCOPING_AS_MATHML) != 0) {
-//            buf.append(" | SCOPING_AS_MATHML");
-//        }
-//        if ((flags & SCOPING_AS_SVG) != 0) {
-//            buf.append(" | SCOPING_AS_SVG");
-//        }
-//        if ((flags & OPTIONAL_END_TAG) != 0) {
-//            buf.append(" | OPTIONAL_END_TAG");
-//        }
-//        return buf.toString();
-//    }
-//
-//    private String constName() {
-//        char[] buf = new char[name.length()];
-//        for (int i = 0; i < name.length(); i++) {
-//            char c = name.charAt(i);
-//            if (c == '-') {
-//            //  if (!"annotation-xml".equals(name)) {
-//            //      throw new RuntimeException(
-//            //              "Non-annotation-xml element name with hyphen: "
-//            //                      + name);
-//            //  }
-//                buf[i] = '_';
-//            } else if (c >= '0' && c <= '9') {
-//                buf[i] = c;
-//            } else {
-//                buf[i] = (char) (c - 0x20);
-//            }
-//        }
-//        return new String(buf);
-//    }
-//
-//    private int hash() {
-//        return bufToHash(name.toCharArray(), name.length());
-//    }
-//
-//    public int compareTo(ElementName other) {
-//        int thisHash = this.hash();
-//        int otherHash = other.hash();
-//        if (thisHash < otherHash) {
-//            return -1;
-//        } else if (thisHash == otherHash) {
-//            return 0;
-//        } else {
-//            return 1;
-//        }
-//    }
-//
-//    private String treeBuilderGroupToName() {
-//        switch (getGroup()) {
-//            case TreeBuilder.OTHER:
-//                return "OTHER";
-//            case TreeBuilder.A:
-//                return "A";
-//            case TreeBuilder.BASE:
-//                return "BASE";
-//            case TreeBuilder.BODY:
-//                return "BODY";
-//            case TreeBuilder.BR:
-//                return "BR";
-//            case TreeBuilder.BUTTON:
-//                return "BUTTON";
-//            case TreeBuilder.CAPTION:
-//                return "CAPTION";
-//            case TreeBuilder.COL:
-//                return "COL";
-//            case TreeBuilder.COLGROUP:
-//                return "COLGROUP";
-//            case TreeBuilder.FONT:
-//                return "FONT";
-//            case TreeBuilder.FORM:
-//                return "FORM";
-//            case TreeBuilder.FRAME:
-//                return "FRAME";
-//            case TreeBuilder.FRAMESET:
-//                return "FRAMESET";
-//            case TreeBuilder.IMAGE:
-//                return "IMAGE";
-//            case TreeBuilder.INPUT:
-//                return "INPUT";
-//            case TreeBuilder.ISINDEX:
-//                return "ISINDEX";
-//            case TreeBuilder.LI:
-//                return "LI";
-//            case TreeBuilder.LINK_OR_BASEFONT_OR_BGSOUND:
-//                return "LINK_OR_BASEFONT_OR_BGSOUND";
-//            case TreeBuilder.MATH:
-//                return "MATH";
-//            case TreeBuilder.META:
-//                return "META";
-//            case TreeBuilder.SVG:
-//                return "SVG";
-//            case TreeBuilder.HEAD:
-//                return "HEAD";
-//            case TreeBuilder.HR:
-//                return "HR";
-//            case TreeBuilder.HTML:
-//                return "HTML";
-//            case TreeBuilder.KEYGEN:
-//                return "KEYGEN";
-//            case TreeBuilder.NOBR:
-//                return "NOBR";
-//            case TreeBuilder.NOFRAMES:
-//                return "NOFRAMES";
-//            case TreeBuilder.NOSCRIPT:
-//                return "NOSCRIPT";
-//            case TreeBuilder.OPTGROUP:
-//                return "OPTGROUP";
-//            case TreeBuilder.OPTION:
-//                return "OPTION";
-//            case TreeBuilder.P:
-//                return "P";
-//            case TreeBuilder.PLAINTEXT:
-//                return "PLAINTEXT";
-//            case TreeBuilder.SCRIPT:
-//                return "SCRIPT";
-//            case TreeBuilder.SELECT:
-//                return "SELECT";
-//            case TreeBuilder.STYLE:
-//                return "STYLE";
-//            case TreeBuilder.TABLE:
-//                return "TABLE";
-//            case TreeBuilder.TEXTAREA:
-//                return "TEXTAREA";
-//            case TreeBuilder.TITLE:
-//                return "TITLE";
-//            case TreeBuilder.TEMPLATE:
-//                return "TEMPLATE";
-//            case TreeBuilder.TR:
-//                return "TR";
-//            case TreeBuilder.XMP:
-//                return "XMP";
-//            case TreeBuilder.TBODY_OR_THEAD_OR_TFOOT:
-//                return "TBODY_OR_THEAD_OR_TFOOT";
-//            case TreeBuilder.TD_OR_TH:
-//                return "TD_OR_TH";
-//            case TreeBuilder.DD_OR_DT:
-//                return "DD_OR_DT";
-//            case TreeBuilder.H1_OR_H2_OR_H3_OR_H4_OR_H5_OR_H6:
-//                return "H1_OR_H2_OR_H3_OR_H4_OR_H5_OR_H6";
-//            case TreeBuilder.OBJECT:
-//                return "OBJECT";
-//            case TreeBuilder.OUTPUT:
-//                return "OUTPUT";
-//            case TreeBuilder.MARQUEE_OR_APPLET:
-//                return "MARQUEE_OR_APPLET";
-//            case TreeBuilder.PRE_OR_LISTING:
-//                return "PRE_OR_LISTING";
-//            case TreeBuilder.B_OR_BIG_OR_CODE_OR_EM_OR_I_OR_S_OR_SMALL_OR_STRIKE_OR_STRONG_OR_TT_OR_U:
-//                return "B_OR_BIG_OR_CODE_OR_EM_OR_I_OR_S_OR_SMALL_OR_STRIKE_OR_STRONG_OR_TT_OR_U";
-//            case TreeBuilder.UL_OR_OL_OR_DL:
-//                return "UL_OR_OL_OR_DL";
-//            case TreeBuilder.IFRAME:
-//                return "IFRAME";
-//            case TreeBuilder.NOEMBED:
-//                return "NOEMBED";
-//            case TreeBuilder.EMBED:
-//                return "EMBED";
-//            case TreeBuilder.IMG:
-//                return "IMG";
-//            case TreeBuilder.AREA_OR_WBR:
-//                return "AREA_OR_WBR";
-//            case TreeBuilder.DIV_OR_BLOCKQUOTE_OR_CENTER_OR_MENU:
-//                return "DIV_OR_BLOCKQUOTE_OR_CENTER_OR_MENU";
-//            case TreeBuilder.FIELDSET:
-//                return "FIELDSET";
-//            case TreeBuilder.ADDRESS_OR_ARTICLE_OR_ASIDE_OR_DETAILS_OR_DIALOG_OR_DIR_OR_FIGCAPTION_OR_FIGURE_OR_FOOTER_OR_HEADER_OR_HGROUP_OR_MAIN_OR_NAV_OR_SECTION_OR_SUMMARY:
-//                return "ADDRESS_OR_ARTICLE_OR_ASIDE_OR_DETAILS_OR_DIALOG_OR_DIR_OR_FIGCAPTION_OR_FIGURE_OR_FOOTER_OR_HEADER_OR_HGROUP_OR_MAIN_OR_NAV_OR_SECTION_OR_SUMMARY";
-//            case TreeBuilder.RUBY_OR_SPAN_OR_SUB_OR_SUP_OR_VAR:
-//                return "RUBY_OR_SPAN_OR_SUB_OR_SUP_OR_VAR";
-//            case TreeBuilder.RB_OR_RTC:
-//                return "RB_OR_RTC";
-//            case TreeBuilder.RT_OR_RP:
-//                return "RT_OR_RP";
-//            case TreeBuilder.PARAM_OR_SOURCE_OR_TRACK:
-//                return "PARAM_OR_SOURCE_OR_TRACK";
-//            case TreeBuilder.MGLYPH_OR_MALIGNMARK:
-//                return "MGLYPH_OR_MALIGNMARK";
-//            case TreeBuilder.MI_MO_MN_MS_MTEXT:
-//                return "MI_MO_MN_MS_MTEXT";
-//            case TreeBuilder.ANNOTATION_XML:
-//                return "ANNOTATION_XML";
-//            case TreeBuilder.FOREIGNOBJECT_OR_DESC:
-//                return "FOREIGNOBJECT_OR_DESC";
-//            case TreeBuilder.MENUITEM:
-//                return "MENUITEM";
-//        }
-//        return null;
-//    }
-//
-//    private static void fillLevelOrderArray(List<ElementName> sorted, int depth,
-//            int rootIdx, ElementName[] levelOrder) {
-//        if (rootIdx >= levelOrder.length) {
-//            return;
-//        }
-//
-//        if (depth > 0) {
-//            fillLevelOrderArray(sorted, depth - 1, rootIdx * 2 + 1, levelOrder);
-//        }
-//
-//        if (!sorted.isEmpty()) {
-//            levelOrder[rootIdx] = sorted.remove(0);
-//        }
-//
-//        if (depth > 0) {
-//            fillLevelOrderArray(sorted, depth - 1, rootIdx * 2 + 2, levelOrder);
-//        }
-//    }
-//
-//    /**
-//     * Regenerate self
-//     *
-//     * The args should be the paths to m-c files
-//     * parser/htmlparser/nsHTMLTagList.h and dom/svg/SVGTagList.h.
-//     */
-//    public static void main(String[] args) {
-//        File htmlList = new File(args[0]);
-//        File svgList = new File(args[1]);
-//        try {
-//            ingestHtmlTags(htmlList);
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//        try {
-//            ingestSvgTags(svgList);
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//
-//        Arrays.sort(ELEMENT_NAMES);
-//        for (int i = 0; i < ELEMENT_NAMES.length; i++) {
-//            int hash = ELEMENT_NAMES[i].hash();
-//            if (hash < 0) {
-//                System.err.println("Negative hash: " + ELEMENT_NAMES[i].name);
-//                return;
-//            }
-//            for (int j = i + 1; j < ELEMENT_NAMES.length; j++) {
-//                if (hash == ELEMENT_NAMES[j].hash()) {
-//                    System.err.println(
-//                            "Hash collision: " + ELEMENT_NAMES[i].name + ", "
-//                                    + ELEMENT_NAMES[j].name);
-//                    return;
-//                }
-//            }
-//        }
-//        for (int i = 0; i < ELEMENT_NAMES.length; i++) {
-//            ElementName el = ELEMENT_NAMES[i];
-//            if ("isindex".equals(el.name)) {
-//                continue;
-//            }
-//            System.out.println(
-//                    "public static final ElementName " + el.constName()
-//                            + " = new ElementName" + el.toString() + ";");
-//        }
-//
-//        LinkedList<ElementName> sortedNames = new LinkedList<ElementName>();
-//        Collections.addAll(sortedNames, ELEMENT_NAMES);
-//        ElementName[] levelOrder = new ElementName[ELEMENT_NAMES.length];
-//        int bstDepth = (int) Math.ceil(
-//                Math.log(ELEMENT_NAMES.length) / Math.log(2));
-//        fillLevelOrderArray(sortedNames, bstDepth, 0, levelOrder);
-//
-//        System.out.println(
-//                "private final static @NoLength ElementName[] ELEMENT_NAMES = {");
-//        for (int i = 0; i < levelOrder.length; i++) {
-//            ElementName el = levelOrder[i];
-//            System.out.println(el.constName() + ",");
-//        }
-//        System.out.println("};");
-//        System.out.println("private final static int[] ELEMENT_HASHES = {");
-//        for (int i = 0; i < levelOrder.length; i++) {
-//            ElementName el = levelOrder[i];
-//            System.out.println(Integer.toString(el.hash()) + ",");
-//        }
-//        System.out.println("};");
-//
-//        for (Entry<String, String> entry : htmlMap.entrySet()) {
-//            System.err.println("Missing HTML element: " + entry.getKey());
-//        }
-//        for (Entry<String, String> entry : svgMap.entrySet()) {
-//            System.err.println("Missing SVG element: " + entry.getKey());
-//        }
-//    }
+    private static final Pattern HTML_TAG_DEF = Pattern.compile(
+            "^HTML_TAG\\(([^,]+),\\s*([^,]+),\\s*[^,]+\\).*$");
+
+    private static final Pattern HTML_HTMLELEMENT_TAG_DEF = Pattern.compile(
+            "^HTML_HTMLELEMENT_TAG\\(([^\\)]+)\\).*$");
+
+    private static final Pattern SVG_TAG_DEF = Pattern.compile(
+            "^SVG_(?:FROM_PARSER_)?TAG\\(([^,]+),\\s*([^\\)]+)\\).*$");
+
+    private static final Map<String, String> htmlMap = new HashMap<String, String>();
+
+    private static final Map<String, String> svgMap = new HashMap<String, String>();
+
+    private static void ingestHtmlTags(File htmlList) throws IOException {
+        // This doesn't need to be efficient, so let's make it easy to write.
+        BufferedReader htmlReader = new BufferedReader(
+                new InputStreamReader(new FileInputStream(htmlList), "utf-8"));
+        try {
+            String line;
+            while ((line = htmlReader.readLine()) != null) {
+                if (!line.startsWith("HTML_")) {
+                    continue;
+                }
+                if (line.startsWith("HTML_OTHER")) {
+                    continue;
+                }
+                Matcher m = HTML_TAG_DEF.matcher(line);
+                if (m.matches()) {
+                    String iface = m.group(2);
+                    if ("Unknown".equals(iface)) {
+                        continue;
+                    }
+                    htmlMap.put(m.group(1), "NS_NewHTML" + iface + "Element");
+                } else {
+                    m = HTML_HTMLELEMENT_TAG_DEF.matcher(line);
+                    if (!m.matches()) {
+                        throw new RuntimeException(
+                                "Malformed HTML element definition: " + line);
+                    }
+                    htmlMap.put(m.group(1), "NS_NewHTMLElement");
+                }
+            }
+        } finally {
+            htmlReader.close();
+        }
+    }
+
+    private static void ingestSvgTags(File svgList) throws IOException {
+        // This doesn't need to be efficient, so let's make it easy to write.
+        BufferedReader svgReader = new BufferedReader(
+                new InputStreamReader(new FileInputStream(svgList), "utf-8"));
+        try {
+            String line;
+            while ((line = svgReader.readLine()) != null) {
+                if (!line.startsWith("SVG_")) {
+                    continue;
+                }
+                Matcher m = SVG_TAG_DEF.matcher(line);
+                if (!m.matches()) {
+                    throw new RuntimeException(
+                            "Malformed SVG element definition: " + line);
+                }
+                String name = m.group(1);
+                if ("svgSwitch".equals(name)) {
+                    name = "switch";
+                }
+                svgMap.put(name, "NS_NewSVG" + m.group(2) + "Element");
+            }
+        } finally {
+            svgReader.close();
+        }
+    }
+
+    private static String htmlCreator(String name) {
+        String creator = htmlMap.remove(name);
+        if (creator != null) {
+            return creator;
+        }
+        return "NS_NewHTMLUnknownElement";
+    }
+
+    private static String svgCreator(String name) {
+        String creator = svgMap.remove(name);
+        if (creator != null) {
+            return creator;
+        }
+        return "NS_NewSVGUnknownElement";
+    }
+
+    /**
+     * @see java.lang.Object#toString()
+     */
+    @Override public String toString() {
+        return "(\"" + name + "\", \"" + camelCaseName + "\", \n// CPP"
+                + "ONLY: " + htmlCreator(name) + ",\n// CPP" + "ONLY: "
+                + svgCreator(camelCaseName) + ", \n" + decomposedFlags() + ")";
+    }
+
+    private String decomposedFlags() {
+        StringBuilder buf = new StringBuilder("TreeBuilder.");
+        buf.append(treeBuilderGroupToName());
+        if ((flags & SPECIAL) != 0) {
+            buf.append(" | SPECIAL");
+        }
+        if ((flags & FOSTER_PARENTING) != 0) {
+            buf.append(" | FOSTER_PARENTING");
+        }
+        if ((flags & SCOPING) != 0) {
+            buf.append(" | SCOPING");
+        }
+        if ((flags & SCOPING_AS_MATHML) != 0) {
+            buf.append(" | SCOPING_AS_MATHML");
+        }
+        if ((flags & SCOPING_AS_SVG) != 0) {
+            buf.append(" | SCOPING_AS_SVG");
+        }
+        if ((flags & OPTIONAL_END_TAG) != 0) {
+            buf.append(" | OPTIONAL_END_TAG");
+        }
+        return buf.toString();
+    }
+
+    private String constName() {
+        char[] buf = new char[name.length()];
+        for (int i = 0; i < name.length(); i++) {
+            char c = name.charAt(i);
+            if (c == '-') {
+            //  if (!"annotation-xml".equals(name)) {
+            //      throw new RuntimeException(
+            //              "Non-annotation-xml element name with hyphen: "
+            //                      + name);
+            //  }
+                buf[i] = '_';
+            } else if (c >= '0' && c <= '9') {
+                buf[i] = c;
+            } else {
+                buf[i] = (char) (c - 0x20);
+            }
+        }
+        return new String(buf);
+    }
+
+    private int hash() {
+        return bufToHash(name.toCharArray(), name.length());
+    }
+
+    public int compareTo(ElementName other) {
+        int thisHash = this.hash();
+        int otherHash = other.hash();
+        if (thisHash < otherHash) {
+            return -1;
+        } else if (thisHash == otherHash) {
+            return 0;
+        } else {
+            return 1;
+        }
+    }
+
+    private String treeBuilderGroupToName() {
+        switch (getGroup()) {
+            case TreeBuilder.OTHER:
+                return "OTHER";
+            case TreeBuilder.A:
+                return "A";
+            case TreeBuilder.BASE:
+                return "BASE";
+            case TreeBuilder.BODY:
+                return "BODY";
+            case TreeBuilder.BR:
+                return "BR";
+            case TreeBuilder.BUTTON:
+                return "BUTTON";
+            case TreeBuilder.CAPTION:
+                return "CAPTION";
+            case TreeBuilder.COL:
+                return "COL";
+            case TreeBuilder.COLGROUP:
+                return "COLGROUP";
+            case TreeBuilder.FONT:
+                return "FONT";
+            case TreeBuilder.FORM:
+                return "FORM";
+            case TreeBuilder.FRAME:
+                return "FRAME";
+            case TreeBuilder.FRAMESET:
+                return "FRAMESET";
+            case TreeBuilder.IMAGE:
+                return "IMAGE";
+            case TreeBuilder.INPUT:
+                return "INPUT";
+            case TreeBuilder.ISINDEX:
+                return "ISINDEX";
+            case TreeBuilder.LI:
+                return "LI";
+            case TreeBuilder.LINK_OR_BASEFONT_OR_BGSOUND:
+                return "LINK_OR_BASEFONT_OR_BGSOUND";
+            case TreeBuilder.MATH:
+                return "MATH";
+            case TreeBuilder.META:
+                return "META";
+            case TreeBuilder.SVG:
+                return "SVG";
+            case TreeBuilder.HEAD:
+                return "HEAD";
+            case TreeBuilder.HR:
+                return "HR";
+            case TreeBuilder.HTML:
+                return "HTML";
+            case TreeBuilder.KEYGEN:
+                return "KEYGEN";
+            case TreeBuilder.NOBR:
+                return "NOBR";
+            case TreeBuilder.NOFRAMES:
+                return "NOFRAMES";
+            case TreeBuilder.NOSCRIPT:
+                return "NOSCRIPT";
+            case TreeBuilder.OPTGROUP:
+                return "OPTGROUP";
+            case TreeBuilder.OPTION:
+                return "OPTION";
+            case TreeBuilder.P:
+                return "P";
+            case TreeBuilder.PLAINTEXT:
+                return "PLAINTEXT";
+            case TreeBuilder.SCRIPT:
+                return "SCRIPT";
+            case TreeBuilder.SELECT:
+                return "SELECT";
+            case TreeBuilder.STYLE:
+                return "STYLE";
+            case TreeBuilder.TABLE:
+                return "TABLE";
+            case TreeBuilder.TEXTAREA:
+                return "TEXTAREA";
+            case TreeBuilder.TITLE:
+                return "TITLE";
+            case TreeBuilder.TEMPLATE:
+                return "TEMPLATE";
+            case TreeBuilder.TR:
+                return "TR";
+            case TreeBuilder.XMP:
+                return "XMP";
+            case TreeBuilder.TBODY_OR_THEAD_OR_TFOOT:
+                return "TBODY_OR_THEAD_OR_TFOOT";
+            case TreeBuilder.TD_OR_TH:
+                return "TD_OR_TH";
+            case TreeBuilder.DD_OR_DT:
+                return "DD_OR_DT";
+            case TreeBuilder.H1_OR_H2_OR_H3_OR_H4_OR_H5_OR_H6:
+                return "H1_OR_H2_OR_H3_OR_H4_OR_H5_OR_H6";
+            case TreeBuilder.OBJECT:
+                return "OBJECT";
+            case TreeBuilder.OUTPUT:
+                return "OUTPUT";
+            case TreeBuilder.MARQUEE_OR_APPLET:
+                return "MARQUEE_OR_APPLET";
+            case TreeBuilder.PRE_OR_LISTING:
+                return "PRE_OR_LISTING";
+            case TreeBuilder.B_OR_BIG_OR_CODE_OR_EM_OR_I_OR_S_OR_SMALL_OR_STRIKE_OR_STRONG_OR_TT_OR_U:
+                return "B_OR_BIG_OR_CODE_OR_EM_OR_I_OR_S_OR_SMALL_OR_STRIKE_OR_STRONG_OR_TT_OR_U";
+            case TreeBuilder.UL_OR_OL_OR_DL:
+                return "UL_OR_OL_OR_DL";
+            case TreeBuilder.IFRAME:
+                return "IFRAME";
+            case TreeBuilder.NOEMBED:
+                return "NOEMBED";
+            case TreeBuilder.EMBED:
+                return "EMBED";
+            case TreeBuilder.IMG:
+                return "IMG";
+            case TreeBuilder.AREA_OR_WBR:
+                return "AREA_OR_WBR";
+            case TreeBuilder.DIV_OR_BLOCKQUOTE_OR_CENTER_OR_MENU:
+                return "DIV_OR_BLOCKQUOTE_OR_CENTER_OR_MENU";
+            case TreeBuilder.FIELDSET:
+                return "FIELDSET";
+            case TreeBuilder.ADDRESS_OR_ARTICLE_OR_ASIDE_OR_DETAILS_OR_DIALOG_OR_DIR_OR_FIGCAPTION_OR_FIGURE_OR_FOOTER_OR_HEADER_OR_HGROUP_OR_MAIN_OR_NAV_OR_SECTION_OR_SUMMARY:
+                return "ADDRESS_OR_ARTICLE_OR_ASIDE_OR_DETAILS_OR_DIALOG_OR_DIR_OR_FIGCAPTION_OR_FIGURE_OR_FOOTER_OR_HEADER_OR_HGROUP_OR_MAIN_OR_NAV_OR_SECTION_OR_SUMMARY";
+            case TreeBuilder.RUBY_OR_SPAN_OR_SUB_OR_SUP_OR_VAR:
+                return "RUBY_OR_SPAN_OR_SUB_OR_SUP_OR_VAR";
+            case TreeBuilder.RB_OR_RTC:
+                return "RB_OR_RTC";
+            case TreeBuilder.RT_OR_RP:
+                return "RT_OR_RP";
+            case TreeBuilder.PARAM_OR_SOURCE_OR_TRACK:
+                return "PARAM_OR_SOURCE_OR_TRACK";
+            case TreeBuilder.MGLYPH_OR_MALIGNMARK:
+                return "MGLYPH_OR_MALIGNMARK";
+            case TreeBuilder.MI_MO_MN_MS_MTEXT:
+                return "MI_MO_MN_MS_MTEXT";
+            case TreeBuilder.ANNOTATION_XML:
+                return "ANNOTATION_XML";
+            case TreeBuilder.FOREIGNOBJECT_OR_DESC:
+                return "FOREIGNOBJECT_OR_DESC";
+            case TreeBuilder.MENUITEM:
+                return "MENUITEM";
+        }
+        return null;
+    }
+
+    private static void fillLevelOrderArray(List<ElementName> sorted, int depth,
+            int rootIdx, ElementName[] levelOrder) {
+        if (rootIdx >= levelOrder.length) {
+            return;
+        }
+
+        if (depth > 0) {
+            fillLevelOrderArray(sorted, depth - 1, rootIdx * 2 + 1, levelOrder);
+        }
+
+        if (!sorted.isEmpty()) {
+            levelOrder[rootIdx] = sorted.remove(0);
+        }
+
+        if (depth > 0) {
+            fillLevelOrderArray(sorted, depth - 1, rootIdx * 2 + 2, levelOrder);
+        }
+    }
+
+    /**
+     * Regenerate self
+     *
+     * The args should be the paths to m-c files
+     * parser/htmlparser/nsHTMLTagList.h and dom/svg/SVGTagList.h.
+     */
+    public static void main(String[] args) {
+        File htmlList = new File(args[0]);
+        File svgList = new File(args[1]);
+        try {
+            ingestHtmlTags(htmlList);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            ingestSvgTags(svgList);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        Arrays.sort(ELEMENT_NAMES);
+        for (int i = 0; i < ELEMENT_NAMES.length; i++) {
+            int hash = ELEMENT_NAMES[i].hash();
+            if (hash < 0) {
+                System.err.println("Negative hash: " + ELEMENT_NAMES[i].name);
+                return;
+            }
+            for (int j = i + 1; j < ELEMENT_NAMES.length; j++) {
+                if (hash == ELEMENT_NAMES[j].hash()) {
+                    System.err.println(
+                            "Hash collision: " + ELEMENT_NAMES[i].name + ", "
+                                    + ELEMENT_NAMES[j].name);
+                    return;
+                }
+            }
+        }
+        for (int i = 0; i < ELEMENT_NAMES.length; i++) {
+            ElementName el = ELEMENT_NAMES[i];
+            if ("isindex".equals(el.name)) {
+                continue;
+            }
+            System.out.println(
+                    "public static final ElementName " + el.constName()
+                            + " = new ElementName" + el.toString() + ";");
+        }
+
+        LinkedList<ElementName> sortedNames = new LinkedList<ElementName>();
+        Collections.addAll(sortedNames, ELEMENT_NAMES);
+        ElementName[] levelOrder = new ElementName[ELEMENT_NAMES.length];
+        int bstDepth = (int) Math.ceil(
+                Math.log(ELEMENT_NAMES.length) / Math.log(2));
+        fillLevelOrderArray(sortedNames, bstDepth, 0, levelOrder);
+
+        System.out.println(
+                "private final static @NoLength ElementName[] ELEMENT_NAMES = {");
+        for (int i = 0; i < levelOrder.length; i++) {
+            ElementName el = levelOrder[i];
+            System.out.println(el.constName() + ",");
+        }
+        System.out.println("};");
+        System.out.println("private final static int[] ELEMENT_HASHES = {");
+        for (int i = 0; i < levelOrder.length; i++) {
+            ElementName el = levelOrder[i];
+            System.out.println(Integer.toString(el.hash()) + ",");
+        }
+        System.out.println("};");
+
+        for (Entry<String, String> entry : htmlMap.entrySet()) {
+            System.err.println("Missing HTML element: " + entry.getKey());
+        }
+        for (Entry<String, String> entry : svgMap.entrySet()) {
+            System.err.println("Missing SVG element: " + entry.getKey());
+        }
+    }
 
 
     // START GENERATED CODE
@@ -1191,10 +1191,6 @@ public final class ElementName
     // CPPONLY: NS_NewHTMLUnknownElement,
     // CPPONLY: NS_NewSVGUnknownElement, 
     TreeBuilder.OTHER);
-    public static final ElementName MARQUEE = new ElementName("marquee", "marquee", 
-    // CPPONLY: NS_NewHTMLDivElement,
-    // CPPONLY: NS_NewSVGUnknownElement, 
-    TreeBuilder.MARQUEE_OR_APPLET | SPECIAL | SCOPING);
     public static final ElementName MTABLE = new ElementName("mtable", "mtable", 
     // CPPONLY: NS_NewHTMLUnknownElement,
     // CPPONLY: NS_NewSVGUnknownElement, 
@@ -2588,7 +2584,6 @@ public final class ElementName
     IFRAME,
     LINE,
     MSPACE,
-    MARQUEE,
     MSTYLE,
     NONE,
     PIECE,
