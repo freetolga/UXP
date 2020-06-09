@@ -8,6 +8,8 @@
 #define mozilla_dom_StyleScope_h__
 
 #include "nsTArray.h"
+#include "nsContentListDeclarations.h"
+#include "nsNameSpaceManager.h"
 #include "mozilla/dom/NameSpaceConstants.h"
 
 class nsContentList;

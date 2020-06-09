@@ -10,20 +10,20 @@
 
 class nsINode;
 class nsIDocument;
-class mozilla::dom::ShadowRoot;
+class ShadowRoot;
 
 namespace mozilla {
 namespace dom {
 
-StyleScope::StyleScope(mozilla::dom::ShadowRoot& aShadowRoot)
+StyleScope::StyleScope(mozilla::dom::ShadowRoot* aShadowRoot)
   : mAsNode(aShadowRoot)
   , mKind(Kind::ShadowRoot)
-{}
+{ MOZ_ASSERT(mAsNode); }
 
-StyleScope::StyleScope(nsIDocument& aDoc)
+StyleScope::StyleScope(nsIDocument* aDoc)
   : mAsNode(aDoc)
   , mKind(Kind::Document)
-{}
+{ MOZ_ASSERT(mAsNode); }
 
 StyleScope::~StyleScope()
 {
