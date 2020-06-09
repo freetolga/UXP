@@ -8,7 +8,9 @@
 #define mozilla_dom_StyleScope_h__
 
 #include "nsTArray.h"
+#include "mozilla/dom/NameSpaceConstants.h"
 
+class nsContentList;
 class nsINode;
 
 namespace mozilla {
@@ -17,6 +19,7 @@ class StyleSheet;
 namespace dom {
 
 class StyleSheetList;
+class ShadowRoot;
 
 /**
  * A class meant to be shared by ShadowRoot and Document, that holds a list of
@@ -27,12 +30,23 @@ class StyleSheetList;
  */
 class StyleScope
 {
+  enum class Kind {
+    Document,
+    ShadowRoot,
+  };
+
 public:
-  virtual nsINode& AsNode() = 0;
+  explicit StyleScope(nsIDocument*);
+  explicit StyleScope(mozilla::dom::ShadowRoot*);
+
+  nsINode& AsNode()
+  {
+    return *mAsNode;
+  }
 
   const nsINode& AsNode() const
   {
-    return const_cast<StyleScope&>(*this).AsNode();
+    return *mAsNode;
   }
 
   StyleSheet* SheetAt(size_t aIndex) const
@@ -72,6 +86,9 @@ public:
 protected:
   nsTArray<RefPtr<mozilla::StyleSheet>> mStyleSheets;
   RefPtr<mozilla::dom::StyleSheetList> mDOMStyleSheets;
+
+  nsINode* mAsNode;
+  const Kind mKind;
 };
 
 }

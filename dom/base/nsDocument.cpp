@@ -1226,6 +1226,7 @@ static already_AddRefed<mozilla::dom::NodeInfo> nullNodeInfo;
 // ==================================================================
 nsIDocument::nsIDocument()
   : nsINode(nullNodeInfo),
+    StyleScope(this),
     mReferrerPolicySet(false),
     mReferrerPolicy(mozilla::net::RP_Default),
     mBlockAllMixedContent(false),
