@@ -7,6 +7,7 @@
 #include "StyleScope.h"
 #include "mozilla/dom/StyleSheetList.h"
 #include "ShadowRoot.h"
+#include "XULDocument.h"
 
 class nsINode;
 class nsIDocument;
@@ -36,6 +37,67 @@ StyleScope::EnsureDOMStyleSheets()
     mDOMStyleSheets = new StyleSheetList(*this);
   }
   return *mDOMStyleSheets;
+}
+
+Element*
+StyleScope::GetElementById(const nsAString& aElementId)
+{
+  if (MOZ_UNLIKELY(aElementId.IsEmpty())) {
+    nsContentUtils::ReportEmptyGetElementByIdArg(AsNode().OwnerDoc());
+    return nullptr;
+  }
+
+  if (nsIdentifierMapEntry* entry = mIdentifierMap.GetEntry(aElementId)) {
+    if (Element* el = entry->GetIdElement()) {
+      return el;
+    }
+  }
+
+  if (MOZ_UNLIKELY(mKind == Kind::Document &&
+      static_cast<nsIDocument&>(AsNode()).IsXULDocument())) {
+    return static_cast<XULDocument&>(AsNode()).GetRefById(aElementId);
+  }
+
+  return nullptr;
+}
+
+already_AddRefed<nsContentList>
+StyleScope::GetElementsByTagNameNS(const nsAString& aNamespaceURI,
+                                   const nsAString& aLocalName)
+{
+  ErrorResult rv;
+  RefPtr<nsContentList> list =
+    GetElementsByTagNameNS(aNamespaceURI, aLocalName, rv);
+  if (rv.Failed()) {
+    return nullptr;
+  }
+  return list.forget();
+}
+
+already_AddRefed<nsContentList>
+StyleScope::GetElementsByTagNameNS(const nsAString& aNamespaceURI,
+                                   const nsAString& aLocalName,
+                                   mozilla::ErrorResult& aResult)
+{
+  int32_t nameSpaceId = kNameSpaceID_Wildcard;
+
+  if (!aNamespaceURI.EqualsLiteral("*")) {
+    aResult =
+      nsContentUtils::NameSpaceManager()->RegisterNameSpace(aNamespaceURI,
+                                                            nameSpaceId);
+    if (aResult.Failed()) {
+      return nullptr;
+    }
+  }
+
+  NS_ASSERTION(nameSpaceId != kNameSpaceID_Unknown, "Unexpected namespace ID!");
+  return NS_GetContentList(&AsNode(), nameSpaceId, aLocalName);
+}
+
+already_AddRefed<nsContentList>
+StyleScope::GetElementsByClassName(const nsAString& aClasses)
+{
+  return nsContentUtils::GetElementsByClassName(&AsNode(), aClasses);
 }
 
 }
