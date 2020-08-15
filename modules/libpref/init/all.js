@@ -935,19 +935,6 @@ pref("toolkit.scrollbox.verticalScrollDistance", 3);
 pref("toolkit.scrollbox.horizontalScrollDistance", 5);
 pref("toolkit.scrollbox.clickToScroll.scrollDelay", 150);
 
-// Telemetry settings.
-// Server to submit telemetry pings to.
-pref("toolkit.telemetry.server", "");
-// Telemetry server owner. Please change if you set toolkit.telemetry.server to a different server
-pref("toolkit.telemetry.server_owner", "");
-// Information page about telemetry (temporary ; will be about:telemetry in the end)
-pref("toolkit.telemetry.infoURL", "");
-// Determines whether full SQL strings are returned when they might contain sensitive info
-// i.e. dynamically constructed SQL strings or SQL executed by addons against addon DBs
-pref("toolkit.telemetry.debugSlowSql", false);
-// Whether to use the unified telemetry behavior, requires a restart.
-pref("toolkit.telemetry.unified", false);
-
 // Identity module
 pref("toolkit.identity.enabled", false);
 pref("toolkit.identity.debug", false);
@@ -1348,11 +1335,6 @@ pref("logging.config.clear_on_startup", true);
 //   pref("network.security.ports.banned", "1,2,3,4,5");
 // prevents necko connecting to ports 1-5 unless the protocol
 // overrides.
-
-// Allow necko to do A/B testing. Will generally only happen if
-// telemetry is also enabled as otherwise there is no way to report
-// the results
-pref("network.allow-experiments", true);
 
 // Allow the network changed event to get sent when a network topology or
 // setup change is noticed while running.
