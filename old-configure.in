@@ -2170,22 +2170,6 @@ case "${target}" in
 
 esac
 
-# Optional Firefox for Android partner distribution directory.
-MOZ_ARG_WITH_STRING(android-distribution-directory,
-[  --with-android-distribution-directory=dir
-                          Optional Firefox for Android partner distribution directory.],
-  MOZ_ANDROID_DISTRIBUTION_DIRECTORY=$withval)
-
-if test -n "$MOZ_ANDROID_DISTRIBUTION_DIRECTORY"; then
-  # A distribution directory must have an assets/distribution directory.
-  # See https://wiki.mozilla.org/Mobile/Distribution_Files.
-  if test ! -d "$MOZ_ANDROID_DISTRIBUTION_DIRECTORY/assets/distribution" ; then
-    AC_MSG_ERROR([--with-android-distribution-directory does not contain assets/distribution;
-                  (looked for ${MOZ_ANDROID_DISTRIBUTION_DIRECTORY}/assets/distribution).])
-  fi
-fi
-AC_SUBST(MOZ_ANDROID_DISTRIBUTION_DIRECTORY)
-
 dnl ========================================================
 dnl = Vendor override
 dnl ========================================================
@@ -2233,11 +2217,6 @@ WITH_APP_BASENAME=$withval,
 
 if test -n "$WITH_APP_BASENAME" ; then
     MOZ_APP_BASENAME="$WITH_APP_BASENAME"
-fi
-
-# Graphene is a desktop runtime for running applications with a HTML UI.
-if test -n "$MOZ_GRAPHENE"; then
-    AC_DEFINE(MOZ_GRAPHENE)
 fi
 
 dnl ========================================================
