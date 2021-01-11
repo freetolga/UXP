@@ -208,8 +208,6 @@ nsHttpChannelAuthProvider::ProcessAuthentication(uint32_t httpStatus,
 
     nsAutoCString creds;
     rv = GetCredentials(challenges.get(), mProxyAuth, creds);
-    if (rv == NS_ERROR_IN_PROGRESS)
-        return rv;
     if (NS_FAILED(rv))
         LOG(("unable to authenticate\n"));
     else {
@@ -633,15 +631,6 @@ nsHttpChannelAuthProvider::GetCredentials(const char     *challenges,
                 *currentAuthType = authType;
 
                 break;
-            }
-            else if (rv == NS_ERROR_IN_PROGRESS) {
-                // authentication prompt has been invoked and result is
-                // expected asynchronously, save current challenge being
-                // processed and all remaining challenges to use later in
-                // OnAuthAvailable and now immediately return
-                mCurrentChallenge = challenge;
-                mRemainingChallenges = eol ? eol+1 : nullptr;
-                return rv;
             }
 
             // reset the auth type and continuation state
@@ -1205,31 +1194,20 @@ nsHttpChannelAuthProvider::PromptForIdentity(uint32_t            level,
     nsCOMPtr<nsIChannel> channel(do_QueryInterface(mAuthChannel, &rv));
     if (NS_FAILED(rv)) return rv;
 
-    rv =
-        authPrompt->AsyncPromptAuth(channel, this, nullptr, level, holder,
-                                    getter_AddRefs(mAsyncPromptAuthCancelable));
-
-    if (NS_SUCCEEDED(rv)) {
-        // indicate using this error code that authentication prompt
-        // result is expected asynchronously
-        rv = NS_ERROR_IN_PROGRESS;
-    }
-    else {
-        // Fall back to synchronous prompt
         bool retval = false;
         rv = authPrompt->PromptAuth(channel, level, holder, &retval);
         if (NS_FAILED(rv))
             return rv;
 
-        if (!retval)
-            rv = NS_ERROR_ABORT;
-        else
-            holder->SetToHttpAuthIdentity(authFlags, ident);
-    }
-
     // remember that we successfully showed the user an auth dialog
     if (!proxyAuth)
         mSuppressDefensiveAuth = true;
+
+    if (!retval) {
+      rv = NS_ERROR_ABORT;
+    } else {
+    holder->SetToHttpAuthIdentity(authFlags, ident);
+    }
 
     if (mConnectionBased) {
         // Connection can be reset by the server in the meantime user is entering

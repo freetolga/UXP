@@ -2060,21 +2060,7 @@ nsHttpChannel::ContinueProcessResponse2(nsresult rv)
                 httpStatus,
                 mConnectionInfo->EndToEndSSL() && mTransaction->ProxyConnectFailed());
         }
-        if (rv == NS_ERROR_IN_PROGRESS)  {
-            // authentication prompt has been invoked and result
-            // is expected asynchronously
-            mAuthRetryPending = true;
-            if (httpStatus == 407 || mTransaction->ProxyConnectFailed())
-                mProxyAuthPending = true;
-
-            // suspend the transaction pump to stop receiving the
-            // unauthenticated content data. We will throw that data
-            // away when user provides credentials or resume the pump
-            // when user refuses to authenticate.
-            LOG(("Suspending the transaction, asynchronously prompting for credentials"));
-            mTransactionPump->Suspend();
-            rv = NS_OK;
-        } else if (NS_FAILED(rv)) {
+        if (NS_FAILED(rv)) {
             LOG(("ProcessAuthentication failed [rv=%x]\n", rv));
             if (mTransaction->ProxyConnectFailed())
                 return ProcessFailedProxyConnect(httpStatus);
