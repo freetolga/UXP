@@ -32,9 +32,7 @@ const PROMPT_NEVER = 3;
  * Invoked by [toolkit/components/prompts/src/nsPrompter.js]
  */
 function LoginManagerPromptFactory() {
-  Services.obs.addObserver(this, "quit-application-granted", true);
   Services.obs.addObserver(this, "passwordmgr-crypto-login", true);
-  Services.obs.addObserver(this, "passwordmgr-crypto-loginCanceled", true);
 }
 
 LoginManagerPromptFactory.prototype = {
@@ -42,20 +40,23 @@ LoginManagerPromptFactory.prototype = {
   classID : Components.ID("{749e62f4-60ae-4569-a8a2-de78b649660e}"),
   QueryInterface : XPCOMUtils.generateQI([Ci.nsIPromptFactory, Ci.nsIObserver, Ci.nsISupportsWeakReference]),
 
-  _asyncPrompts : {},
-  _asyncPromptInProgress : false,
+  // Tracks pending auth prompts per top level browser and hash key.
+  // browser -> hashkey -> prompt
+  // This enables us to consolidate auth prompts with the same browser and
+  // hashkey (level, origin, realm).
+  _pendingPrompts: new WeakMap(),
+  // We use a separate bucket for when we don't have a browser.
+  // _noBrowser -> hashkey -> prompt
+  _noBrowser: {},
+  // Promise used to defer prompts if the password manager isn't ready when
+  // they're called.
+  _uiBusyPromise: null,
 
   observe : function (subject, topic, data) {
     this.log("Observed: " + topic);
-    if (topic == "quit-application-granted") {
-      this._cancelPendingPrompts();
-    } else if (topic == "passwordmgr-crypto-login") {
-      // Start processing the deferred prompters.
-      this._doAsyncPrompt();
-    } else if (topic == "passwordmgr-crypto-loginCanceled") {
-      // User canceled a Master Password prompt, so go ahead and cancel
-      // all pending auth prompts to avoid nagging over and over.
-      this._cancelPendingPrompts();
+    if (topic == "passwordmgr-crypto-login") {
+      // Show the deferred prompters.
+      this._uiBusyPromise?.resolve();
     }
   },
 
@@ -65,35 +66,86 @@ LoginManagerPromptFactory.prototype = {
     return prompt;
   },
 
-  _doAsyncPrompt : function() {
-    if (this._asyncPromptInProgress) {
-      this.log("_doAsyncPrompt bypassed, already in progress");
+  getPendingPrompt(browser, hashKey) {
+    return this._pendingPrompts.get(browser || this._noBrowser)?.get(hashKey);
+  },
+
+  _setPendingPrompt(prompt, hashKey) {
+    let browser = prompt.prompter.browser || this._noBrowser;
+    let hashToPrompt = this._pendingPrompts.get(browser);
+    if (!hashToPrompt) {
+      hashToPrompt = new Map();
+      this._pendingPrompts.set(browser, hashToPrompt);
+    }
+    hashToPrompt.set(hashKey, prompt);
+  },
+
+  _removePendingPrompt(prompt, hashKey) {
+    let browser = prompt.prompter.browser || this._noBrowser;
+    let hashToPrompt = this._pendingPrompts.get(browser);
+    if (!hashToPrompt) {
+    return;
+    }
+
+    hashToPrompt.delete(hashKey);
+    if (!hashToPrompt.size) {
+      this._pendingPrompts.delete(browser);
+    }
+  }.
+
+  async _waitForLoginsUI(prompt) {
+    await this._uiBusyPromise;
+
+    let [hostname, httpRealm] = prompt.prompter._getAuthTarget(prompt.channel, prompt.authInfo);
+    // No UI to wait for.
+    if (!Services.logins.uiBusy) {
       return;
     }
 
-    // Find the first prompt key we have in the queue
-    var hashKey = null;
-    for (hashKey in this._asyncPrompts)
-      break;
-
-    if (!hashKey) {
-      this.log("_doAsyncPrompt:run bypassed, no prompts in the queue");
+    let hasLogins = Services.logins.countLogins(origin, null, httpRealm) > 0;
+    if (
+      !hasLogins &&
+      LoginHelper.schemeUpgrades &&
+      origin.startsWith("https://")
+    ) {
+      let httpOrigin = origin.replace(/^https:\/\//, "http://");
+      hasLogins = Services.logins.countLogins(httpOrigin, null, httpRealm) > 0;
+    }
+    // We don't depend on saved logins.
+    if (!hasLogins) {
       return;
     }
 
-    // If login manger has logins for this host, defer prompting if we're
-    // already waiting on a master password entry.
-    var prompt = this._asyncPrompts[hashKey];
-    var prompter = prompt.prompter;
-    var [hostname, httpRealm] = prompter._getAuthTarget(prompt.channel, prompt.authInfo);
-    var hasLogins = (prompter._pwmgr.countLogins(hostname, null, httpRealm) > 0);
-    if (!hasLogins && LoginHelper.schemeUpgrades && hostname.startsWith("https://")) {
-      let httpHostname = hostname.replace(/^https:\/\//, "http://");
-      hasLogins = (prompter._pwmgr.countLogins(httpHostname, null, httpRealm) > 0);
-    }
-    if (hasLogins && prompter._pwmgr.uiBusy) {
-      this.log("_doAsyncPrompt:run bypassed, master password UI busy");
-      return;
+    this.log("Waiting for master password UI");
+
+    this._uiBusyPromise = new Promise();
+    await this._uiBusyPromise;
+  },
+
+  async _doAsyncPrompt(prompt, hashKey) {
+    this._setPendingPrompt(prompt, hashKey);
+
+    // UI might be busy due to the master password dialog. Wait for it to close.
+    await this._waitForLoginsUI(prompt);
+
+    let ok = false;
+    let promptAborted = false;
+    try {
+      this.log("_doAsyncPrompt - performing the prompt for '" + hashKey + "'");
+      ok = await prompt.prompter.promptAuthInternal(
+        prompt.channel,
+        prompt.level,
+        prompt.authInfo
+      );
+    } catch (e) {
+    if (e.instanceof Components.Exception && e.result == Cr.NS_ERROR_NOT_AVAILABLE)) {
+        this.log(
+          "_doAsyncPrompt bypassed, UI is not available in this context"
+       );
+        // Prompts throw NS_ERROR_NOT_AVAILABLE if they're aborted.
+        promptAborted = true;
+      } else {
+        Cu.reportError("LoginManagerAuthPrompter: _doAsyncPrompt " + e + "\n");
     }
 
     // Set up a counter for ensuring that the basic auth prompt can not
