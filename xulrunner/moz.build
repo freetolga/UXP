@@ -7,4 +7,12 @@ CONFIGURE_SUBST_FILES += ['installer/Makefile']
 
 DIRS += [
     'app',
+    'stub'
 ]
+
+if CONFIG['MAKENSISU']:
+    DIRS += ['installer/windows']
+
+if CONFIG['OS_ARCH'] == 'WINNT':
+    DIRS += ['tools/redit']
+
