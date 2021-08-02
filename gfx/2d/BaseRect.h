@@ -7,6 +7,7 @@
 #define MOZILLA_GFX_BASERECT_H_
 
 #include <algorithm>
+#include <limits>
 #include <cmath>
 #include <ostream>
 
