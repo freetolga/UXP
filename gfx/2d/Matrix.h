@@ -6,6 +6,8 @@
 #ifndef MOZILLA_GFX_MATRIX_H_
 #define MOZILLA_GFX_MATRIX_H_
 
+#include <limits>
+
 #include "Types.h"
 #include "Triangle.h"
 #include "Rect.h"
