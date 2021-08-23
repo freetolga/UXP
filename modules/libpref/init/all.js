@@ -430,6 +430,8 @@ pref("media.apple.mp4.enabled", true);
 // changes are made.
 pref("media.gmp.storage.version.expected", 1);
 
+pref("media.cubeb.backend", "");
+
 // Filter what triggers user notifications.
 // See DecoderDoctorDocumentWatcher::ReportAnalysis for details.
 pref("media.decoder-doctor.notifications-allowed", "MediaWMFNeeded,MediaWidevineNoWMFNoSilverlight,MediaCannotInitializePulseAudio,MediaCannotPlayNoDecoders,MediaUnsupportedLibavcodec");
