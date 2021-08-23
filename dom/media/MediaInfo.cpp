@@ -88,21 +88,29 @@ ChannelLayout ChannelLayout::L3F2{ AudioConfig::CHANNEL_FRONT_LEFT,
                                    AudioConfig::CHANNEL_FRONT_CENTER,
                                    AudioConfig::CHANNEL_SIDE_LEFT,
                                    AudioConfig::CHANNEL_SIDE_RIGHT };
-ChannelLayout ChannelLayout::L3F2_LFE{
-	AudioConfig::CHANNEL_FRONT_LEFT, AudioConfig::CHANNEL_FRONT_RIGHT, AudioConfig::CHANNEL_FRONT_CENTER,
-  AudioConfig::CHANNEL_LFE,        AudioConfig::CHANNEL_SIDE_LEFT,   AudioConfig::CHANNEL_SIDE_RIGHT
-};
+ChannelLayout ChannelLayout::L3F2_LFE{ AudioConfig::CHANNEL_FRONT_LEFT,
+	                               AudioConfig::CHANNEL_FRONT_RIGHT, 
+				       AudioConfig::CHANNEL_FRONT_CENTER,
+				       AudioConfig::CHANNEL_LFE,        
+				       AudioConfig::CHANNEL_SIDE_LEFT,   
+				       AudioConfig::CHANNEL_SIDE_RIGHT };
 ChannelLayout ChannelLayout::L5POINT1_SURROUND = ChannelLayout::L3F2_LFE;
 
-ChannelLayout ChannelLayout::L3F3R_LFE{
-	AudioConfig::CHANNEL_FRONT_LEFT,  AudioConfig::CHANNEL_FRONT_RIGHT, AudioConfig::CHANNEL_FRONT_CENTER, AudioConfig::CHANNEL_LFE,
-  AudioConfig::CHANNEL_BACK_CENTER, AudioConfig::CHANNEL_SIDE_LEFT,   AudioConfig::CHANNEL_SIDE_RIGHT
-};
-ChannelLayout ChannelLayout::L3F4_LFE{
-	AudioConfig::CHANNEL_FRONT_LEFT, AudioConfig::CHANNEL_FRONT_RIGHT, AudioConfig::CHANNEL_FRONT_CENTER,
-  AudioConfig::CHANNEL_LFE,        AudioConfig::CHANNEL_BACK_LEFT,   AudioConfig::CHANNEL_BACK_RIGHT,
-  AudioConfig::CHANNEL_SIDE_LEFT,  AudioConfig::CHANNEL_SIDE_RIGHT
-};
+ChannelLayout ChannelLayout::L3F3R_LFE{ AudioConfig::CHANNEL_FRONT_LEFT,  
+	                                AudioConfig::CHANNEL_FRONT_RIGHT, 
+					AudioConfig::CHANNEL_FRONT_CENTER, 
+					AudioConfig::CHANNEL_LFE,
+                                        AudioConfig::CHANNEL_BACK_CENTER,
+					AudioConfig::CHANNEL_SIDE_LEFT,   
+					AudioConfig::CHANNEL_SIDE_RIGHT };
+ChannelLayout ChannelLayout::L3F4_LFE{ AudioConfig::CHANNEL_FRONT_LEFT,
+	                               AudioConfig::CHANNEL_FRONT_RIGHT, 
+				       AudioConfig::CHANNEL_FRONT_CENTER,
+				       AudioConfig::CHANNEL_LFE,
+				       AudioConfig::CHANNEL_BACK_LEFT,
+				       AudioConfig::CHANNEL_BACK_RIGHT,
+                                       AudioConfig::CHANNEL_SIDE_LEFT,
+				       AudioConfig::CHANNEL_SIDE_RIGHT };
 ChannelLayout ChannelLayout::L7POINT1_SURROUND = ChannelLayout::L3F4_LFE;
 
 void
