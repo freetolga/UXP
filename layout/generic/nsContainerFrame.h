@@ -12,16 +12,7 @@
 #include "nsSplittableFrame.h"
 #include "nsFrameList.h"
 #include "nsLayoutUtils.h"
-
-// Option flags for ReflowChild() and FinishReflowChild()
-// member functions
-#define NS_FRAME_NO_MOVE_VIEW         0x0001
-#define NS_FRAME_NO_MOVE_FRAME        (0x0002 | NS_FRAME_NO_MOVE_VIEW)
-#define NS_FRAME_NO_SIZE_VIEW         0x0004
-#define NS_FRAME_NO_VISIBILITY        0x0008
-// Only applies to ReflowChild; if true, don't delete the next-in-flow, even
-// if the reflow is fully complete.
-#define NS_FRAME_NO_DELETE_NEXT_IN_FLOW_CHILD 0x0010
+#include "nsLineBox.h"
 
 class nsOverflowContinuationTracker;
 
@@ -173,14 +164,13 @@ public:
   // Set the view's size and position after its frame has been reflowed.
   //
   // Flags:
-  // NS_FRAME_NO_MOVE_VIEW - don't position the frame's view. Set this if you
+  // NoMoveView - don't position the frame's view. Set this if you
   //    don't want to automatically sync the frame and view
-  // NS_FRAME_NO_SIZE_VIEW - don't size the view
-  static void SyncFrameViewAfterReflow(nsPresContext* aPresContext,
-                                       nsIFrame*       aFrame,
-                                       nsView*        aView,
-                                       const nsRect&   aVisualOverflowArea,
-                                       uint32_t        aFlags = 0);
+  // NoSizeView - don't size the view
+  static void SyncFrameViewAfterReflow(
+      nsPresContext* aPresContext, nsIFrame* aFrame, nsView* aView,
+      const nsRect& aVisualOverflowArea,
+      ReflowChildFlags aFlags = ReflowChildFlags::Default);
 
   // Syncs properties to the top level view and window, like transparency and
   // shadow.
@@ -189,11 +179,9 @@ public:
   enum {
     SET_ASYNC = 0x01,
   };
-  static void SyncWindowProperties(nsPresContext*       aPresContext,
-                                   nsIFrame*            aFrame,
-                                   nsView*              aView,
-                                   nsRenderingContext*  aRC,
-                                   uint32_t             aFlags);
+  static void SyncWindowProperties(nsPresContext* aPresContext,
+                                   nsIFrame* aFrame, nsView* aView,
+                                   nsRenderingContext* aRC, uint32_t aFlags);
 
   // Sets the view's attributes from the frame style.
   // - visibility
@@ -222,7 +210,7 @@ public:
                                  const nsSize& aMaxSize);
 
   // Used by both nsInlineFrame and nsFirstLetterFrame.
-  void DoInlineIntrinsicISize(nsRenderingContext *aRenderingContext,
+  void DoInlineIntrinsicISize(nsRenderingContext* aRenderingContext,
                               InlineIntrinsicISizeData *aData,
                               nsLayoutUtils::IntrinsicISizeType aType);
 
@@ -248,20 +236,17 @@ public:
    * @param aContainerSize  size of the border-box of the containing frame
    *
    * Flags:
-   * NS_FRAME_NO_MOVE_VIEW - don't position the frame's view. Set this if you
+   * NoMoveView - don't position the frame's view. Set this if you
    *    don't want to automatically sync the frame and view
-   * NS_FRAME_NO_MOVE_FRAME - don't move the frame. aPos is ignored in this
-   *    case. Also implies NS_FRAME_NO_MOVE_VIEW
+   * NoMoveFrame - don't move the frame. aPos is ignored in this
+   *    case. Also implies NoMoveView
    */
-  void ReflowChild(nsIFrame*                      aChildFrame,
-                   nsPresContext*                 aPresContext,
-                   ReflowOutput&           aDesiredSize,
-                   const ReflowInput&       aReflowInput,
-                   const mozilla::WritingMode&    aWM,
-                   const mozilla::LogicalPoint&   aPos,
-                   const nsSize&                  aContainerSize,
-                   uint32_t                       aFlags,
-                   nsReflowStatus&                aStatus,
+  void ReflowChild(nsIFrame* aChildFrame, nsPresContext* aPresContext,
+                   ReflowOutput& aDesiredSize, const ReflowInput& aReflowInput,
+                   const mozilla::WritingMode& aWM,
+                   const mozilla::LogicalPoint& aPos,
+                   const nsSize& aContainerSize, ReflowChildFlags aFlags,
+                   nsReflowStatus& aStatus,
                    nsOverflowContinuationTracker* aTracker = nullptr);
 
   /**
@@ -277,41 +262,32 @@ public:
    * @param aContainerSize  size of the border-box of the containing frame
    *
    * Flags:
-   * NS_FRAME_NO_MOVE_FRAME - don't move the frame. aPos is ignored in this
-   *    case. Also implies NS_FRAME_NO_MOVE_VIEW
-   * NS_FRAME_NO_MOVE_VIEW - don't position the frame's view. Set this if you
+   * NoMoveFrame - don't move the frame. aPos is ignored in this
+   *    case. Also implies NoMoveView
+   * NoMoveView - don't position the frame's view. Set this if you
    *    don't want to automatically sync the frame and view
-   * NS_FRAME_NO_SIZE_VIEW - don't size the frame's view
+   * NoSizeView - don't size the frame's view
    */
-  static void FinishReflowChild(nsIFrame*                    aKidFrame,
-                                nsPresContext*               aPresContext,
-                                const ReflowOutput&   aDesiredSize,
-                                const ReflowInput*     aReflowInput,
-                                const mozilla::WritingMode&  aWM,
-                                const mozilla::LogicalPoint& aPos,
-                                const nsSize&                aContainerSize,
-                                uint32_t                     aFlags);
+  static void FinishReflowChild(
+      nsIFrame* aKidFrame, nsPresContext* aPresContext,
+      const ReflowOutput& aDesiredSize, const ReflowInput* aReflowInput,
+      const mozilla::WritingMode& aWM, const mozilla::LogicalPoint& aPos,
+      const nsSize& aContainerSize, ReflowChildFlags aFlags);
 
   //XXX temporary: hold on to a copy of the old physical versions of
   //    ReflowChild and FinishReflowChild so that we can convert callers
   //    incrementally.
-  void ReflowChild(nsIFrame*                      aKidFrame,
-                   nsPresContext*                 aPresContext,
-                   ReflowOutput&           aDesiredSize,
-                   const ReflowInput&       aReflowInput,
-                   nscoord                        aX,
-                   nscoord                        aY,
-                   uint32_t                       aFlags,
-                   nsReflowStatus&                aStatus,
+  void ReflowChild(nsIFrame* aKidFrame, nsPresContext* aPresContext,
+                   ReflowOutput& aDesiredSize, const ReflowInput& aReflowInput,
+                   nscoord aX, nscoord aY, ReflowChildFlags aFlags,
+                   nsReflowStatus& aStatus,
                    nsOverflowContinuationTracker* aTracker = nullptr);
 
-  static void FinishReflowChild(nsIFrame*                  aKidFrame,
-                                nsPresContext*             aPresContext,
+  static void FinishReflowChild(nsIFrame* aKidFrame,
+                                nsPresContext* aPresContext,
                                 const ReflowOutput& aDesiredSize,
-                                const ReflowInput*   aReflowInput,
-                                nscoord                    aX,
-                                nscoord                    aY,
-                                uint32_t                   aFlags);
+                                const ReflowInput* aReflowInput, nscoord aX,
+                                nscoord aY, ReflowChildFlags aFlags);
 
   static void PositionChildViews(nsIFrame* aFrame);
 
@@ -388,13 +364,11 @@ public:
    * @param aFlags is passed through to ReflowChild
    * @param aMergeFunc is passed to DrainExcessOverflowContainersList
    */
-  void ReflowOverflowContainerChildren(nsPresContext*           aPresContext,
-                                       const ReflowInput& aReflowInput,
-                                       nsOverflowAreas&         aOverflowRects,
-                                       uint32_t                 aFlags,
-                                       nsReflowStatus&          aStatus,
-                                       ChildFrameMerger aMergeFunc =
-                                         DefaultChildFrameMerge);
+  void ReflowOverflowContainerChildren(
+      nsPresContext* aPresContext, const ReflowInput& aReflowInput,
+      nsOverflowAreas& aOverflowRects, ReflowChildFlags aFlags,
+      nsReflowStatus& aStatus,
+      ChildFrameMerger aMergeFunc = DefaultChildFrameMerge);
 
   /**
    * Move any frames on our overflow list to the end of our principal list.

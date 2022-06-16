@@ -1856,7 +1856,7 @@ nsFlexContainerFrame::MeasureAscentAndHeightForFlexItem(
   ReflowOutput childDesiredSize(aChildReflowInput);
   nsReflowStatus childReflowStatus;
 
-  const uint32_t flags = NS_FRAME_NO_MOVE_FRAME;
+  const ReflowChildFlags flags = ReflowChildFlags::NoMoveFrame;
   ReflowChild(aItem.Frame(), aPresContext,
               childDesiredSize, aChildReflowInput,
               0, 0, flags, childReflowStatus);
@@ -4853,10 +4853,9 @@ nsFlexContainerFrame::ReflowFlexItem(nsPresContext* aPresContext,
 
   ReflowOutput childDesiredSize(childReflowInput);
   nsReflowStatus childReflowStatus;
-  ReflowChild(aItem.Frame(), aPresContext,
-              childDesiredSize, childReflowInput,
-              outerWM, aFramePos, aContainerSize,
-              0, childReflowStatus);
+  ReflowChild(aItem.Frame(), aPresContext, childDesiredSize, childReflowInput,
+              outerWM, aFramePos, aContainerSize, ReflowChildFlags::Default,
+              childReflowStatus);
 
   // XXXdholbert Once we do pagination / splitting, we'll need to actually
   // handle incomplete childReflowStatuses. But for now, we give our kids
@@ -4872,9 +4871,9 @@ nsFlexContainerFrame::ReflowFlexItem(nsPresContext* aPresContext,
                                               offsets, &aFramePos,
                                               aContainerSize);
 
-  FinishReflowChild(aItem.Frame(), aPresContext,
-                    childDesiredSize, &childReflowInput,
-                    outerWM, aFramePos, aContainerSize, 0);
+  FinishReflowChild(aItem.Frame(), aPresContext, childDesiredSize,
+                    &childReflowInput, outerWM, aFramePos, aContainerSize,
+                    ReflowChildFlags::Default);
 
   aItem.SetAscent(childDesiredSize.BlockStartAscent());
 }
@@ -4899,14 +4898,13 @@ nsFlexContainerFrame::ReflowPlaceholders(nsPresContext* aPresContext,
                                  placeholder, availSize);
     ReflowOutput childDesiredSize(childReflowInput);
     nsReflowStatus childReflowStatus;
-    ReflowChild(placeholder, aPresContext,
-                childDesiredSize, childReflowInput,
-                outerWM, aContentBoxOrigin, aContainerSize, 0,
-                childReflowStatus);
+    ReflowChild(placeholder, aPresContext, childDesiredSize, childReflowInput,
+                outerWM, aContentBoxOrigin, aContainerSize,
+                ReflowChildFlags::Default, childReflowStatus);
 
-    FinishReflowChild(placeholder, aPresContext,
-                      childDesiredSize, &childReflowInput,
-                      outerWM, aContentBoxOrigin, aContainerSize, 0);
+    FinishReflowChild(placeholder, aPresContext, childDesiredSize,
+                      &childReflowInput, outerWM, aContentBoxOrigin,
+                      aContainerSize, ReflowChildFlags::Default);
 
     // Mark the placeholder frame to indicate that it's not actually at the
     // element's static position, because we need to apply CSS Alignment after

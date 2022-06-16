@@ -753,23 +753,19 @@ void nsContainerFrame::SetSizeConstraints(nsPresContext* aPresContext,
   aWidget->SetSizeConstraints(constraints);
 }
 
-void
-nsContainerFrame::SyncFrameViewAfterReflow(nsPresContext* aPresContext,
-                                           nsIFrame*       aFrame,
-                                           nsView*        aView,
-                                           const nsRect&   aVisualOverflowArea,
-                                           uint32_t        aFlags)
-{
+void nsContainerFrame::SyncFrameViewAfterReflow(
+    nsPresContext* aPresContext, nsIFrame* aFrame, nsView* aView,
+    const nsRect& aVisualOverflowArea, ReflowChildFlags aFlags) {
   if (!aView) {
     return;
   }
 
   // Make sure the view is sized and positioned correctly
-  if (0 == (aFlags & NS_FRAME_NO_MOVE_VIEW)) {
+  if (!(aFlags & ReflowChildFlags::NoMoveView)) {
     PositionFrameView(aFrame);
   }
 
-  if (0 == (aFlags & NS_FRAME_NO_SIZE_VIEW)) {
+  if (!(aFlags & ReflowChildFlags::NoSizeView)) {
     nsViewManager* vm = aView->GetViewManager();
 
     vm->ResizeView(aView, aVisualOverflowArea, true);
@@ -1024,30 +1020,25 @@ nsContainerFrame::ComputeAutoSize(nsRenderingContext* aRenderingContext,
   return result;
 }
 
-void
-nsContainerFrame::ReflowChild(nsIFrame*                aKidFrame,
-                              nsPresContext*           aPresContext,
-                              ReflowOutput&     aDesiredSize,
-                              const ReflowInput& aReflowInput,
-                              const WritingMode&       aWM,
-                              const LogicalPoint&      aPos,
-                              const nsSize&            aContainerSize,
-                              uint32_t                 aFlags,
-                              nsReflowStatus&          aStatus,
-                              nsOverflowContinuationTracker* aTracker)
-{
-  NS_PRECONDITION(aReflowInput.mFrame == aKidFrame, "bad reflow state");
+void nsContainerFrame::ReflowChild(
+    nsIFrame* aKidFrame, nsPresContext* aPresContext,
+    ReflowOutput& aDesiredSize, const ReflowInput& aReflowInput,
+    const WritingMode& aWM, const LogicalPoint& aPos,
+    const nsSize& aContainerSize, ReflowChildFlags aFlags,
+    nsReflowStatus& aStatus, nsOverflowContinuationTracker* aTracker) {
+  MOZ_ASSERT(aReflowInput.mFrame == aKidFrame, "bad reflow input");
   if (aWM.IsVerticalRL() || (!aWM.IsVertical() && !aWM.IsBidiLTR())) {
     NS_ASSERTION(aContainerSize.width != NS_UNCONSTRAINEDSIZE,
                  "ReflowChild with unconstrained container width!");
   }
 
   // Position the child frame and its view if requested.
-  if (NS_FRAME_NO_MOVE_FRAME != (aFlags & NS_FRAME_NO_MOVE_FRAME)) {
+  if (ReflowChildFlags::NoMoveFrame !=
+      (aFlags & ReflowChildFlags::NoMoveFrame)) {
     aKidFrame->SetPosition(aWM, aPos, aContainerSize);
   }
 
-  if (0 == (aFlags & NS_FRAME_NO_MOVE_VIEW)) {
+  if (!(aFlags & ReflowChildFlags::NoMoveView)) {
     PositionFrameView(aKidFrame);
     PositionChildViews(aKidFrame);
   }
@@ -1056,10 +1047,9 @@ nsContainerFrame::ReflowChild(nsIFrame*                aKidFrame,
   aKidFrame->Reflow(aPresContext, aDesiredSize, aReflowInput, aStatus);
 
   // If the child frame is complete, delete any next-in-flows,
-  // but only if the NO_DELETE_NEXT_IN_FLOW flag isn't set.
-  if (!NS_INLINE_IS_BREAK_BEFORE(aStatus) &&
-      NS_FRAME_IS_FULLY_COMPLETE(aStatus) &&
-      !(aFlags & NS_FRAME_NO_DELETE_NEXT_IN_FLOW_CHILD)) {
+  // but only if the NoDeleteNextInFlowChild flag isn't set.
+  if (!aStatus.IsInlineBreakBefore() && aStatus.IsFullyComplete() &&
+      !(aFlags & ReflowChildFlags::NoDeleteNextInFlowChild)) {
     nsIFrame* kidNextInFlow = aKidFrame->GetNextInFlow();
     if (kidNextInFlow) {
       // Remove all of the childs next-in-flows. Make sure that we ask
@@ -1073,25 +1063,22 @@ nsContainerFrame::ReflowChild(nsIFrame*                aKidFrame,
 
 //XXX temporary: hold on to a copy of the old physical version of
 //    ReflowChild so that we can convert callers incrementally.
-void
-nsContainerFrame::ReflowChild(nsIFrame*                aKidFrame,
-                              nsPresContext*           aPresContext,
-                              ReflowOutput&     aDesiredSize,
-                              const ReflowInput& aReflowInput,
-                              nscoord                  aX,
-                              nscoord                  aY,
-                              uint32_t                 aFlags,
-                              nsReflowStatus&          aStatus,
-                              nsOverflowContinuationTracker* aTracker)
-{
-  NS_PRECONDITION(aReflowInput.mFrame == aKidFrame, "bad reflow state");
+void nsContainerFrame::ReflowChild(nsIFrame* aKidFrame,
+                                   nsPresContext* aPresContext,
+                                   ReflowOutput& aDesiredSize,
+                                   const ReflowInput& aReflowInput, nscoord aX,
+                                   nscoord aY, ReflowChildFlags aFlags,
+                                   nsReflowStatus& aStatus,
+                                   nsOverflowContinuationTracker* aTracker) {
+  MOZ_ASSERT(aReflowInput.mFrame == aKidFrame, "bad reflow input");
 
   // Position the child frame and its view if requested.
-  if (NS_FRAME_NO_MOVE_FRAME != (aFlags & NS_FRAME_NO_MOVE_FRAME)) {
+  if (ReflowChildFlags::NoMoveFrame !=
+      (aFlags & ReflowChildFlags::NoMoveFrame)) {
     aKidFrame->SetPosition(nsPoint(aX, aY));
   }
 
-  if (0 == (aFlags & NS_FRAME_NO_MOVE_VIEW)) {
+  if (!(aFlags & ReflowChildFlags::NoMoveView)) {
     PositionFrameView(aKidFrame);
     PositionChildViews(aKidFrame);
   }
@@ -1100,9 +1087,9 @@ nsContainerFrame::ReflowChild(nsIFrame*                aKidFrame,
   aKidFrame->Reflow(aPresContext, aDesiredSize, aReflowInput, aStatus);
 
   // If the child frame is complete, delete any next-in-flows,
-  // but only if the NO_DELETE_NEXT_IN_FLOW flag isn't set.
-  if (NS_FRAME_IS_FULLY_COMPLETE(aStatus) &&
-      !(aFlags & NS_FRAME_NO_DELETE_NEXT_IN_FLOW_CHILD)) {
+  // but only if the NoDeleteNextInFlowChild flag isn't set.
+  if (aStatus.IsFullyComplete() &&
+      !(aFlags & ReflowChildFlags::NoDeleteNextInFlowChild)) {
     nsIFrame* kidNextInFlow = aKidFrame->GetNextInFlow();
     if (kidNextInFlow) {
       // Remove all of the childs next-in-flows. Make sure that we ask
@@ -1161,22 +1148,17 @@ nsContainerFrame::PositionChildViews(nsIFrame* aFrame)
  * - invoked the DidReflow() function
  *
  * Flags:
- * NS_FRAME_NO_MOVE_FRAME - don't move the frame. aX and aY are ignored in this
- *    case. Also implies NS_FRAME_NO_MOVE_VIEW
- * NS_FRAME_NO_MOVE_VIEW - don't position the frame's view. Set this if you
- *    don't want to automatically sync the frame and view
- * NS_FRAME_NO_SIZE_VIEW - don't size the frame's view
+ * ReflowChildFlags::NoMoveFrame - don't move the frame. aX and aY are ignored
+ *    in this case. Also implies ReflowChildFlags::NoMoveView
+ * ReflowChildFlags::NoMoveView - don't position the frame's view. Set this if
+ *    you don't want to automatically sync the frame and view
+ * ReflowChildFlags::NoSizeView - don't size the frame's view
  */
-void
-nsContainerFrame::FinishReflowChild(nsIFrame*                  aKidFrame,
-                                    nsPresContext*             aPresContext,
-                                    const ReflowOutput& aDesiredSize,
-                                    const ReflowInput*   aReflowInput,
-                                    const WritingMode&         aWM,
-                                    const LogicalPoint&        aPos,
-                                    const nsSize&              aContainerSize,
-                                    uint32_t                   aFlags)
-{
+void nsContainerFrame::FinishReflowChild(
+    nsIFrame* aKidFrame, nsPresContext* aPresContext,
+    const ReflowOutput& aDesiredSize, const ReflowInput* aReflowInput,
+    const WritingMode& aWM, const LogicalPoint& aPos,
+    const nsSize& aContainerSize, nsIFrame::ReflowChildFlags aFlags) {
   if (aWM.IsVerticalRL() || (!aWM.IsVertical() && !aWM.IsBidiLTR())) {
     NS_ASSERTION(aContainerSize.width != NS_UNCONSTRAINEDSIZE,
                  "FinishReflowChild with unconstrained container width!");
@@ -1184,10 +1166,11 @@ nsContainerFrame::FinishReflowChild(nsIFrame*                  aKidFrame,
 
   nsPoint curOrigin = aKidFrame->GetPosition();
   WritingMode outerWM = aDesiredSize.GetWritingMode();
-  LogicalSize convertedSize = aDesiredSize.Size(outerWM).ConvertTo(aWM,
-                                                                   outerWM);
+  LogicalSize convertedSize =
+      aDesiredSize.Size(outerWM).ConvertTo(aWM, outerWM);
 
-  if (NS_FRAME_NO_MOVE_FRAME != (aFlags & NS_FRAME_NO_MOVE_FRAME)) {
+  if (ReflowChildFlags::NoMoveFrame !=
+      (aFlags & ReflowChildFlags::NoMoveFrame)) {
     aKidFrame->SetRect(aWM, LogicalRect(aWM, aPos, convertedSize),
                        aContainerSize);
   } else {
@@ -1203,7 +1186,7 @@ nsContainerFrame::FinishReflowChild(nsIFrame*                  aKidFrame,
   }
 
   nsPoint newOrigin = aKidFrame->GetPosition();
-  if (!(aFlags & NS_FRAME_NO_MOVE_VIEW) && curOrigin != newOrigin) {
+  if (!(aFlags & ReflowChildFlags::NoMoveView) && curOrigin != newOrigin) {
     if (!aKidFrame->HasView()) {
       // If the frame has moved, then we need to make sure any child views are
       // correctly positioned
@@ -1216,19 +1199,18 @@ nsContainerFrame::FinishReflowChild(nsIFrame*                  aKidFrame,
 
 //XXX temporary: hold on to a copy of the old physical version of
 //    FinishReflowChild so that we can convert callers incrementally.
-void
-nsContainerFrame::FinishReflowChild(nsIFrame*                  aKidFrame,
-                                    nsPresContext*             aPresContext,
-                                    const ReflowOutput& aDesiredSize,
-                                    const ReflowInput*   aReflowInput,
-                                    nscoord                    aX,
-                                    nscoord                    aY,
-                                    uint32_t                   aFlags)
-{
+void nsContainerFrame::FinishReflowChild(nsIFrame* aKidFrame,
+                                         nsPresContext* aPresContext,
+                                         const ReflowOutput& aDesiredSize,
+                                         const ReflowInput* aReflowInput,
+                                         nscoord aX, nscoord aY,
+                                         ReflowChildFlags aFlags) {
   nsPoint curOrigin = aKidFrame->GetPosition();
 
-  if (NS_FRAME_NO_MOVE_FRAME != (aFlags & NS_FRAME_NO_MOVE_FRAME)) {
-    aKidFrame->SetRect(nsRect(aX, aY, aDesiredSize.Width(), aDesiredSize.Height()));
+  if (ReflowChildFlags::NoMoveFrame !=
+      (aFlags & ReflowChildFlags::NoMoveFrame)) {
+    aKidFrame->SetRect(
+        nsRect(aX, aY, aDesiredSize.Width(), aDesiredSize.Height()));
   } else {
     aKidFrame->SetSize(nsSize(aDesiredSize.Width(), aDesiredSize.Height()));
   }
@@ -1241,7 +1223,7 @@ nsContainerFrame::FinishReflowChild(nsIFrame*                  aKidFrame,
                              aDesiredSize.VisualOverflow(), aFlags);
   }
 
-  if (!(aFlags & NS_FRAME_NO_MOVE_VIEW) &&
+  if (!(aFlags & ReflowChildFlags::NoMoveView) &&
       (curOrigin.x != aX || curOrigin.y != aY)) {
     if (!aKidFrame->HasView()) {
       // If the frame has moved, then we need to make sure any child views are
@@ -1253,15 +1235,11 @@ nsContainerFrame::FinishReflowChild(nsIFrame*                  aKidFrame,
   aKidFrame->DidReflow(aPresContext, aReflowInput, nsDidReflowStatus::FINISHED);
 }
 
-void
-nsContainerFrame::ReflowOverflowContainerChildren(nsPresContext*           aPresContext,
-                                                  const ReflowInput& aReflowInput,
-                                                  nsOverflowAreas&         aOverflowRects,
-                                                  uint32_t                 aFlags,
-                                                  nsReflowStatus&          aStatus,
-                                                  ChildFrameMerger         aMergeFunc)
-{
-  NS_PRECONDITION(aPresContext, "null pointer");
+void nsContainerFrame::ReflowOverflowContainerChildren(
+    nsPresContext* aPresContext, const ReflowInput& aReflowInput,
+    nsOverflowAreas& aOverflowRects, ReflowChildFlags aFlags,
+    nsReflowStatus& aStatus, ChildFrameMerger aMergeFunc) {
+  MOZ_ASSERT(aPresContext, "null pointer");
 
   nsFrameList* overflowContainers = DrainExcessOverflowContainersList(aMergeFunc);
   if (!overflowContainers) {
