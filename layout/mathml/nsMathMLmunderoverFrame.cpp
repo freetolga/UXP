@@ -665,8 +665,9 @@ nsMathMLmunderoverFrame::Place(DrawTarget*          aDrawTarget,
     nscoord dy;
     // place overscript
     if (overFrame) {
-      dy = aDesiredSize.BlockStartAscent() - mBoundingMetrics.ascent +
-           bmOver.ascent - overSize.BlockStartAscent();
+      dy = aDesiredSize.BlockStartAscent() -
+           mBoundingMetrics.ascent + bmOver.ascent -
+           overSize.BlockStartAscent();
       FinishReflowChild(overFrame, PresContext(), overSize, nullptr, dxOver, dy,
                         ReflowChildFlags::Default);
     }
@@ -676,10 +677,11 @@ nsMathMLmunderoverFrame::Place(DrawTarget*          aDrawTarget,
                       ReflowChildFlags::Default);
     // place underscript
     if (underFrame) {
-      dy = aDesiredSize.BlockStartAscent() + mBoundingMetrics.descent -
-           bmUnder.descent - underSize.BlockStartAscent();
-      FinishReflowChild(underFrame, PresContext(), underSize, nullptr, dxUnder,
-                        dy, ReflowChildFlags::Default);
+      dy = aDesiredSize.BlockStartAscent() +
+           mBoundingMetrics.descent - bmUnder.descent -
+           underSize.BlockStartAscent();
+      FinishReflowChild(underFrame, PresContext(), underSize, nullptr,
+                        dxUnder, dy, ReflowChildFlags::Default);
     }
   }
   return NS_OK;

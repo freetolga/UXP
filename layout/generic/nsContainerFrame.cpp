@@ -1036,7 +1036,7 @@ nsContainerFrame::ReflowChild(nsIFrame*                aKidFrame,
                               nsReflowStatus&          aStatus,
                               nsOverflowContinuationTracker* aTracker)
 {
-  MOZ_ASSERT(aReflowInput.mFrame == aKidFrame, "bad reflow input");
+  NS_PRECONDITION(aReflowInput.mFrame == aKidFrame, "bad reflow state");
   if (aWM.IsVerticalRL() || (!aWM.IsVertical() && !aWM.IsBidiLTR())) {
     NS_ASSERTION(aContainerSize.width != NS_UNCONSTRAINEDSIZE,
                  "ReflowChild with unconstrained container width!");
@@ -1084,7 +1084,7 @@ nsContainerFrame::ReflowChild(nsIFrame*                aKidFrame,
                               nsReflowStatus&          aStatus,
                               nsOverflowContinuationTracker* aTracker)
 {
-  MOZ_ASSERT(aReflowInput.mFrame == aKidFrame, "bad reflow input");
+  NS_PRECONDITION(aReflowInput.mFrame == aKidFrame, "bad reflow state");
 
   // Position the child frame and its view if requested.
   if (ReflowChildFlags::NoMoveFrame !=
@@ -1266,7 +1266,7 @@ nsContainerFrame::ReflowOverflowContainerChildren(nsPresContext*           aPres
                                                   nsReflowStatus&          aStatus,
                                                   ChildFrameMerger         aMergeFunc)
 {
-  MOZ_ASSERT(aPresContext, "null pointer");
+  NS_PRECONDITION(aPresContext, "null pointer");
 
   nsFrameList* overflowContainers = DrainExcessOverflowContainersList(aMergeFunc);
   if (!overflowContainers) {

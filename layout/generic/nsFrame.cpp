@@ -9821,9 +9821,9 @@ nsFrame::BoxReflow(nsBoxLayoutState&        aState,
     NS_ASSERTION(NS_FRAME_IS_COMPLETE(status), "bad status");
 
     ReflowChildFlags layoutFlags = aState.LayoutFlags();
-    nsContainerFrame::FinishReflowChild(
-        this, aPresContext, aDesiredSize, &reflowInput, aX, aY,
-        layoutFlags | ReflowChildFlags::NoMoveFrame);
+    nsContainerFrame::FinishReflowChild(this, aPresContext, aDesiredSize,
+                                        &reflowInput, aX, aY, layoutFlags |
+                                        ReflowChildFlags::NoMoveFrame);
 
     // Save the ascent.  (bug 103925)
     if (IsXULCollapsed()) {

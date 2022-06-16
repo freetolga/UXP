@@ -632,10 +632,11 @@ nsMathMLmmultiscriptsFrame::PlaceMultiScript(nsPresContext*  aPresContext,
         // place the base ...
         childFrame = baseFrame;
         dy = aDesiredSize.BlockStartAscent() - baseSize.BlockStartAscent();
-        FinishReflowChild(
-            baseFrame, aPresContext, baseSize, nullptr,
-            aFrame->MirrorIfRTL(aDesiredSize.Width(), baseSize.Width(), dx), dy,
-            ReflowChildFlags::Default);
+        FinishReflowChild(baseFrame, aPresContext, baseSize, nullptr,
+                          aFrame->MirrorIfRTL(aDesiredSize.Width(),
+                                              baseSize.Width(),
+                                              dx),
+                          dy, ReflowChildFlags::Default);
         dx += bmBase.width;
       } else if (prescriptsFrame == childFrame) {
         // Clear reflow flags of prescripts frame.
@@ -663,13 +664,15 @@ nsMathMLmmultiscriptsFrame::PlaceMultiScript(nsPresContext*  aPresContext,
             nscoord x = dx;
             // prescripts should be right aligned
             // https://bugzilla.mozilla.org/show_bug.cgi?id=928675
-            if (isPreScript) x += width - subScriptSize.Width();
-            dy = aDesiredSize.BlockStartAscent() -
-                 subScriptSize.BlockStartAscent() + maxSubScriptShift;
+            if (isPreScript)
+              x += width - subScriptSize.Width();
+            dy = aDesiredSize.BlockStartAscent() - subScriptSize.BlockStartAscent() +
+              maxSubScriptShift;
             FinishReflowChild(subScriptFrame, aPresContext, subScriptSize,
                               nullptr,
                               aFrame->MirrorIfRTL(aDesiredSize.Width(),
-                                                  subScriptSize.Width(), x),
+                                                  subScriptSize.Width(),
+                                                  x),
                               dy, ReflowChildFlags::Default);
           }
 
@@ -681,12 +684,13 @@ nsMathMLmmultiscriptsFrame::PlaceMultiScript(nsPresContext*  aPresContext,
               // post superscripts are shifted by the italic correction value
               x += italicCorrection;
             }
-            dy = aDesiredSize.BlockStartAscent() -
-                 supScriptSize.BlockStartAscent() - maxSupScriptShift;
+            dy = aDesiredSize.BlockStartAscent() - supScriptSize.BlockStartAscent() -
+              maxSupScriptShift;
             FinishReflowChild(supScriptFrame, aPresContext, supScriptSize,
                               nullptr,
                               aFrame->MirrorIfRTL(aDesiredSize.Width(),
-                                                  supScriptSize.Width(), x),
+                                                  supScriptSize.Width(),
+                                                  x),
                               dy, ReflowChildFlags::Default);
           }
           dx += width + scriptSpace;

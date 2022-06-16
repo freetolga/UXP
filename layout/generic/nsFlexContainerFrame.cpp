@@ -4853,8 +4853,10 @@ nsFlexContainerFrame::ReflowFlexItem(nsPresContext* aPresContext,
 
   ReflowOutput childDesiredSize(childReflowInput);
   nsReflowStatus childReflowStatus;
-  ReflowChild(aItem.Frame(), aPresContext, childDesiredSize, childReflowInput,
-              outerWM, aFramePos, aContainerSize, ReflowChildFlags::Default,
+  ReflowChild(aItem.Frame(), aPresContext,
+              childDesiredSize, childReflowInput,
+              outerWM, aFramePos, aContainerSize,
+              ReflowChildFlags::Default,
               childReflowStatus);
 
   // XXXdholbert Once we do pagination / splitting, we'll need to actually

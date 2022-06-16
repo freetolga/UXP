@@ -3329,10 +3329,9 @@ nsLineLayout::RelativePositionFrames(PerSpanData* psd, nsOverflowAreas& aOverflo
     // descendants so that widgets are positioned properly (since only
     // some views have widgets).
     if (frame->HasView())
-      nsContainerFrame::SyncFrameViewAfterReflow(
-          mPresContext, frame, frame->GetView(),
-          pfd->mOverflowAreas.VisualOverflow(),
-          nsIFrame::ReflowChildFlags::NoSizeView);
+      nsContainerFrame::SyncFrameViewAfterReflow(mPresContext, frame,
+        frame->GetView(), pfd->mOverflowAreas.VisualOverflow(),
+        nsIFrame::ReflowChildFlags::NoSizeView);
 
     // Note: the combined area of a child is in its coordinate
     // system. We adjust the childs combined area into our coordinate
@@ -3377,9 +3376,10 @@ nsLineLayout::RelativePositionFrames(PerSpanData* psd, nsOverflowAreas& aOverflo
     // below) so we get leaf frames as well.  No need to worry
     // about the root span, since it doesn't have a frame.
     if (frame->HasView())
-      nsContainerFrame::SyncFrameViewAfterReflow(
-          mPresContext, frame, frame->GetView(), r.VisualOverflow(),
-          nsIFrame::ReflowChildFlags::NoMoveView);
+      nsContainerFrame::SyncFrameViewAfterReflow(mPresContext, frame,
+                                                 frame->GetView(),
+                                                 r.VisualOverflow(),
+                                                 nsIFrame::ReflowChildFlags::NoMoveView);
 
     overflowAreas.UnionWith(r + frame->GetPosition());
   }

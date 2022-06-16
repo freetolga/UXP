@@ -638,7 +638,8 @@ void nsTableCellFrame::BlockDirAlignChild(WritingMode aWM, nscoord aMaxAscent)
     firstKid->InvalidateFrameSubtree();
   }
   if (HasView()) {
-    nsContainerFrame::SyncFrameViewAfterReflow(PresContext(), this, GetView(),
+    nsContainerFrame::SyncFrameViewAfterReflow(PresContext(), this,
+                                               GetView(),
                                                desiredSize.VisualOverflow(),
                                                ReflowChildFlags::Default);
   }

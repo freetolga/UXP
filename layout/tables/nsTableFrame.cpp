@@ -110,6 +110,7 @@ struct TableReflowInput {
     }
     availSize.BSize(aWM) -= aAmount;
     availSize.BSize(aWM) = std::max(0, availSize.BSize(aWM));
+
   }
 };
 

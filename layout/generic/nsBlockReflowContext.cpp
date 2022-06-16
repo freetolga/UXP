@@ -454,9 +454,10 @@ nsBlockReflowContext::PlaceBlock(const ReflowInput&  aReflowInput,
   aReflowInput.ApplyRelativePositioning(&logPos, mContainerSize);
 
   // Now place the frame and complete the reflow process
-  nsContainerFrame::FinishReflowChild(
-      mFrame, mPresContext, mMetrics, &aReflowInput, frameWM, logPos,
-      mContainerSize, nsIFrame::ReflowChildFlags::Default);
+  nsContainerFrame::FinishReflowChild(mFrame, mPresContext, mMetrics,
+                                      &aReflowInput, frameWM, logPos,
+                                      mContainerSize,
+                                      nsIFrame::ReflowChildFlags::Default);
 
   aOverflowAreas = mMetrics.mOverflowAreas + mFrame->GetPosition();
 

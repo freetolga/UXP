@@ -585,10 +585,10 @@ nsHTMLScrollFrame::ReflowScrolledFrame(ScrollReflowInput* aState,
   // resize here would size it to the natural height of the frame,
   // which will usually be different from the scrollport height;
   // invalidating the difference will cause unnecessary repainting.
-  FinishReflowChild(
-      mHelper.mScrolledFrame, presContext, *aMetrics, &kidReflowInput, wm,
-      LogicalPoint(wm), dummyContainerSize,
-      ReflowChildFlags::NoMoveFrame | ReflowChildFlags::NoSizeView);
+  FinishReflowChild(mHelper.mScrolledFrame, presContext,
+                    *aMetrics, &kidReflowInput, wm, LogicalPoint(wm),
+                    dummyContainerSize,
+                    ReflowChildFlags::NoMoveFrame | ReflowChildFlags::NoSizeView);
 
   // XXX Some frames (e.g., nsPluginFrame, nsFrameFrame, nsTextFrame) don't bother
   // setting their mOverflowArea. This is wrong because every frame should
@@ -797,9 +797,11 @@ nsHTMLScrollFrame::PlaceScrollArea(ScrollReflowInput& aState,
   // scrolled view to clamp scroll requests.
   // Normally the scrolledFrame won't have a view but in some cases it
   // might create its own.
-  nsContainerFrame::SyncFrameViewAfterReflow(
-      scrolledFrame->PresContext(), scrolledFrame, scrolledFrame->GetView(),
-      scrolledArea, ReflowChildFlags::Default);
+  nsContainerFrame::SyncFrameViewAfterReflow(scrolledFrame->PresContext(),
+                                             scrolledFrame,
+                                             scrolledFrame->GetView(),
+                                             scrolledArea,
+                                             ReflowChildFlags::Default);
 }
 
 nscoord
