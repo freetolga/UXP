@@ -700,23 +700,6 @@ nsCanvasFrame::Reflow(nsPresContext*           aPresContext,
                                     ReflowChildFlags::Default, aStatus);
   }
 
-  if (mPopupSetFrame) {
-    MOZ_ASSERT(mFrames.ContainsFrame(mPopupSetFrame),
-               "Only normal flow supported.");
-    nsReflowStatus popupStatus;
-    ReflowOutput popupDesiredSize(aReflowInput.GetWritingMode());
-    WritingMode wm = mPopupSetFrame->GetWritingMode();
-    LogicalSize availSize = aReflowInput.ComputedSize(wm);
-    availSize.BSize(wm) = NS_UNCONSTRAINEDSIZE;
-    ReflowInput popupReflowInput(aPresContext, aReflowInput, mPopupSetFrame,
-                                 availSize);
-    ReflowChild(mPopupSetFrame, aPresContext, popupDesiredSize,
-                popupReflowInput, 0, 0, ReflowChildFlags::NoMoveFrame,
-                popupStatus);
-    FinishReflowChild(mPopupSetFrame, aPresContext, popupDesiredSize,
-                      &popupReflowInput, 0, 0, ReflowChildFlags::NoMoveFrame);
-  }
-
   FinishReflowWithAbsoluteFrames(aPresContext, aDesiredSize, aReflowInput, aStatus);
 
   NS_FRAME_TRACE_REFLOW_OUT("nsCanvasFrame::Reflow", aStatus);

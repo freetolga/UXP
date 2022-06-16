@@ -2234,9 +2234,10 @@ public:
    * @param aStatus a return value indicating whether the frame is complete
    *          and whether the next-in-flow is dirty and needs to be reflowed
    */
-  virtual void Reflow(nsPresContext* aPresContext, ReflowOutput& aReflowOutput,
+  virtual void Reflow(nsPresContext*           aPresContext,
+                      ReflowOutput&     aReflowOutput,
                       const ReflowInput& aReflowInput,
-                      nsReflowStatus& aStatus) = 0;
+                      nsReflowStatus&          aStatus) = 0;
 
   // Option flags for ReflowChild() and FinishReflowChild()
   // member functions

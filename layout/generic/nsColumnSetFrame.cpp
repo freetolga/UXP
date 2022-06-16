@@ -636,11 +636,11 @@ nsColumnSetFrame::ReflowChildren(ReflowOutput&     aDesiredSize,
       // columns would flow around it.
 
       // Reflow the frame
-      LogicalPoint origin(
-          wm,
-          childOrigin.I(wm) + kidReflowInput.ComputedLogicalMargin().IStart(wm),
-          childOrigin.B(wm) +
-              kidReflowInput.ComputedLogicalMargin().BStart(wm));
+      LogicalPoint origin(wm,
+                          childOrigin.I(wm) +
+                          kidReflowInput.ComputedLogicalMargin().IStart(wm),
+                          childOrigin.B(wm) +
+                          kidReflowInput.ComputedLogicalMargin().BStart(wm));
       ReflowChild(child, PresContext(), kidDesiredSize, kidReflowInput, wm,
                   origin, containerSize, ReflowChildFlags::Default, aStatus);
 
@@ -657,7 +657,7 @@ nsColumnSetFrame::ReflowChildren(ReflowOutput&     aDesiredSize,
       *aCarriedOutBEndMargin = kidDesiredSize.mCarriedOutBEndMargin;
 
       FinishReflowChild(child, PresContext(), kidDesiredSize, &kidReflowInput,
-                        wm, childOrigin, containerSize
+                        wm, childOrigin, containerSize,
                         ReflowChildFlags::Default);
 
       childContentBEnd = nsLayoutUtils::CalculateContentBEnd(wm, child);

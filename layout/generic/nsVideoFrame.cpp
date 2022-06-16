@@ -386,7 +386,7 @@ nsVideoFrame::Reflow(nsPresContext* aPresContext,
 
       FinishReflowChild(child, aPresContext,
                         kidDesiredSize, &kidReflowInput,
-                        mBorderPadding.left, mBorderPadding.top
+                        mBorderPadding.left, mBorderPadding.top,
                         ReflowChildFlags::Default);
     }
   }
