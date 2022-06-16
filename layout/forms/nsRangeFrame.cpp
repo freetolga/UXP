@@ -464,12 +464,12 @@ nsRangeFrame::ReflowAnonymousContent(nsPresContext*           aPresContext,
     nsReflowStatus frameStatus;
     ReflowOutput progressDesiredSize(aReflowInput);
     ReflowChild(rangeProgressFrame, aPresContext, progressDesiredSize,
-                progressReflowInput, 0, 0, ReflowChildFlags::Default
+                progressReflowInput, 0, 0, ReflowChildFlags::Default,
                 frameStatus);
     MOZ_ASSERT(NS_FRAME_IS_FULLY_COMPLETE(frameStatus),
                "We gave our child unconstrained height, so it should be complete");
-    FinishReflowChild(rangeProgressFrame, aPresContext,
-                      progressDesiredSize, &progressReflowInput, 0, 0, 0);
+    FinishReflowChild(rangeProgressFrame, aPresContext, progressDesiredSize,
+                      &progressReflowInput, 0, 0, ReflowChildFlags::Default);
     DoUpdateRangeProgressFrame(rangeProgressFrame, nsSize(aDesiredSize.Width(),
                                                           aDesiredSize.Height()));
   }

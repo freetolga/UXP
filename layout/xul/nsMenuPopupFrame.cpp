@@ -531,7 +531,7 @@ nsMenuPopupFrame::LayoutPopup(nsBoxLayoutState& aState, nsIFrame* aParentMenu,
     }
 
     viewManager->SetViewVisibility(view, nsViewVisibility_kShow);
-    nsContainerFrame::SyncFrameViewProperties(pc, this, nullptr, view, 0);
+    nsContainerFrame::SyncFrameViewProperties(pc, this, nullptr, view);
   }
 
   // finally, if the popup just opened, send a popupshown event
