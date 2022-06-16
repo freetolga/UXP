@@ -641,7 +641,6 @@ nsColumnSetFrame::ReflowChildren(ReflowOutput&     aDesiredSize,
           childOrigin.I(wm) + kidReflowInput.ComputedLogicalMargin().IStart(wm),
           childOrigin.B(wm) +
               kidReflowInput.ComputedLogicalMargin().BStart(wm));
-      aStatus.Reset();
       ReflowChild(child, PresContext(), kidDesiredSize, kidReflowInput, wm,
                   origin, containerSize, ReflowChildFlags::Default, aStatus);
 
