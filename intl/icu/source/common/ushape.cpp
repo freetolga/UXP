@@ -1,4 +1,4 @@
-// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
 /*
  ******************************************************************************
@@ -8,7 +8,7 @@
  *
  ******************************************************************************
  *   file name:  ushape.cpp
- *   encoding:   US-ASCII
+ *   encoding:   UTF-8
  *   tab size:   8 (not used)
  *   indentation:4
  *
@@ -342,18 +342,16 @@ static void
 _shapeToArabicDigitsWithContext(UChar *s, int32_t length,
                                 UChar digitBase,
                                 UBool isLogical, UBool lastStrongWasAL) {
-    const UBiDiProps *bdp;
     int32_t i;
     UChar c;
 
-    bdp=ubidi_getSingleton();
     digitBase-=0x30;
 
     /* the iteration direction depends on the type of input */
     if(isLogical) {
         for(i=0; i<length; ++i) {
             c=s[i];
-            switch(ubidi_getClass(bdp, c)) {
+            switch(ubidi_getClass(c)) {
             case U_LEFT_TO_RIGHT: /* L */
             case U_RIGHT_TO_LEFT: /* R */
                 lastStrongWasAL=FALSE;
@@ -373,7 +371,7 @@ _shapeToArabicDigitsWithContext(UChar *s, int32_t length,
     } else {
         for(i=length; i>0; /* pre-decrement in the body */) {
             c=s[--i];
-            switch(ubidi_getClass(bdp, c)) {
+            switch(ubidi_getClass(c)) {
             case U_LEFT_TO_RIGHT: /* L */
             case U_RIGHT_TO_LEFT: /* R */
                 lastStrongWasAL=FALSE;

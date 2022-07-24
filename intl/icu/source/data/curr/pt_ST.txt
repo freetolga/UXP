@@ -1,12 +1,12 @@
-// © 2016 and later: Unicode, Inc. and others.
+﻿// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html#License
 pt_ST{
     %%Parent{"pt_PT"}
     Currencies{
-        STD{
+        STN{
             "Db",
-            "Dobra de São Tomé e Príncipe",
+            "São Tomé & Príncipe Dobra (2018)",
         }
     }
-    Version{"2.1.27.40"}
+    Version{"2.1.39.11"}
 }

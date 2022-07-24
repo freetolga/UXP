@@ -1,4 +1,4 @@
-// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
 /*
 ******************************************************************************
@@ -8,7 +8,7 @@
 *
 ******************************************************************************
 *   file name:  ubidi.h
-*   encoding:   US-ASCII
+*   encoding:   UTF-8
 *   tab size:   8 (not used)
 *   indentation:4
 *
@@ -692,7 +692,7 @@ typedef enum UBiDiReorderingMode {
       * @stable ICU 3.6 */
     UBIDI_REORDER_DEFAULT = 0,
     /** Logical to Visual algorithm which handles numbers in a way which
-      * mimicks the behavior of Windows XP.
+      * mimics the behavior of Windows XP.
       * @stable ICU 3.6 */
     UBIDI_REORDER_NUMBERS_SPECIAL,
     /** Logical to Visual algorithm grouping numbers with adjacent R characters
@@ -1142,7 +1142,7 @@ ubidi_setContext(UBiDi *pBiDi,
 
 /**
  * Perform the Unicode Bidi algorithm. It is defined in the
- * <a href="http://www.unicode.org/unicode/reports/tr9/">Unicode Standard Anned #9</a>,
+ * <a href="http://www.unicode.org/unicode/reports/tr9/">Unicode Standard Annex #9</a>,
  * version 13,
  * also described in The Unicode Standard, Version 4.0 .<p>
  *
@@ -1196,11 +1196,14 @@ ubidi_setContext(UBiDi *pBiDi,
  *        A level overrides the directional property of its corresponding
  *        (same index) character if the level has the
  *        <code>#UBIDI_LEVEL_OVERRIDE</code> bit set.<br><br>
- *        Except for that bit, it must be
+ *        Aside from that bit, it must be
  *        <code>paraLevel<=embeddingLevels[]<=UBIDI_MAX_EXPLICIT_LEVEL</code>,
- *        with one exception: a level of zero may be specified for a paragraph
- *        separator even if <code>paraLevel>0</code> when multiple paragraphs
- *        are submitted in the same call to <code>ubidi_setPara()</code>.<br><br>
+ *        except that level 0 is always allowed.
+ *        Level 0 for a paragraph separator prevents reordering of paragraphs;
+ *        this only works reliably if <code>#UBIDI_LEVEL_OVERRIDE</code>
+ *        is also set for paragraph separators.
+ *        Level 0 for other characters is treated as a wildcard
+ *        and is lifted up to the resolved level of the surrounding paragraph.<br><br>
  *        <strong>Caution: </strong>A copy of this pointer, not of the levels,
  *        will be stored in the <code>UBiDi</code> object;
  *        the <code>embeddingLevels</code> array must not be

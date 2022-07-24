@@ -1,4 +1,4 @@
-// © 2016 and later: Unicode, Inc. and others.
+﻿// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html#License
 it{
     Currencies{
@@ -217,6 +217,10 @@ it{
         CLP{
             "CLP",
             "peso cileno",
+        }
+        CNH{
+            "CNH",
+            "CNH",
         }
         CNY{
             "CN¥",
@@ -605,6 +609,10 @@ it{
         }
         MRO{
             "MRO",
+            "ouguiya della Mauritania (1973–2017)",
+        }
+        MRU{
+            "MRU",
             "ouguiya della Mauritania",
         }
         MTL{
@@ -697,11 +705,11 @@ it{
         }
         PEN{
             "PEN",
-            "nuovo sol peruviano",
+            "sol peruviano",
         }
         PES{
             "PES",
-            "sol peruviano",
+            "sol peruviano (1863–1965)",
         }
         PGK{
             "PGK",
@@ -825,6 +833,10 @@ it{
         }
         STD{
             "STD",
+            "dobra di Sao Tomé e Principe (1977–2017)",
+        }
+        STN{
+            "STN",
             "dobra di Sao Tomé e Principe",
         }
         SUR{
@@ -912,7 +924,7 @@ it{
             "scellino ugandese",
         }
         USD{
-            "US$",
+            "USD",
             "dollaro statunitense",
         }
         USN{
@@ -1155,7 +1167,7 @@ it{
         PKR{"Rs"}
         PLN{"zł"}
         PYG{"₲"}
-        RON{"L"}
+        RON{"lei"}
         RUB{"₽"}
         RWF{"RF"}
         SBD{"$"}
@@ -1164,7 +1176,7 @@ it{
         SHP{"£"}
         SRD{"$"}
         SSP{"£"}
-        STD{"Db"}
+        STN{"Db"}
         SYP{"£"}
         THB{"฿"}
         TOP{"T$"}
@@ -1308,6 +1320,10 @@ it{
         CLP{
             one{"peso cileno"}
             other{"pesos cileni"}
+        }
+        CNH{
+            one{"CNH"}
+            other{"CNH"}
         }
         CNY{
             one{"renmimbi cinese"}
@@ -1558,6 +1574,10 @@ it{
             other{"patacas di Macao"}
         }
         MRO{
+            one{"ouguiya della Mauritania (1973–2017)"}
+            other{"ouguiya della Mauritania (1973–2017)"}
+        }
+        MRU{
             one{"ouguiya della Mauritania"}
             other{"ouguiya della Mauritania"}
         }
@@ -1622,8 +1642,8 @@ it{
             other{"balboa panamensi"}
         }
         PEN{
-            one{"nuovo sol peruviano"}
-            other{"nuovi sol peruviani"}
+            one{"sol peruviano"}
+            other{"sol peruviani"}
         }
         PGK{
             one{"kina papuana"}
@@ -1714,6 +1734,10 @@ it{
             other{"sterline sud-sudanesi"}
         }
         STD{
+            one{"dobra di Sao Tomé e Principe (1977–2017)"}
+            other{"dobra di Sao Tomé e Principe (1977–2017)"}
+        }
+        STN{
             one{"dobra di Sao Tomé e Principe"}
             other{"dobra di Sao Tomé e Principe"}
         }
@@ -1846,5 +1870,5 @@ it{
         one{"{0} {1}"}
         other{"{0} {1}"}
     }
-    Version{"2.1.28.79"}
+    Version{"2.1.41.97"}
 }

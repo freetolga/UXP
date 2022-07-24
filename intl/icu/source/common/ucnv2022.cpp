@@ -1,4 +1,4 @@
-// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
 /*
 **********************************************************************
@@ -6,7 +6,7 @@
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 *   file name:  ucnv2022.cpp
-*   encoding:   US-ASCII
+*   encoding:   UTF-8
 *   tab size:   8 (not used)
 *   indentation:4
 *
@@ -3512,14 +3512,14 @@ _ISO_2022_WriteSub(UConverterFromUnicodeArgs *args, int32_t offsetIndex, UErrorC
     case 'k':
         if(myConverterData->version == 0) {
             if(length == 1) {
-                if((UBool)args->converter->fromUnicodeStatus) {
+                if(args->converter->fromUnicodeStatus) {
                     /* in DBCS mode: switch to SBCS */
                     args->converter->fromUnicodeStatus = 0;
                     *p++ = UCNV_SI;
                 }
                 *p++ = subchar[0];
             } else /* length == 2*/ {
-                if(!(UBool)args->converter->fromUnicodeStatus) {
+                if(!args->converter->fromUnicodeStatus) {
                     /* in SBCS mode: switch to DBCS */
                     args->converter->fromUnicodeStatus = 1;
                     *p++ = UCNV_SO;

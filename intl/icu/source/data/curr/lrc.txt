@@ -1,4 +1,4 @@
-// © 2016 and later: Unicode, Inc. and others.
+﻿// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html#License
 lrc{
     Currencies{
@@ -21,6 +21,10 @@ lrc{
         INR{
             "₹",
             "روٙپیه هئن",
+        }
+        IQD{
+            "د.ع.‏",
+            "IQD",
         }
         JPY{
             "JP¥",
@@ -78,5 +82,5 @@ lrc{
             other{"پیل نادیار"}
         }
     }
-    Version{"2.1.27.40"}
+    Version{"2.1.38.69"}
 }

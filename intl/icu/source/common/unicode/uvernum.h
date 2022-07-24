@@ -1,4 +1,4 @@
-// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
 /*
 *******************************************************************************
@@ -7,7 +7,7 @@
 *******************************************************************************
 *
 *   file name:  uvernum.h
-*   encoding:   US-ASCII
+*   encoding:   UTF-8
 *   tab size:   8 (not used)
 *   indentation:4
 *
@@ -58,13 +58,13 @@
  *  This value will change in the subsequent releases of ICU
  *  @stable ICU 2.4
  */
-#define U_ICU_VERSION_MAJOR_NUM 58
+#define U_ICU_VERSION_MAJOR_NUM 62
 
 /** The current ICU minor version as an integer.
  *  This value will change in the subsequent releases of ICU
  *  @stable ICU 2.6
  */
-#define U_ICU_VERSION_MINOR_NUM 3
+#define U_ICU_VERSION_MINOR_NUM 2
 
 /** The current ICU patchlevel version as an integer.
  *  This value will change in the subsequent releases of ICU
@@ -84,7 +84,7 @@
  *  This value will change in the subsequent releases of ICU
  *  @stable ICU 2.6
  */
-#define U_ICU_VERSION_SUFFIX _58
+#define U_ICU_VERSION_SUFFIX _62
 
 /**
  * \def U_DEF2_ICU_ENTRY_POINT_RENAME
@@ -119,19 +119,26 @@
  *  This value will change in the subsequent releases of ICU
  *  @stable ICU 2.4
  */
-#define U_ICU_VERSION "58.3"
+#define U_ICU_VERSION "62.2"
 
-/** The current ICU library major/minor version as a string without dots, for library name suffixes.
- *  This value will change in the subsequent releases of ICU
- *  @stable ICU 2.6
+/**
+ * The current ICU library major version number as a string, for library name suffixes.
+ * This value will change in subsequent releases of ICU.
+ *
+ * Until ICU 4.8, this was the combination of the single-digit major and minor ICU version numbers
+ * into one string without dots ("48").
+ * Since ICU 49, it is the double-digit major ICU version number.
+ * See http://userguide.icu-project.org/design#TOC-Version-Numbers-in-ICU
+ *
+ * @stable ICU 2.6
  */
-#define U_ICU_VERSION_SHORT "58"
+#define U_ICU_VERSION_SHORT "62"
 
 #ifndef U_HIDE_INTERNAL_API
 /** Data version in ICU4C.
  * @internal ICU 4.4 Internal Use Only
  **/
-#define U_ICU_DATA_VERSION "58.3"
+#define U_ICU_DATA_VERSION "62.2"
 #endif  /* U_HIDE_INTERNAL_API */
 
 /*===========================================================================

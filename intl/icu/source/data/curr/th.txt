@@ -1,4 +1,4 @@
-// © 2016 and later: Unicode, Inc. and others.
+﻿// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html#License
 th{
     Currencies{
@@ -257,6 +257,10 @@ th{
         CLP{
             "CLP",
             "เปโซชิลี",
+        }
+        CNH{
+            "CNH",
+            "หยวน",
         }
         CNY{
             "CN¥",
@@ -664,6 +668,10 @@ th{
         }
         MRO{
             "MRO",
+            "อูกียามอริเตเนีย (1973–2017)",
+        }
+        MRU{
+            "MRU",
             "อูกียามอริเตเนีย",
         }
         MTL{
@@ -760,11 +768,11 @@ th{
         }
         PEN{
             "PEN",
-            "นูโวซอลเปรู",
+            "ซอลเปรู",
         }
         PES{
             "PES",
-            "ซอลเปรู",
+            "ซอลเปรู (1863–1965)",
         }
         PGK{
             "PGK",
@@ -892,6 +900,10 @@ th{
         }
         STD{
             "STD",
+            "ดอบราเซาตูเมและปรินซิปี (1977–2017)",
+        }
+        STN{
+            "STN",
             "ดอบราเซาตูเมและปรินซิปี",
         }
         SUR{
@@ -912,7 +924,7 @@ th{
         }
         THB{
             "THB",
-            "บาทไทย",
+            "บาท",
         }
         TJR{
             "TJR",
@@ -1205,6 +1217,7 @@ th{
         FJD{"$"}
         FKP{"£"}
         GBP{"£"}
+        GEL{"₾"}
         GIP{"£"}
         GNF{"FG"}
         GTQ{"Q"}
@@ -1245,6 +1258,8 @@ th{
         PKR{"Rs"}
         PLN{"zł"}
         PYG{"₲"}
+        RON{"lei"}
+        RUB{"₽"}
         RWF{"RF"}
         SBD{"$"}
         SEK{"kr"}
@@ -1252,7 +1267,7 @@ th{
         SHP{"£"}
         SRD{"$"}
         SSP{"£"}
-        STD{"Db"}
+        STN{"Db"}
         SYP{"£"}
         THB{"฿"}
         TOP{"T$"}
@@ -1363,6 +1378,9 @@ th{
         }
         CLP{
             other{"เปโซชิลี"}
+        }
+        CNH{
+            other{"หยวน"}
         }
         CNY{
             other{"หยวนจีน"}
@@ -1551,6 +1569,9 @@ th{
             other{"ปาตากามาเก๊า"}
         }
         MRO{
+            other{"อูกียามอริเตเนีย (1973–2017)"}
+        }
+        MRU{
             other{"อูกียามอริเตเนีย"}
         }
         MUR{
@@ -1596,7 +1617,10 @@ th{
             other{"บัลบัวปานามา"}
         }
         PEN{
-            other{"นูโวซอลเปรู"}
+            other{"ซอลเปรู"}
+        }
+        PES{
+            other{"ซอลเปรู(1863–1965)"}
         }
         PGK{
             other{"กีนาปาปัวนิวกินี"}
@@ -1662,6 +1686,9 @@ th{
             other{"ปอนด์ซูดานใต้"}
         }
         STD{
+            other{"ดอบราเซาตูเมและปรินซิปี (1977–2017)"}
+        }
+        STN{
             other{"ดอบราเซาตูเมและปรินซิปี"}
         }
         SYP{
@@ -1758,5 +1785,5 @@ th{
     CurrencyUnitPatterns{
         other{"{0} {1}"}
     }
-    Version{"2.1.28.79"}
+    Version{"2.1.41.97"}
 }

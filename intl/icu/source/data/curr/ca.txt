@@ -1,4 +1,4 @@
-// © 2016 and later: Unicode, Inc. and others.
+﻿// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html#License
 ca{
     Currencies{
@@ -261,6 +261,10 @@ ca{
         CLP{
             "CLP",
             "peso xilè",
+        }
+        CNH{
+            "CNH",
+            "iuan xinès extracontinental",
         }
         CNY{
             "¥",
@@ -681,6 +685,10 @@ ca{
         }
         MRO{
             "MRO",
+            "ouguiya maurità (1973–2017)",
+        }
+        MRU{
+            "MRU",
             "ouguiya maurità",
         }
         MTL{
@@ -777,11 +785,11 @@ ca{
         }
         PEN{
             "PEN",
-            "nou sol peruà",
+            "sol peruà",
         }
         PES{
             "PES",
-            "sol peruà",
+            "sol peruà (1863–1965)",
         }
         PGK{
             "PGK",
@@ -909,6 +917,10 @@ ca{
         }
         STD{
             "STD",
+            "dobra de São Tomé i Príncipe (1977–2017)",
+        }
+        STN{
+            "STN",
             "dobra de São Tomé i Príncipe",
         }
         SUR{
@@ -1255,6 +1267,7 @@ ca{
         PKR{"Rs"}
         PLN{"zł"}
         PYG{"₲"}
+        RON{"lei"}
         RUB{"₽"}
         RWF{"RF"}
         SBD{"$"}
@@ -1263,7 +1276,7 @@ ca{
         SHP{"£"}
         SRD{"$"}
         SSP{"£"}
-        STD{"Db"}
+        STN{"Db"}
         SYP{"£"}
         THB{"฿"}
         TOP{"T$"}
@@ -1543,6 +1556,10 @@ ca{
         CLP{
             one{"peso xilè"}
             other{"pesos xilens"}
+        }
+        CNH{
+            one{"iuan xinès extracontinental"}
+            other{"iuan xinès extracontinental"}
         }
         CNX{
             one{"dòlar del Banc Popular Xinès"}
@@ -1961,6 +1978,10 @@ ca{
             other{"pataques de Macau"}
         }
         MRO{
+            one{"ouguiya maurità (1973–2017)"}
+            other{"ouguiyas mauritans (1973–2017)"}
+        }
+        MRU{
             one{"ouguiya maurità"}
             other{"ouguiyas mauritans"}
         }
@@ -2057,12 +2078,12 @@ ca{
             other{"intis peruans"}
         }
         PEN{
-            one{"nou sol peruà"}
-            other{"nous sols peruans"}
-        }
-        PES{
             one{"sol peruà"}
             other{"sols peruans"}
+        }
+        PES{
+            one{"sol peruà (1863–1965)"}
+            other{"sols peruans (1863–1965)"}
         }
         PGK{
             one{"kina de Papua Nova Guinea"}
@@ -2189,6 +2210,10 @@ ca{
             other{"lliures del Sudan del Sud"}
         }
         STD{
+            one{"dobra de São Tomé i Príncipe (1977–2017)"}
+            other{"dobras de São Tomé i Príncipe (1977–2017)"}
+        }
+        STN{
             one{"dobra de São Tomé i Príncipe"}
             other{"dobras de São Tomé i Príncipe"}
         }
@@ -2469,5 +2494,5 @@ ca{
         one{"{0} {1}"}
         other{"{0} {1}"}
     }
-    Version{"2.1.28.79"}
+    Version{"2.1.41.97"}
 }

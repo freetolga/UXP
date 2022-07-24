@@ -1,4 +1,4 @@
-// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
 /*
 ******************************************************************************
@@ -14,7 +14,9 @@
 
 #if !UCONFIG_NO_FORMATTING && !UCONFIG_NO_BREAK_ITERATION
 
+#include <cmath>
 #include "unicode/dtfmtsym.h"
+#include "unicode/ucasemap.h"
 #include "unicode/ureldatefmt.h"
 #include "unicode/udisplaycontext.h"
 #include "unicode/unum.h"
@@ -135,14 +137,20 @@ const UnicodeString& RelativeDateTimeCacheData::getAbsoluteUnitString(
         UDateRelativeUnit unit,
         int32_t pastFutureIndex,
         int32_t pluralUnit) const {
-    int32_t style = fStyle;
-    do {
-        if (relativeUnitsFormatters[style][unit][pastFutureIndex][pluralUnit] != NULL) {
-            return relativeUnitsFormatters[style][unit][pastFutureIndex][pluralUnit];
+    while (true) {
+        int32_t style = fStyle;
+        do {
+            if (relativeUnitsFormatters[style][unit][pastFutureIndex][pluralUnit] != nullptr) {
+                return relativeUnitsFormatters[style][unit][pastFutureIndex][pluralUnit];
+            }
+            style = fallBackCache[style];
+        } while (style != -1);
+
+        if (pluralUnit == StandardPlural::OTHER) {
+            return nullptr;  // No formatter found.
         }
-        style = fallBackCache[style];
-    } while (style != -1);
-    return NULL;  // No formatter found.
+        pluralUnit = StandardPlural::OTHER;
+    }
  }
 
 static UBool getStringWithFallback(
@@ -559,7 +567,7 @@ struct RelDateTimeFmtDataSink : public ResourceSink {
 RelDateTimeFmtDataSink::~RelDateTimeFmtDataSink() {}
 } // namespace
 
-DateFormatSymbols::DtWidthType styleToDateFormatSymbolWidth[UDAT_STYLE_COUNT] = {
+static const DateFormatSymbols::DtWidthType styleToDateFormatSymbolWidth[UDAT_STYLE_COUNT] = {
   DateFormatSymbols::WIDE, DateFormatSymbols::SHORT, DateFormatSymbols::NARROW
 };
 
@@ -848,7 +856,7 @@ UnicodeString& RelativeDateTimeFormatter::formatNumeric(
             return appendTo;
     }
     UDateDirection direction = UDAT_DIRECTION_NEXT;
-    if (offset < 0) {
+    if (std::signbit(offset)) { // needed to handle -0.0
         direction = UDAT_DIRECTION_LAST;
         offset = -offset;
     }
