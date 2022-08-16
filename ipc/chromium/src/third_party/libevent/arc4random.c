@@ -482,6 +482,7 @@ arc4random(void)
 #endif
 
 #if defined(_we_have_arc4random_buf) || !defined(XP_SOLARIS)
+#if (__GLIBC__ <= 2 && __GLIBC_MINOR__ < 36) || !defined(XP_LINUX)
 ARC4RANDOM_EXPORT void
 arc4random_buf(void *_buf, size_t n)
 {
@@ -495,6 +496,7 @@ arc4random_buf(void *_buf, size_t n)
 	}
 	_ARC4_UNLOCK();
 }
+#endif
 #endif
 
 #ifndef ARC4RANDOM_NOUNIFORM
