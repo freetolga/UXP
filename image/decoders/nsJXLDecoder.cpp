@@ -141,6 +141,14 @@ nsJXLDecoder::ReadJXLData(const char* aData, size_t aLength)
             Nothing(), SurfacePipeFlags());
         for (uint8_t* rowPtr = mOutBuffer.begin(); rowPtr < mOutBuffer.end();
              rowPtr += mInfo.xsize * 4) {
+          // Dirty hack to fix the byte order: the jxl decoder currently outputs RGBA, while the SurfaceFormat is
+          // BGRA. This can either be fixed when libjxl support different channel orders or when Pale Moon supports
+          // handling SurfaceFormat::R8G8B8A8.
+          for (uint8_t* pixPtr = rowPtr; pixPtr < rowPtr + mInfo.xsize * 4; pixPtr+=4){
+            uint8_t temp = pixPtr[0];
+            pixPtr[0] = pixPtr[2];
+            pixPtr[2] = temp;
+          }
           pipe->WriteBuffer(reinterpret_cast<uint32_t*>(rowPtr));
         }
 
