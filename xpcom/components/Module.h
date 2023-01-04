@@ -132,16 +132,16 @@ struct Module
 #if defined(MOZILLA_INTERNAL_API)
 #  define NSMODULE_NAME(_name) _name##_NSModule
 #  if defined(_MSC_VER)
-#    pragma section(".kPStaticModules$M", read)
-#    pragma comment(linker, "/merge:.kPStaticModules=.rdata")
-#    define NSMODULE_SECTION __declspec(allocate(".kPStaticModules$M"), dllexport)
+#    pragma section(".kPStaticModules.rel.ro$M", read)
+#    pragma comment(linker, "/merge:.kPStaticModules.rel.ro=.rdata")
+#    define NSMODULE_SECTION __declspec(allocate(".kPStaticModules.rel.ro$M"), dllexport)
 #  elif defined(__GNUC__)
 #    if defined(__ELF__)
-#      define NSMODULE_SECTION __attribute__((section(".kPStaticModules"), visibility("default")))
+#      define NSMODULE_SECTION __attribute__((section(".kPStaticModules.rel.ro"), visibility("default")))
 #    elif defined(__MACH__)
-#      define NSMODULE_SECTION __attribute__((section("__DATA, .kPStaticModules"), visibility("default")))
+#      define NSMODULE_SECTION __attribute__((section("__DATA, .kPStaticModules.rel.ro"), visibility("default")))
 #    elif defined (_WIN32)
-#      define NSMODULE_SECTION __attribute__((section(".kPStaticModules"), dllexport))
+#      define NSMODULE_SECTION __attribute__((section(".kPStaticModules.rel.ro"), dllexport))
 #    endif
 #  endif
 #  if !defined(NSMODULE_SECTION)
