@@ -1942,6 +1942,29 @@ static bool SelectorMatches(Element* aElement,
         }
         break;
 
+      case CSSPseudoClassType::slotted:
+        {
+          // Slot elements cannot be matched.
+          if (aElement->IsHTMLElement(nsGkAtoms::slot)) {
+            return false;
+          }
+
+          // The current element must have an assigned slot.
+          if (!aElement->GetAssignedSlot()) {
+            return false;
+          }
+
+          NodeMatchContext nodeContext(EventStates(),
+                                       aNodeMatchContext.mIsRelevantLink);
+          if (!SelectorListMatches(aElement,
+                                   pseudoClass,
+                                   nodeContext,
+                                   aTreeMatchContext)) {
+            return false;
+          }
+        }
+        break;
+
       case CSSPseudoClassType::host:
         {
           // In order to match :host, the element must be a shadow root host,
