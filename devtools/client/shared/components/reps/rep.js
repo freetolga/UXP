@@ -26,6 +26,7 @@ define(function (require, exports, module) {
 
   // DOM types (grips)
   const { Attribute } = require("./attribute");
+  const { BigInt } = require("./big-int");
   const { DateTime } = require("./date-time");
   const { Document } = require("./document");
   const { Event } = require("./event");
@@ -70,6 +71,7 @@ define(function (require, exports, module) {
     Null,
     StringRep,
     Number,
+    BigInt,
     SymbolRep,
     InfinityRep,
     NaNRep,

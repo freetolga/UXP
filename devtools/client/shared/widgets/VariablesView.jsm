@@ -3236,14 +3236,6 @@ VariablesView.prototype.isOverridden = function (aItem) {
  *        The variable's descriptor.
  */
 VariablesView.isPrimitive = function (aDescriptor) {
-  // For accessor property descriptors, the getter and setter need to be
-  // contained in 'get' and 'set' properties.
-  let getter = aDescriptor.get;
-  let setter = aDescriptor.set;
-  if (getter || setter) {
-    return false;
-  }
-
   // As described in the remote debugger protocol, the value grip
   // must be contained in a 'value' property.
   let grip = aDescriptor.value;
@@ -3261,7 +3253,8 @@ VariablesView.isPrimitive = function (aDescriptor) {
       type == "NaN" ||
       type == "-0" ||
       type == "symbol" ||
-      type == "longString") {
+      type == "longString" ||
+      type == "BigInt") {
     return true;
   }
 
@@ -3354,6 +3347,10 @@ VariablesView.getGrip = function (aValue) {
         return { type: "-0" };
       }
       return aValue;
+    case "bigint":
+      return { type: "BigInt",
+               text: aValue.toString(),
+             };
     case "undefined":
       // document.all is also "undefined"
       if (aValue === undefined) {
@@ -3397,6 +3394,8 @@ VariablesView.getString = function (aGrip, aOptions = {}) {
       case "-Infinity":
       case "-0":
         return aGrip.type;
+      case "BigInt":
+        return aGrip.text + "n";
       default:
         let stringifier = VariablesView.stringifiers.byType[aGrip.type];
         if (stringifier) {

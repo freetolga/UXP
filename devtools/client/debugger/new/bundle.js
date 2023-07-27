@@ -2565,7 +2565,7 @@ var Debugger =
 	  // XXX there should be a way for extensions to register a new
 	  // or modify an existing rep.
 	
-	  var reps = [RegExp, StyleSheet, Event, DateTime, TextNode, Attribute, Func, ArrayRep, Document, Window, ObjectWithText, ObjectWithURL, GripArray, GripMap, Grip, Undefined, Null, StringRep, Number, SymbolRep];
+	  var reps = [RegExp, StyleSheet, Event, DateTime, TextNode, Attribute, Func, ArrayRep, Document, Window, ObjectWithText, ObjectWithURL, GripArray, GripMap, Grip, Undefined, Null, StringRep, Number, SymbolRep, BigInt];
 	
 	  /**
 	   * Generic rep that is using for rendering native JS types or an object.
@@ -58324,6 +58324,58 @@ var Debugger =
 	  getFormatStr,
 	  setBundle
 	};
+
+/***/ },
+/* 460 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_RESULT__;/* -*- indent-tabs-mode: nil; js-indent-level: 2 -*- */
+	/* vim: set ft=javascript ts=2 et sw=2 tw=80: */
+	/* This Source Code Form is subject to the terms of the Mozilla Public
+	 * License, v. 2.0. If a copy of the MPL was not distributed with this
+	 * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+	
+	"use strict";
+	
+	// Make this available to both AMD and CJS environments
+	
+	!(__WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, module) {
+	  // Dependencies
+	  var React = __webpack_require__(2);
+	
+	  // Shortcuts
+	  var span = React.DOM.span;
+	
+	  /**
+	   * Renders a number
+	   */
+	
+	  var BigInt = React.createClass({
+	    displayName: "BigInt",
+	
+	    stringify: function (object) {
+	      return String(object);
+	    },
+	
+	    render: function () {
+	      var value = this.props.object;
+	
+	      return span({ className: "objectBox objectBox-number" }, this.stringify(value));
+	    }
+	  });
+	
+	  function supportsObject(object, type) {
+	    return type == "boolean" || type == "number" || type == "object";
+	  }
+	
+	  // Exports from this module
+	
+	  exports.BigInt = {
+	    rep: BigInt,
+	    supportsObject: supportsObject
+	  };
+	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
 
 /***/ }
 /******/ ]);
