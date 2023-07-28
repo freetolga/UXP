@@ -58347,7 +58347,7 @@ var Debugger =
 	  var span = React.DOM.span;
 	
 	  /**
-	   * Renders a number
+	   * Renders a BigInt
 	   */
 	
 	  var BigInt = React.createClass({
