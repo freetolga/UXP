@@ -2004,6 +2004,7 @@ MOZ_VORBIS=
 MOZ_TREMOR=
 MOZ_SAMPLE_TYPE_FLOAT32=
 MOZ_SAMPLE_TYPE_S16=
+MOZ_GMP=
 MOZ_WEBRTC=
 MOZ_PEERCONNECTION=
 MOZ_SRTP=
@@ -2669,6 +2670,10 @@ if test -n "$MOZ_WEBRTC"; then
     MOZ_RAW=1
     MOZ_VPX_ERROR_CONCEALMENT=1
 
+dnl enable Gecko Media Plugins
+    MOZ_GMP=1
+    AC_DEFINE(MOZ_GMP)
+
 dnl enable once Signaling lands
     MOZ_WEBRTC_SIGNALING=1
     AC_DEFINE(MOZ_WEBRTC_SIGNALING)
@@ -2790,6 +2795,11 @@ if test -n "$MOZ_EME"; then
         AC_MSG_ERROR([Encrypted Media Extension support requires Fragmented MP4 support])
     fi
     AC_DEFINE(MOZ_EME)
+
+dnl enable Gecko Media Plugins
+    MOZ_GMP=1
+    AC_DEFINE(MOZ_GMP)
+
 fi
 
 AC_SUBST(MOZ_EME)

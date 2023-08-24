@@ -81,7 +81,6 @@ IPDL_SOURCES += [
     'PBrowser.ipdl',
     'PBrowserOrId.ipdlh',
     'PColorPicker.ipdl',
-    'PContent.ipdl',
     'PContentBridge.ipdl',
     'PContentPermission.ipdlh',
     'PContentPermissionRequest.ipdl',
@@ -93,6 +92,10 @@ IPDL_SOURCES += [
     'PScreenManager.ipdl',
     'PTabContext.ipdlh',
     'ServiceWorkerConfiguration.ipdlh',
+]
+
+PREPROCESSED_IPDL_SOURCES += [
+    'PContent.ipdl',
 ]
 
 include('/ipc/chromium/chromium-config.mozbuild')

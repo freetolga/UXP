@@ -18,7 +18,9 @@
 #include "mozilla/Assertions.h"
 #include "mozilla/Vector.h"
 #include "mozilla/TimeStamp.h"
+#ifdef MOZ_GMP
 #include "XREChildData.h"
+#endif
 
 /**
  * A directory service key which provides the platform-correct "application
@@ -397,7 +399,9 @@ enum GeckoProcessType
 
   GeckoProcessType_IPDLUnitTest,
 
+#ifdef MOZ_GMP
   GeckoProcessType_GMPlugin, // Gecko Media Plugin
+#endif
 
   GeckoProcessType_GPU,      // GPU and compositor process
 
@@ -410,7 +414,9 @@ static const char* const kGeckoProcessTypeString[] = {
   "plugin",
   "tab",
   "ipdlunittest",
+#ifdef MOZ_GMP
   "geckomediaplugin",
+#endif
   "gpu"
 };
 
@@ -425,15 +431,21 @@ XRE_API(void,
         XRE_SetProcessType, (const char* aProcessTypeString))
 
 namespace mozilla {
+#ifdef MOZ_GMP
 namespace gmp {
 class GMPLoader;
 } // namespace gmp
+#endif
 } // namespace mozilla
 
 XRE_API(nsresult,
         XRE_InitChildProcess, (int aArgc,
+#ifdef MOZ_GMP
                                char* aArgv[],
                                const XREChildData* aChildData))
+#else
+                               char* aArgv[]))
+#endif
 
 XRE_API(GeckoProcessType,
         XRE_GetProcessType, ())

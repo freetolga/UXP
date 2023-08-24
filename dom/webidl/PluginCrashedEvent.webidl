@@ -13,7 +13,9 @@ interface PluginCrashedEvent : Event
   readonly attribute DOMString? browserDumpID;
   readonly attribute DOMString? pluginFilename;
   readonly attribute boolean submittedCrashReport;
+#ifdef MOZ_GMP
   readonly attribute boolean gmpPlugin;
+#endif
 };
 
 dictionary PluginCrashedEventInit : EventInit
@@ -24,5 +26,7 @@ dictionary PluginCrashedEventInit : EventInit
   DOMString? browserDumpID = null;
   DOMString? pluginFilename = null;
   boolean submittedCrashReport = false;
+#ifdef MOZ_GMP
   boolean gmpPlugin = false;
+#endif
 };

@@ -171,7 +171,9 @@ static void Shutdown();
 
 #include "MediaManager.h"
 
+#ifdef MOZ_GMP
 #include "GMPService.h"
+#endif
 
 #include "nsScriptError.h"
 
@@ -186,7 +188,9 @@ using mozilla::dom::workers::WorkerDebuggerManager;
 using mozilla::dom::UDPSocketChild;
 using mozilla::dom::time::TimeService;
 using mozilla::net::StreamingProtocolControllerService;
+#ifdef MOZ_GMP
 using mozilla::gmp::GeckoMediaPluginService;
+#endif
 
 #define NS_EDITORCOMMANDTABLE_CID \
 { 0x4f5e62b8, 0xd659, 0x4156, \
@@ -504,7 +508,9 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(nsStructuredCloneContainer)
 NS_GENERIC_FACTORY_CONSTRUCTOR(OSFileConstantsService)
 NS_GENERIC_FACTORY_CONSTRUCTOR(UDPSocketChild)
 
+#ifdef MOZ_GMP
 NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR(GeckoMediaPluginService, GeckoMediaPluginService::GetGeckoMediaPluginService)
+#endif
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(nsScriptError)
 
@@ -998,7 +1004,9 @@ static const mozilla::Module::ContractIDEntry kLayoutContracts[] = {
   { "@mozilla.org/accessibilityService;1", &kNS_ACCESSIBILITY_SERVICE_CID },
   { "@mozilla.org/accessibleRetrieval;1", &kNS_ACCESSIBILITY_SERVICE_CID },
 #endif
+#ifdef MOZ_GMP
   { "@mozilla.org/gecko-media-plugin-service;1",  &kGECKO_MEDIA_PLUGIN_SERVICE_CID },
+#endif
   { "@mozilla.org/text-input-processor;1", &kTEXT_INPUT_PROCESSOR_CID },
   { NS_SCRIPTERROR_CONTRACTID, &kNS_SCRIPTERROR_CID },
   { nullptr }

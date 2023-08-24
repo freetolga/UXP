@@ -12,6 +12,7 @@ PREPROCESSED_WEBIDL_FILES = [
     'Navigator.webidl',
     'Node.webidl',
     'Performance.webidl',
+    'PluginCrashedEvent.webidl',
     'Window.webidl',
 ]
 
@@ -685,7 +686,6 @@ GENERATED_EVENTS_WEBIDL_FILES = [
     'MozSettingsTransactionEvent.webidl',
     'PageTransitionEvent.webidl',
     'PerformanceEntryEvent.webidl',
-    'PluginCrashedEvent.webidl',
     'PopStateEvent.webidl',
     'PopupBlockedEvent.webidl',
     'ProgressEvent.webidl',
