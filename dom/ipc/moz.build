@@ -73,7 +73,8 @@ SOURCES += [
     'ProcessHangMonitor.cpp',
 ]
 
-IPDL_SOURCES += [
+# Seems like there is a timing issue with the IPDL parser, so pp all the files
+PREPROCESSED_IPDL_SOURCES += [
     'BlobTypes.ipdlh',
     'DOMTypes.ipdlh',
     'PBlob.ipdl',
