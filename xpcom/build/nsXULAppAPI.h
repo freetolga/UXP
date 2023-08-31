@@ -435,12 +435,14 @@ class GMPLoader;
 } // namespace mozilla
 #endif
 
+#ifdef MOZ_GMP
 XRE_API(nsresult,
         XRE_InitChildProcess, (int aArgc,
-#ifdef MOZ_GMP
                                char* aArgv[],
                                const XREChildData* aChildData))
 #else
+XRE_API(nsresult,
+        XRE_InitChildProcess, (int aArgc,
                                char* aArgv[]))
 #endif
 

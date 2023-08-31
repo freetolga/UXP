@@ -13,10 +13,10 @@ EXTRA_JS_MODULES.addons += [
 ]
 
 if CONFIG['MOZ_GMP']:
-	EXTRA_JS_MODULES.addons += [
+    EXTRA_JS_MODULES.addons += [
         'GMPProvider.jsm',
         'ProductAddonChecker.jsm',
-	]
+    ]
 
 EXTRA_PP_JS_MODULES.addons += [
     'AddonRepository.jsm',

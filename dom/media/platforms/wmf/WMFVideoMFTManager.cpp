@@ -68,7 +68,8 @@ const CLSID CLSID_WebmMfVpxDec =
 
 namespace mozilla {
 
-// Utility function only used here.
+#ifndef MOZ_GMP
+// Utility function only used when not building GMP
 // XXXMC: Perhaps make this available globally?
 void
 SplitAt(const char* aDelims,
@@ -82,6 +83,7 @@ SplitAt(const char* aDelims,
     aOutTokens.AppendElement(nsCString(start));
   }
 }
+#endif
 
 LayersBackend
 GetCompositorBackendType(layers::KnowsCompositor* aKnowsCompositor)

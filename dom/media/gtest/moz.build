@@ -25,11 +25,11 @@ UNIFIED_SOURCES += [
 ]
 
 if CONFIG['MOZ_GMP']:
-	UNIFIED_SOURCES += [
+    UNIFIED_SOURCES += [
         'TestGMPCrossOrigin.cpp',
         'TestGMPRemoveAndDelete.cpp',
         'TestGMPUtils.cpp',
-	]
+    ]
 
 if CONFIG['MOZ_WEBM_ENCODER']:
     UNIFIED_SOURCES += [
@@ -68,7 +68,7 @@ LOCAL_INCLUDES += [
 ]
 
 if CONFIG['MOZ_GMP']:
-	LOCAL_INCLUDES += [
+    LOCAL_INCLUDES += [
         '/dom/media/gmp',
 	]
 

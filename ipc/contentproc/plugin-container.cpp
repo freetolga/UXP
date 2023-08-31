@@ -52,6 +52,7 @@ content_process_main(int argc, char* argv[])
         SetDllDirectoryW(L"");
     }
 #endif
+#ifdef MOZ_PLUGIN_CONTAINER
 #ifdef MOZ_GMP
     // On desktop, the GMPLoader lives in plugin-container, so that its
     // code can be covered by an EME/GMP vendor's voucher.
@@ -64,6 +65,7 @@ content_process_main(int argc, char* argv[])
     nsresult rv = XRE_InitChildProcess(argc, argv);
 #endif
     NS_ENSURE_SUCCESS(rv, 1);
+#endif
 
     return 0;
 }

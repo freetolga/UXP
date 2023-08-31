@@ -685,6 +685,7 @@ GENERATED_EVENTS_WEBIDL_FILES = [
     'MozSettingsTransactionEvent.webidl',
     'PageTransitionEvent.webidl',
     'PerformanceEntryEvent.webidl',
+    'PluginCrashedEvent.webidl',
     'PopStateEvent.webidl',
     'PopupBlockedEvent.webidl',
     'ProgressEvent.webidl',
@@ -702,15 +703,6 @@ GENERATED_EVENTS_WEBIDL_FILES = [
     'UserProximityEvent.webidl',
     'WebGLContextEvent.webidl',
 ]
-
-if CONFIG['MOZ_GMP']:
-    GENERATED_EVENTS_WEBIDL_FILES += [
-        'GMPPluginCrashedEvent.webidl',
-		]
-else:
-    GENERATED_EVENTS_WEBIDL_FILES += [
-        'PluginCrashedEvent.webidl',
-		]
 
 if CONFIG['MOZ_WEBRTC']:
     GENERATED_EVENTS_WEBIDL_FILES += [

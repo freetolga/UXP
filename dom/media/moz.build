@@ -52,7 +52,7 @@ if CONFIG['MOZ_GMP']:
         'gmp',
         'gmp-plugin',
         'gmp-plugin-openh264',
-	]
+    ]
 
 TEST_DIRS += [
     'gtest',
