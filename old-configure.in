@@ -2181,7 +2181,7 @@ esac
 
 if test "$COMPILE_ENVIRONMENT"; then
   if test "$MOZ_WIDGET_TOOLKIT" = gtk3; then
-    PKG_CHECK_MODULES(MOZ_GTK3, gtk+-3.0 >= $GTK3_VERSION gtk+-unix-print-3.0 glib-2.0 gobject-2.0 $GDK_PACKAGES)
+    PKG_CHECK_MODULES(MOZ_GTK3, gtk+-3.0 >= $GTK3_VERSION gtk+-unix-print-3.0 glib-2.0 gobject-2.0 gdk-3.0 $GDK_PACKAGES)
     MOZ_GTK3_CFLAGS="-I${_topsrcdir}/widget/gtk/compat-gtk3 $MOZ_GTK3_CFLAGS"
     TK_CFLAGS=$MOZ_GTK3_CFLAGS
     TK_LIBS=$MOZ_GTK3_LIBS
@@ -2194,14 +2194,8 @@ if test "$COMPILE_ENVIRONMENT"; then
     GLIB_VERSION_MAX_ALLOWED=$GLIB_VERSION_MIN_REQUIRED
   fi
   if test "$MOZ_ENABLE_GTK"; then
-    if test "$MOZ_X11"; then
-      GDK_PACKAGES=gdk-x11-2.0
-    fi
     AC_DEFINE_UNQUOTED(GLIB_VERSION_MIN_REQUIRED,$GLIB_VERSION_MIN_REQUIRED)
     AC_DEFINE_UNQUOTED(GLIB_VERSION_MAX_ALLOWED,$GLIB_VERSION_MAX_ALLOWED)
-
-    PKG_CHECK_MODULES(MOZ_GTK2, gtk+-2.0 >= $GTK2_VERSION gtk+-unix-print-2.0 glib-2.0 >= $GLIB_VERSION gobject-2.0 $GDK_PACKAGES)
-    MOZ_GTK2_CFLAGS="-I${_topsrcdir}/widget/gtk/compat $MOZ_GTK2_CFLAGS"
   fi
   if test "$MOZ_WIDGET_TOOLKIT" = gtk2; then
     TK_CFLAGS=$MOZ_GTK2_CFLAGS
@@ -2490,6 +2484,31 @@ then
     fi
 fi
 AC_SUBST(MOZ_ENABLE_DBUS)
+
+dnl ========================================================
+dnl = Disable GTK2
+dnl ========================================================
+
+if test "$MOZ_ENABLE_GTK"; then
+    MOZ_ENABLE_GTK2=1
+
+    MOZ_ARG_DISABLE_BOOL(gtk2,
+    [  --disable-gtk2          Disable gtk2 support ],
+        MOZ_ENABLE_GTK2=,
+        MOZ_ENABLE_GTK2=1)
+
+    if test "$MOZ_WIDGET_TOOLKIT" = gtk2; then
+        MOZ_ENABLE_GTK2=1
+    fi
+
+    if test "$MOZ_ENABLE_GTK2"; then
+    PKG_CHECK_MODULES(MOZ_GTK2, gtk+-2.0 >= $GTK2_VERSION gtk+-unix-print-2.0 glib-2.0 >= $GLIB_VERSION gobject-2.0 gdk-x11-2.0)
+    MOZ_GTK2_CFLAGS="-I${_topsrcdir}/widget/gtk/compat $MOZ_GTK2_CFLAGS"
+    AC_DEFINE(MOZ_ENABLE_GTK2)
+    fi
+fi
+AC_SUBST(MOZ_ENABLE_GTK2)
+
 
 dnl =========================================================
 dnl = Whether to exclude hyphenations files in the build

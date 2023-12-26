@@ -53,7 +53,8 @@ if 'gtk' in CONFIG['MOZ_WIDGET_TOOLKIT']:
     DIRS += ['gtk']
 
     if CONFIG['MOZ_X11']:
-        DIRS += ['gtkxtbin']
+        if CONFIG['MOZ_ENABLE_GTK2']:
+            DIRS += ['gtkxtbin']
 
 XPIDL_SOURCES += [
     'nsIAppShell.idl',

@@ -51,7 +51,10 @@ using namespace std;
 #include <gtk/gtk.h>
 #include <gdk/gdkx.h>
 #include <gdk/gdk.h>
+
+#ifdef MOZ_ENABLE_GTK2
 #include "gtk2xtbin.h"
+#endif
 
 #elif defined(OS_WIN)
 
@@ -151,7 +154,7 @@ PluginInstanceChild::PluginInstanceChild(const NPPluginFuncs* aPluginIface,
     , mAsyncInvalidateTask(0)
     , mCachedWindowActor(nullptr)
     , mCachedElementActor(nullptr)
-#ifdef MOZ_WIDGET_GTK
+#ifdef MOZ_ENABLE_GTK2
     , mXEmbed(false)
 #endif // MOZ_WIDGET_GTK
 #if defined(OS_WIN)
@@ -200,7 +203,7 @@ PluginInstanceChild::PluginInstanceChild(const NPPluginFuncs* aPluginIface,
 #if defined(MOZ_X11) && defined(XP_UNIX) && !defined(XP_MACOSX)
     mWindow.ws_info = &mWsInfo;
     memset(&mWsInfo, 0, sizeof(mWsInfo));
-#ifdef MOZ_WIDGET_GTK
+#ifdef MOZ_ENABLE_GTK2
     mWsInfo.display = nullptr;
     mXtClient.top_widget = nullptr;
 #else
@@ -609,7 +612,7 @@ PluginInstanceChild::NPN_SetValue(NPPVariable aVar, void* aValue)
             return NPERR_GENERIC_ERROR;
 
         NPWindowType newWindowType = windowed ? NPWindowTypeWindow : NPWindowTypeDrawable;
-#ifdef MOZ_WIDGET_GTK
+#ifdef MOZ_ENABLE_GTK2
         if (mWindow.type != newWindowType && mWsInfo.display) {
            // plugin type has been changed but we already have a valid display
            // so update it for the recent plugin mode
@@ -1201,7 +1204,7 @@ bool PluginInstanceChild::CreateWindow(const NPRemoteWindow& aWindow)
                       aWindow.x, aWindow.y,
                       aWindow.width, aWindow.height));
 
-#ifdef MOZ_WIDGET_GTK
+#ifdef MOZ_ENABLE_GTK2
     if (mXEmbed) {
         mWindow.window = reinterpret_cast<void*>(aWindow.window);
     }
@@ -1230,7 +1233,7 @@ void PluginInstanceChild::DeleteWindow()
   if (!mWindow.window)
       return;
 
-#ifdef MOZ_WIDGET_GTK
+#ifdef MOZ_ENABLE_GTK2
   if (mXtClient.top_widget) {     
       xt_client_unrealize(&mXtClient);
       xt_client_destroy(&mXtClient); 
@@ -1312,7 +1315,7 @@ PluginInstanceChild::AnswerNPP_SetWindow(const NPRemoteWindow& aWindow)
         CreateWindow(aWindow);
     }
 
-#ifdef MOZ_WIDGET_GTK
+#ifdef MOZ_ENABLE_GTK2
     if (mXEmbed && gtk_check_version(2,18,7) != nullptr) { // older
         if (aWindow.type == NPWindowTypeWindow) {
             GdkWindow* socket_window = gdk_window_lookup(static_cast<GdkNativeWindow>(aWindow.window));
@@ -1438,7 +1441,7 @@ PluginInstanceChild::AnswerNPP_SetWindow(const NPRemoteWindow& aWindow)
 bool
 PluginInstanceChild::Initialize()
 {
-#ifdef MOZ_WIDGET_GTK
+#ifdef MOZ_ENABLE_GTK2
     NPError rv;
 
     if (mWsInfo.display) {
@@ -4649,7 +4652,7 @@ PluginInstanceChild::Destroy()
 
     mPendingAsyncCalls.Clear();
     
-#ifdef MOZ_WIDGET_GTK
+#if MOZ_ENABLE_GTK2
     if (mWindow.type == NPWindowTypeWindow && !mXEmbed) {
       xt_client_xloop_destroy();
     }

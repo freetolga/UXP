@@ -189,6 +189,7 @@ def old_configure_options(*options):
     '--enable-gio',
     '--enable-gnomeui',
     '--enable-gold',
+    '--enable-gtk2',
     '--enable-hardware-aec-ns',
     '--enable-icf',
     '--enable-install-strip',

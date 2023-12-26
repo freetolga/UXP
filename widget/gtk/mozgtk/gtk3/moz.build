@@ -7,7 +7,8 @@ SOURCES += [
     '../mozgtk.c',
 ]
 
-DEFINES['GTK2_SYMBOLS'] = True
+if CONFIG['MOZ_ENABLE_GTK2']:
+    DEFINES['GTK2_SYMBOLS'] = True
 
 SharedLibrary('mozgtk')
 

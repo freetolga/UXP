@@ -12,6 +12,9 @@
 
 #ifdef MOZ_WIDGET_GTK
 #include <gtk/gtk.h>
+#ifndef MOZ_ENABLE_GTK2
+#include <gtk/gtkx.h>
+#endif
 #endif
 
 #include "nsIFile.h"
@@ -1093,7 +1096,7 @@ _getvalue(NPP aNPP,
         case NPNVSupportsWindowless:
             *(NPBool*)aValue = PluginModuleChild::GetChrome()->Settings().supportsWindowless();
             return NPERR_NO_ERROR;
-#if defined(MOZ_WIDGET_GTK)
+#ifdef MOZ_ENABLE_GTK2
         case NPNVxDisplay: {
             if (aNPP) {
                 return InstCast(aNPP)->NPN_GetValue(aVariable, aValue);
