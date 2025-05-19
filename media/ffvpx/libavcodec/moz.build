@@ -18,6 +18,7 @@ SharedLibrary('mozavcodec')
 SOURCES += [
     'allcodecs.c',
     'avcodec.c',
+    'avfft.c',
     'avpacket.c',
     'bitstream.c',
     'bitstream_filters.c',
@@ -74,11 +75,6 @@ SOURCES += [
     'vpx_rac.c',
     'xiph.c'
 ]
-
-if CONFIG['MOZ_LIBAV_FFT']:
-    SOURCES += [
-        'avfft.c',
-    ]
 
 SYMBOLS_FILE = 'avcodec.symbols'
 NO_VISIBILITY_FLAGS = True
