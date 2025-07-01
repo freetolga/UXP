@@ -6364,12 +6364,12 @@ nsRuleNode::ComputeDisplayData(void* aStartStruct,
 
     // If 'visible' is specified but doesn't match the other dimension, it
     // turns into 'auto'.
-    if (display->mOverflowX == NS_STYLE_OVERFLOW_VISIBLE) {
-      display->mOverflowX = NS_STYLE_OVERFLOW_AUTO;
-    }
-    if (display->mOverflowY == NS_STYLE_OVERFLOW_VISIBLE) {
-      display->mOverflowY = NS_STYLE_OVERFLOW_AUTO;
-    }
+    // if (display->mOverflowX == NS_STYLE_OVERFLOW_VISIBLE) {
+    //   display->mOverflowX = NS_STYLE_OVERFLOW_AUTO;
+    // }
+    // if (display->mOverflowY == NS_STYLE_OVERFLOW_VISIBLE) {
+    //   display->mOverflowY = NS_STYLE_OVERFLOW_AUTO;
+    // }
   }
 
   // When 'contain: paint', update overflow from 'visible' to 'clip'.

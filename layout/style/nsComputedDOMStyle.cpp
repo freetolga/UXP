@@ -4749,6 +4749,7 @@ already_AddRefed<CSSValue>
 nsComputedDOMStyle::DoGetOverflow()
 {
   const nsStyleDisplay* display = StyleDisplay();
+<<<<<<< HEAD
 
   if (display->mOverflowX == display->mOverflowY) {
     RefPtr<nsROCSSPrimitiveValue> val = new nsROCSSPrimitiveValue;
@@ -4771,6 +4772,19 @@ nsComputedDOMStyle::DoGetOverflow()
   valueList->AppendCSSValue(valY.forget());
 
   return valueList.forget();
+=======
+  if (display->mOverflowX != display->mOverflowY) {
+    // No value to return.  We can't express this combination of
+    // values as a shorthand.
+    return nullptr;
+  }
+
+  RefPtr<nsROCSSPrimitiveValue> val = new nsROCSSPrimitiveValue;
+  val->SetIdent(nsCSSProps::ValueToKeywordEnum(display->mOverflowX,
+                                               nsCSSProps::kOverflowKTable));
+  return val.forget();
+
+>>>>>>> 48e907d7b2 (Issue #2124 - Part 1: Fix overflow axis-shorthand serialization for different x/y values)
 }
 
 already_AddRefed<CSSValue>

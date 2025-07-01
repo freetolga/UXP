@@ -15798,6 +15798,7 @@ CSSParserImpl::ParseOutline()
 bool
 CSSParserImpl::ParseOverflow()
 {
+<<<<<<< HEAD
   nsCSSValue overflowFirst;
   if (!ParseSingleTokenVariant(overflowFirst, VARIANT_HK,
                                nsCSSProps::kOverflowKTable)) {
@@ -15834,6 +15835,44 @@ CSSParserImpl::ParseOverflow()
   // Append the values. The logical-to-physical mapping (block/inline to x/y)
   // based on writing-mode will be handled at a later stage, likely in the
   // style system or frame construction based on the bug report's context.
+=======
+  nsCSSValue overflowX, overflowY;
+  // Parse the first value
+  if (!ParseSingleTokenVariant(overflowX, VARIANT_HK, nsCSSProps::kOverflowKTable)) {
+    return false;
+  }
+
+  // Try to parse a second value (optional)
+  bool haveSecond = ParseSingleTokenVariant(overflowY, VARIANT_HK, nsCSSProps::kOverflowKTable);
+  if (!haveSecond) {
+    overflowY = overflowX;
+  }
+
+  // Handle legacy scrollbars keywords for each axis
+  auto fix_legacy = [](nsCSSValue& v, bool isX) {
+    if (v.GetUnit() == eCSSUnit_Enumerated) {
+      switch (v.GetIntValue()) {
+        case NS_STYLE_OVERFLOW_SCROLLBARS_HORIZONTAL:
+          if (isX) {
+            v.SetIntValue(NS_STYLE_OVERFLOW_SCROLL, eCSSUnit_Enumerated);
+          } else {
+            v.SetIntValue(NS_STYLE_OVERFLOW_HIDDEN, eCSSUnit_Enumerated);
+          }
+          break;
+        case NS_STYLE_OVERFLOW_SCROLLBARS_VERTICAL:
+          if (isX) {
+            v.SetIntValue(NS_STYLE_OVERFLOW_HIDDEN, eCSSUnit_Enumerated);
+          } else {
+            v.SetIntValue(NS_STYLE_OVERFLOW_SCROLL, eCSSUnit_Enumerated);
+          }
+          break;
+      }
+    }
+  };
+  fix_legacy(overflowX, true);
+  fix_legacy(overflowY, false);
+
+>>>>>>> 48e907d7b2 (Issue #2124 - Part 1: Fix overflow axis-shorthand serialization for different x/y values)
   AppendValue(eCSSProperty_overflow_x, overflowX);
   AppendValue(eCSSProperty_overflow_y, overflowY);
   return true;
