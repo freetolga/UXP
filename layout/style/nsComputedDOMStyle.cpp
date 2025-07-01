@@ -3302,7 +3302,7 @@ nsComputedDOMStyle::DoGetScrollbarWidth()
 {
   RefPtr<nsROCSSPrimitiveValue> val = new nsROCSSPrimitiveValue;
   val->SetIdent(
-    nsCSSProps::ValueToKeywordEnum(StyleUIReset()->mScrollbarWidth,
+    nsCSSProps::ValueToKeywordEnum(StyleUserInterface()->mScrollbarWidth,
                                    nsCSSProps::kScrollbarWidthKTable));
   return val.forget();
 }
@@ -4750,16 +4750,26 @@ nsComputedDOMStyle::DoGetOverflow()
 {
   const nsStyleDisplay* display = StyleDisplay();
 
-  if (display->mOverflowX != display->mOverflowY) {
-    // No value to return.  We can't express this combination of
-    // values as a shorthand.
-    return nullptr;
-  }
+  if (display->mOverflowX == display->mOverflowY) {
+    RefPtr<nsROCSSPrimitiveValue> val = new nsROCSSPrimitiveValue;
+    val->SetIdent(nsCSSProps::ValueToKeywordEnum(display->mOverflowX,
+                                                 nsCSSProps::kOverflowKTable));
+    return val.forget();
+  } 
 
-  RefPtr<nsROCSSPrimitiveValue> val = new nsROCSSPrimitiveValue;
-  val->SetIdent(nsCSSProps::ValueToKeywordEnum(display->mOverflowX,
-                                               nsCSSProps::kOverflowKTable));
-  return val.forget();
+  // If the values differ, return a CSSValueList with both.
+  RefPtr<nsDOMCSSValueList> valueList = GetROCSSValueList(false);
+  RefPtr<nsROCSSPrimitiveValue> valX = new nsROCSSPrimitiveValue;
+  valX->SetIdent(nsCSSProps::ValueToKeywordEnum(display->mOverflowX,
+                                                nsCSSProps::kOverflowKTable));
+  valueList->AppendCSSValue(valX.forget());
+
+  RefPtr<nsROCSSPrimitiveValue> valY = new nsROCSSPrimitiveValue;
+  valY->SetIdent(nsCSSProps::ValueToKeywordEnum(display->mOverflowY,
+                                                nsCSSProps::kOverflowKTable));
+  valueList->AppendCSSValue(valY.forget());
+
+  return valueList.forget();
 }
 
 already_AddRefed<CSSValue>

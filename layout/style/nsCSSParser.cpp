@@ -15798,16 +15798,28 @@ CSSParserImpl::ParseOutline()
 bool
 CSSParserImpl::ParseOverflow()
 {
-  nsCSSValue overflow;
-  if (!ParseSingleTokenVariant(overflow, VARIANT_HK,
+  nsCSSValue overflowFirst;
+  if (!ParseSingleTokenVariant(overflowFirst, VARIANT_HK,
                                nsCSSProps::kOverflowKTable)) {
     return false;
   }
 
-  nsCSSValue overflowX(overflow);
-  nsCSSValue overflowY(overflow);
-  if (eCSSUnit_Enumerated == overflow.GetUnit())
-    switch(overflow.GetIntValue()) {
+  nsCSSValue overflowSecond;
+
+  bool hasSecondValue = ParseSingleTokenVariant(overflowSecond, VARIANT_HK,
+                                                nsCSSProps::kOverflowKTable);
+
+  nsCSSValue overflowX;
+  nsCSSValue overflowY;
+
+
+  overflowX = overflowFirst; 
+  overflowY = hasSecondValue ? overflowSecond : overflowFirst;
+
+  // Handle legacy scrollbar-related values if applicable to the first value
+  // and no second value was provided.
+  if (!hasSecondValue && eCSSUnit_Enumerated == overflowFirst.GetUnit()) {
+    switch(overflowFirst.GetIntValue()) {
       case NS_STYLE_OVERFLOW_SCROLLBARS_HORIZONTAL:
         overflowX.SetIntValue(NS_STYLE_OVERFLOW_SCROLL, eCSSUnit_Enumerated);
         overflowY.SetIntValue(NS_STYLE_OVERFLOW_HIDDEN, eCSSUnit_Enumerated);
@@ -15817,6 +15829,11 @@ CSSParserImpl::ParseOverflow()
         overflowY.SetIntValue(NS_STYLE_OVERFLOW_SCROLL, eCSSUnit_Enumerated);
         break;
     }
+  }
+
+  // Append the values. The logical-to-physical mapping (block/inline to x/y)
+  // based on writing-mode will be handled at a later stage, likely in the
+  // style system or frame construction based on the bug report's context.
   AppendValue(eCSSProperty_overflow_x, overflowX);
   AppendValue(eCSSProperty_overflow_y, overflowY);
   return true;

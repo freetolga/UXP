@@ -3171,10 +3171,16 @@ static const nsCSSPropertyID gMinSizeLogicalGroupTable[] = {
   eCSSProperty_min_width,
   eCSSProperty_UNKNOWN
 };
-
+ 
 static const nsCSSPropertyID gSizeLogicalGroupTable[] = {
   eCSSProperty_height,
   eCSSProperty_width,
+  eCSSProperty_UNKNOWN
+};
+
+static const nsCSSPropertyID gOverflowLogicalGroupTable[] = {
+  eCSSProperty_overflow_y,
+  eCSSProperty_overflow_x,
   eCSSProperty_UNKNOWN
 };
 
