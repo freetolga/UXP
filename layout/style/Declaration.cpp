@@ -1026,9 +1026,14 @@ Declaration::GetPropertyValueInternal(
         *data->ValueFor(eCSSProperty_overflow_x);
       const nsCSSValue &yValue =
         *data->ValueFor(eCSSProperty_overflow_y);
-      if (xValue == yValue)
+      if (xValue == yValue) {
         xValue.AppendToString(eCSSProperty_overflow_x, aValue, aSerialization);
-      break;
+      } else { 
+        xValue.AppendToString(eCSSProperty_overflow_x, aValue, aSerialization);
+        aValue.Append(char16_t(' '));
+        yValue.AppendToString(eCSSProperty_overflow_y, aValue, aSerialization);
+      }
+      break; 
     }
     case eCSSProperty_text_decoration: {
       const nsCSSValue *decorationColor =

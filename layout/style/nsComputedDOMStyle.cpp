@@ -3302,7 +3302,7 @@ nsComputedDOMStyle::DoGetScrollbarWidth()
 {
   RefPtr<nsROCSSPrimitiveValue> val = new nsROCSSPrimitiveValue;
   val->SetIdent(
-    nsCSSProps::ValueToKeywordEnum(StyleUserInterface()->mScrollbarWidth,
+    nsCSSProps::ValueToKeywordEnum(StyleUIReset()->mScrollbarWidth,
                                    nsCSSProps::kScrollbarWidthKTable));
   return val.forget();
 }
@@ -4759,11 +4759,12 @@ nsComputedDOMStyle::DoGetOverflow()
 
   // If the values differ, return a CSSValueList with both.
   RefPtr<nsDOMCSSValueList> valueList = GetROCSSValueList(false);
+  // for x
   RefPtr<nsROCSSPrimitiveValue> valX = new nsROCSSPrimitiveValue;
   valX->SetIdent(nsCSSProps::ValueToKeywordEnum(display->mOverflowX,
                                                 nsCSSProps::kOverflowKTable));
   valueList->AppendCSSValue(valX.forget());
-
+  // for y
   RefPtr<nsROCSSPrimitiveValue> valY = new nsROCSSPrimitiveValue;
   valY->SetIdent(nsCSSProps::ValueToKeywordEnum(display->mOverflowY,
                                                 nsCSSProps::kOverflowKTable));
