@@ -794,18 +794,55 @@ Declaration::GetPropertyValueInternal(
       MOZ_ASSERT(StringEndsWith(nsCSSProps::GetStringValue(subprops[2]),
                                 NS_LITERAL_CSTRING("-color")),
                  "third subprop must be the color property");
+      const nsCSSValue *widthValue = data->ValueFor(subprops[0]);
+      const nsCSSValue *styleValue = data->ValueFor(subprops[1]);
       const nsCSSValue *colorValue = data->ValueFor(subprops[2]);
+
+      // default style is none
+      bool isNoneStyle = 
+        styleValue->GetUnit() == eCSSUnit_Enumerated &&
+        styleValue->GetIntValue() == NS_STYLE_BORDER_STYLE_NONE;
+
+      bool isMediumWidth = 
+        widthValue->GetUnit() == eCSSUnit_Enumerated &&
+        widthValue->GetIntValue() == NS_STYLE_BORDER_WIDTH_MEDIUM;
+
       bool isCurrentColor =
         colorValue->GetUnit() == eCSSUnit_EnumColor &&
         colorValue->GetIntValue() == NS_COLOR_CURRENTCOLOR;
-      if (!AppendValueToString(subprops[0], aValue, aSerialization) ||
-          !(aValue.Append(char16_t(' ')),
-            AppendValueToString(subprops[1], aValue, aSerialization)) ||
-          // Don't output a third value when it's currentcolor.
-          !(isCurrentColor ||
-            (aValue.Append(char16_t(' ')),
-             AppendValueToString(subprops[2], aValue, aSerialization)))) {
-        aValue.Truncate();
+      
+      // special case: if we have just color and all other values are default,
+      // output: color
+      if (!isCurrentColor && isNoneStyle && isMediumWidth) {
+        if (!AppendValueToString(subprops[2], aValue, aSerialization)) {
+          aValue.Truncate();
+        }
+        break;
+      }
+
+      // normal case: output width unless medium and only have color
+      if (!(isMediumWidth && isNoneStyle && !isCurrentColor)) {
+        if (!AppendValueToString(subprops[0], aValue, aSerialization)) {
+          aValue.Truncate();
+          break;
+        }
+      }
+
+      // if style is not none, append style
+      if (!isNoneStyle) {
+        aValue.Append(char16_t(' '));
+        if (!AppendValueToString(subprops[1], aValue, aSerialization)) {
+          aValue.Truncate();
+          break;
+        }
+      }
+
+      if (!isCurrentColor) {
+        aValue.Append(char16_t(' '));
+        if (!AppendValueToString(subprops[2], aValue, aSerialization)) {
+          aValue.Truncate();
+          break;
+        }
       }
       break;
     }
