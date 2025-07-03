@@ -15798,44 +15798,6 @@ CSSParserImpl::ParseOutline()
 bool
 CSSParserImpl::ParseOverflow()
 {
-<<<<<<< HEAD
-  nsCSSValue overflowFirst;
-  if (!ParseSingleTokenVariant(overflowFirst, VARIANT_HK,
-                               nsCSSProps::kOverflowKTable)) {
-    return false;
-  }
-
-  nsCSSValue overflowSecond;
-
-  bool hasSecondValue = ParseSingleTokenVariant(overflowSecond, VARIANT_HK,
-                                                nsCSSProps::kOverflowKTable);
-
-  nsCSSValue overflowX;
-  nsCSSValue overflowY;
-
-
-  overflowX = overflowFirst; 
-  overflowY = hasSecondValue ? overflowSecond : overflowFirst;
-
-  // Handle legacy scrollbar-related values if applicable to the first value
-  // and no second value was provided.
-  if (!hasSecondValue && eCSSUnit_Enumerated == overflowFirst.GetUnit()) {
-    switch(overflowFirst.GetIntValue()) {
-      case NS_STYLE_OVERFLOW_SCROLLBARS_HORIZONTAL:
-        overflowX.SetIntValue(NS_STYLE_OVERFLOW_SCROLL, eCSSUnit_Enumerated);
-        overflowY.SetIntValue(NS_STYLE_OVERFLOW_HIDDEN, eCSSUnit_Enumerated);
-        break;
-      case NS_STYLE_OVERFLOW_SCROLLBARS_VERTICAL:
-        overflowX.SetIntValue(NS_STYLE_OVERFLOW_HIDDEN, eCSSUnit_Enumerated);
-        overflowY.SetIntValue(NS_STYLE_OVERFLOW_SCROLL, eCSSUnit_Enumerated);
-        break;
-    }
-  }
-
-  // Append the values. The logical-to-physical mapping (block/inline to x/y)
-  // based on writing-mode will be handled at a later stage, likely in the
-  // style system or frame construction based on the bug report's context.
-=======
   nsCSSValue overflowX, overflowY;
   // Parse the first value
   if (!ParseSingleTokenVariant(overflowX, VARIANT_HK, nsCSSProps::kOverflowKTable)) {
@@ -15871,8 +15833,6 @@ CSSParserImpl::ParseOverflow()
   };
   fix_legacy(overflowX, true);
   fix_legacy(overflowY, false);
-
->>>>>>> 48e907d7b2 (Issue #2124 - Part 1: Fix overflow axis-shorthand serialization for different x/y values)
   AppendValue(eCSSProperty_overflow_x, overflowX);
   AppendValue(eCSSProperty_overflow_y, overflowY);
   return true;

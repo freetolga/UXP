@@ -1,0 +1,154 @@
+From b3de11f735865f7e201d5f9b9a5a306d6037fba5 Mon Sep 17 00:00:00 2001
+From: erixreyes <ebreyes2@up.edu.ph>
+Date: Tue, 1 Jul 2025 22:57:00 +0800
+Subject: [PATCH 4/7] Implement overflow CSS two-value parsing as a shorthand
+
+---
+ layout/style/nsCSSParser.cpp             | 29 ++++++++++++++++++-----
+ layout/style/nsCSSPropLogicalGroupList.h |  3 ++-
+ layout/style/nsCSSProps.cpp              |  8 ++++++-
+ layout/style/nsComputedDOMStyle.cpp      | 30 ++++++++++++++++--------
+ 4 files changed, 52 insertions(+), 18 deletions(-)
+
+diff --git a/layout/style/nsCSSParser.cpp b/layout/style/nsCSSParser.cpp
+index e5780972db..0762d4c064 100644
+--- a/layout/style/nsCSSParser.cpp
++++ b/layout/style/nsCSSParser.cpp
+@@ -15798,16 +15798,28 @@ CSSParserImpl::ParseOutline()
+ bool
+ CSSParserImpl::ParseOverflow()
+ {
+-  nsCSSValue overflow;
+-  if (!ParseSingleTokenVariant(overflow, VARIANT_HK,
++  nsCSSValue overflowFirst;
++  if (!ParseSingleTokenVariant(overflowFirst, VARIANT_HK,
+                                nsCSSProps::kOverflowKTable)) {
+     return false;
+   }
+ 
+-  nsCSSValue overflowX(overflow);
+-  nsCSSValue overflowY(overflow);
+-  if (eCSSUnit_Enumerated == overflow.GetUnit())
+-    switch(overflow.GetIntValue()) {
++  nsCSSValue overflowSecond;
++
++  bool hasSecondValue = ParseSingleTokenVariant(overflowSecond, VARIANT_HK,
++                                                nsCSSProps::kOverflowKTable);
++
++  nsCSSValue overflowX;
++  nsCSSValue overflowY;
++
++
++  overflowX = overflowFirst; 
++  overflowY = hasSecondValue ? overflowSecond : overflowFirst;
++
++  // Handle legacy scrollbar-related values if applicable to the first value
++  // and no second value was provided.
++  if (!hasSecondValue && eCSSUnit_Enumerated == overflowFirst.GetUnit()) {
++    switch(overflowFirst.GetIntValue()) {
+       case NS_STYLE_OVERFLOW_SCROLLBARS_HORIZONTAL:
+         overflowX.SetIntValue(NS_STYLE_OVERFLOW_SCROLL, eCSSUnit_Enumerated);
+         overflowY.SetIntValue(NS_STYLE_OVERFLOW_HIDDEN, eCSSUnit_Enumerated);
+@@ -15817,6 +15829,11 @@ CSSParserImpl::ParseOverflow()
+         overflowY.SetIntValue(NS_STYLE_OVERFLOW_SCROLL, eCSSUnit_Enumerated);
+         break;
+     }
++  }
++
++  // Append the values. The logical-to-physical mapping (block/inline to x/y)
++  // based on writing-mode will be handled at a later stage, likely in the
++  // style system or frame construction based on the bug report's context.
+   AppendValue(eCSSProperty_overflow_x, overflowX);
+   AppendValue(eCSSProperty_overflow_y, overflowY);
+   return true;
+diff --git a/layout/style/nsCSSPropLogicalGroupList.h b/layout/style/nsCSSPropLogicalGroupList.h
+index 3d8a52bc90..2a03cbe8da 100644
+--- a/layout/style/nsCSSPropLogicalGroupList.h
++++ b/layout/style/nsCSSPropLogicalGroupList.h
+@@ -50,7 +50,8 @@ CSS_PROP_LOGICAL_GROUP_SHORTHAND(BorderStyle)
+ CSS_PROP_LOGICAL_GROUP_SHORTHAND(BorderWidth)
+ CSS_PROP_LOGICAL_GROUP_SHORTHAND(Margin)
+ CSS_PROP_LOGICAL_GROUP_AXIS(MaxSize)
+-CSS_PROP_LOGICAL_GROUP_BOX(Offset)
++CSS_PROP_LOGICAL_GROUP_BOX(Offset) 
+ CSS_PROP_LOGICAL_GROUP_SHORTHAND(Padding)
+ CSS_PROP_LOGICAL_GROUP_AXIS(MinSize)
+ CSS_PROP_LOGICAL_GROUP_AXIS(Size)
++CSS_PROP_LOGICAL_GROUP_AXIS(Overflow)
+diff --git a/layout/style/nsCSSProps.cpp b/layout/style/nsCSSProps.cpp
+index 780ab4274e..73638ac905 100644
+--- a/layout/style/nsCSSProps.cpp
++++ b/layout/style/nsCSSProps.cpp
+@@ -3171,13 +3171,19 @@ static const nsCSSPropertyID gMinSizeLogicalGroupTable[] = {
+   eCSSProperty_min_width,
+   eCSSProperty_UNKNOWN
+ };
+-
++ 
+ static const nsCSSPropertyID gSizeLogicalGroupTable[] = {
+   eCSSProperty_height,
+   eCSSProperty_width,
+   eCSSProperty_UNKNOWN
+ };
+ 
++static const nsCSSPropertyID gOverflowLogicalGroupTable[] = {
++  eCSSProperty_overflow_y,
++  eCSSProperty_overflow_x,
++  eCSSProperty_UNKNOWN
++};
++
+ const nsCSSPropertyID* const
+ nsCSSProps::kLogicalGroupTable[eCSSPropertyLogicalGroup_COUNT] = {
+ #define CSS_PROP_LOGICAL_GROUP_SHORTHAND(id_) g##id_##SubpropTable,
+diff --git a/layout/style/nsComputedDOMStyle.cpp b/layout/style/nsComputedDOMStyle.cpp
+index 422bed8628..9b579e8e89 100644
+--- a/layout/style/nsComputedDOMStyle.cpp
++++ b/layout/style/nsComputedDOMStyle.cpp
+@@ -3302,7 +3302,7 @@ nsComputedDOMStyle::DoGetScrollbarWidth()
+ {
+   RefPtr<nsROCSSPrimitiveValue> val = new nsROCSSPrimitiveValue;
+   val->SetIdent(
+-    nsCSSProps::ValueToKeywordEnum(StyleUIReset()->mScrollbarWidth,
++    nsCSSProps::ValueToKeywordEnum(StyleUserInterface()->mScrollbarWidth,
+                                    nsCSSProps::kScrollbarWidthKTable));
+   return val.forget();
+ }
+@@ -4750,16 +4750,26 @@ nsComputedDOMStyle::DoGetOverflow()
+ {
+   const nsStyleDisplay* display = StyleDisplay();
+ 
+-  if (display->mOverflowX != display->mOverflowY) {
+-    // No value to return.  We can't express this combination of
+-    // values as a shorthand.
+-    return nullptr;
+-  }
++  if (display->mOverflowX == display->mOverflowY) {
++    RefPtr<nsROCSSPrimitiveValue> val = new nsROCSSPrimitiveValue;
++    val->SetIdent(nsCSSProps::ValueToKeywordEnum(display->mOverflowX,
++                                                 nsCSSProps::kOverflowKTable));
++    return val.forget();
++  } 
+ 
+-  RefPtr<nsROCSSPrimitiveValue> val = new nsROCSSPrimitiveValue;
+-  val->SetIdent(nsCSSProps::ValueToKeywordEnum(display->mOverflowX,
+-                                               nsCSSProps::kOverflowKTable));
+-  return val.forget();
++  // If the values differ, return a CSSValueList with both.
++  RefPtr<nsDOMCSSValueList> valueList = GetROCSSValueList(false);
++  RefPtr<nsROCSSPrimitiveValue> valX = new nsROCSSPrimitiveValue;
++  valX->SetIdent(nsCSSProps::ValueToKeywordEnum(display->mOverflowX,
++                                                nsCSSProps::kOverflowKTable));
++  valueList->AppendCSSValue(valX.forget());
++
++  RefPtr<nsROCSSPrimitiveValue> valY = new nsROCSSPrimitiveValue;
++  valY->SetIdent(nsCSSProps::ValueToKeywordEnum(display->mOverflowY,
++                                                nsCSSProps::kOverflowKTable));
++  valueList->AppendCSSValue(valY.forget());
++
++  return valueList.forget();
+ }
+ 
+ already_AddRefed<CSSValue>
+-- 
+2.43.0.windows.1
+

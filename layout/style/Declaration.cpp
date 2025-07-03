@@ -1059,20 +1059,6 @@ Declaration::GetPropertyValueInternal(
                           aSerialization);
       break;
     case eCSSProperty_overflow: {
-<<<<<<< HEAD
-      const nsCSSValue &xValue =
-        *data->ValueFor(eCSSProperty_overflow_x);
-      const nsCSSValue &yValue =
-        *data->ValueFor(eCSSProperty_overflow_y);
-      if (xValue == yValue) {
-        xValue.AppendToString(eCSSProperty_overflow_x, aValue, aSerialization);
-<<<<<<< HEAD
-      } else { 
-=======
-      } else {
->>>>>>> 48e907d7b2 (Issue #2124 - Part 1: Fix overflow axis-shorthand serialization for different x/y values)
-        xValue.AppendToString(eCSSProperty_overflow_x, aValue, aSerialization);
-=======
       const nsCSSValue* xValue = data->ValueFor(eCSSProperty_overflow_x);
       const nsCSSValue* yValue = data->ValueFor(eCSSProperty_overflow_y);
       if (!xValue || !yValue ||
@@ -1085,15 +1071,10 @@ Declaration::GetPropertyValueInternal(
         xValue->AppendToString(eCSSProperty_overflow_x, aValue, aSerialization);
       } else {
         xValue->AppendToString(eCSSProperty_overflow_x, aValue, aSerialization);
->>>>>>> 9c1779ddbb (Issue #2124 - Part 2: Fix CSS overflow axis-shorthand serialization in getComputedStyle)
         aValue.Append(char16_t(' '));
         yValue->AppendToString(eCSSProperty_overflow_y, aValue, aSerialization);
       }
-<<<<<<< HEAD
-      break; 
-=======
       break;
->>>>>>> 48e907d7b2 (Issue #2124 - Part 1: Fix overflow axis-shorthand serialization for different x/y values)
     }
     case eCSSProperty_text_decoration: {
       const nsCSSValue *decorationColor =

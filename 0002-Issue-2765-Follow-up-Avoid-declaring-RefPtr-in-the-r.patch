@@ -1,0 +1,27 @@
+From 3aa8907d6aa599199bc8f098a7e871ecadcd939a Mon Sep 17 00:00:00 2001
+From: Francis Dominic Fajardo <fofajardo@up.edu.ph>
+Date: Sat, 28 Jun 2025 16:14:55 +0800
+Subject: [PATCH 2/7] Issue #2765 - Follow-up: Avoid declaring RefPtr in the
+ return statement
+
+---
+ layout/base/nsLayoutUtils.cpp | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/layout/base/nsLayoutUtils.cpp b/layout/base/nsLayoutUtils.cpp
+index 266f1e3b66..af20c82a30 100644
+--- a/layout/base/nsLayoutUtils.cpp
++++ b/layout/base/nsLayoutUtils.cpp
+@@ -9336,7 +9336,8 @@ nsLayoutUtils::GetNonAnonymousStyleContext(nsIFrame* aFrame)
+   }
+   MOZ_ASSERT(node, "Native anonymous element with no originating node?");
+   if (nsIFrame* primaryFrame = node->GetPrimaryFrame()) {
+-    return RefPtr<nsStyleContext>(primaryFrame->StyleContext()).forget();
++    RefPtr<nsStyleContext> context = primaryFrame->StyleContext();
++    return context.forget();
+   }
+   // If the element doesn't have primary frame, get the computed style
+   // from the element directly.
+-- 
+2.43.0.windows.1
+
