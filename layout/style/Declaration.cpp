@@ -1059,6 +1059,7 @@ Declaration::GetPropertyValueInternal(
                           aSerialization);
       break;
     case eCSSProperty_overflow: {
+<<<<<<< HEAD
       const nsCSSValue &xValue =
         *data->ValueFor(eCSSProperty_overflow_x);
       const nsCSSValue &yValue =
@@ -1071,8 +1072,22 @@ Declaration::GetPropertyValueInternal(
       } else {
 >>>>>>> 48e907d7b2 (Issue #2124 - Part 1: Fix overflow axis-shorthand serialization for different x/y values)
         xValue.AppendToString(eCSSProperty_overflow_x, aValue, aSerialization);
+=======
+      const nsCSSValue* xValue = data->ValueFor(eCSSProperty_overflow_x);
+      const nsCSSValue* yValue = data->ValueFor(eCSSProperty_overflow_y);
+      if (!xValue || !yValue ||
+          xValue->GetUnit() != eCSSUnit_Enumerated ||
+          yValue->GetUnit() != eCSSUnit_Enumerated) {
+        aValue.Truncate(); // Don't serialize shorthand if not both present/enumerated
+        break;
+      }
+      if (*xValue == *yValue) {
+        xValue->AppendToString(eCSSProperty_overflow_x, aValue, aSerialization);
+      } else {
+        xValue->AppendToString(eCSSProperty_overflow_x, aValue, aSerialization);
+>>>>>>> 9c1779ddbb (Issue #2124 - Part 2: Fix CSS overflow axis-shorthand serialization in getComputedStyle)
         aValue.Append(char16_t(' '));
-        yValue.AppendToString(eCSSProperty_overflow_y, aValue, aSerialization);
+        yValue->AppendToString(eCSSProperty_overflow_y, aValue, aSerialization);
       }
 <<<<<<< HEAD
       break; 

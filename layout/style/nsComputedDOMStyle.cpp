@@ -4750,12 +4750,19 @@ nsComputedDOMStyle::DoGetOverflow()
 {
   const nsStyleDisplay* display = StyleDisplay();
 <<<<<<< HEAD
+<<<<<<< HEAD
 
   if (display->mOverflowX == display->mOverflowY) {
+=======
+  
+  if (display->mOverflowX == display->mOverflowY) {
+    // Same values, return single value
+>>>>>>> 9c1779ddbb (Issue #2124 - Part 2: Fix CSS overflow axis-shorthand serialization in getComputedStyle)
     RefPtr<nsROCSSPrimitiveValue> val = new nsROCSSPrimitiveValue;
     val->SetIdent(nsCSSProps::ValueToKeywordEnum(display->mOverflowX,
                                                  nsCSSProps::kOverflowKTable));
     return val.forget();
+<<<<<<< HEAD
   } 
 
   // If the values differ, return a CSSValueList with both.
@@ -4777,14 +4784,30 @@ nsComputedDOMStyle::DoGetOverflow()
     // No value to return.  We can't express this combination of
     // values as a shorthand.
     return nullptr;
+=======
+>>>>>>> 9c1779ddbb (Issue #2124 - Part 2: Fix CSS overflow axis-shorthand serialization in getComputedStyle)
   }
-
+  
+  // Different values, return both as space-separated string
   RefPtr<nsROCSSPrimitiveValue> val = new nsROCSSPrimitiveValue;
-  val->SetIdent(nsCSSProps::ValueToKeywordEnum(display->mOverflowX,
-                                               nsCSSProps::kOverflowKTable));
+  nsAutoString result;
+  
+  nsCSSKeyword xKeyword = nsCSSProps::ValueToKeywordEnum(display->mOverflowX,
+                                                         nsCSSProps::kOverflowKTable);
+  nsCSSKeyword yKeyword = nsCSSProps::ValueToKeywordEnum(display->mOverflowY,
+                                                         nsCSSProps::kOverflowKTable);
+  
+  result.AppendASCII(nsCSSKeywords::GetStringValue(xKeyword).get());
+  result.Append(char16_t(' '));
+  result.AppendASCII(nsCSSKeywords::GetStringValue(yKeyword).get());
+  
+  val->SetString(result);
   return val.forget();
+<<<<<<< HEAD
 
 >>>>>>> 48e907d7b2 (Issue #2124 - Part 1: Fix overflow axis-shorthand serialization for different x/y values)
+=======
+>>>>>>> 9c1779ddbb (Issue #2124 - Part 2: Fix CSS overflow axis-shorthand serialization in getComputedStyle)
 }
 
 already_AddRefed<CSSValue>
