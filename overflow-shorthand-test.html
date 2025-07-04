@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Overflow Shorthand Axis Test (No Clip)</title>
+    <style>
+        .test-container {
+            width: 200px;
+            height: 100px;
+            border: 3px solid #ccc;
+            margin: 10px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .test-content {
+            width: 300px;
+            height: 150px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .test-label {
+            position: absolute;
+            top: -25px;
+            left: 0;
+            font-size: 12px;
+            font-family: monospace;
+            background: #f0f0f0;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        
+        .test-result {
+            position: absolute;
+            bottom: -30px;
+            left: 0;
+            font-size: 11px;
+            font-family: monospace;
+            max-width: 200px;
+        }
+        
+        .pass {
+            border-color: #4CAF50 !important;
+            background-color: #E8F5E8;
+        }
+        
+        .fail {
+            border-color: #f44336 !important;
+            background-color: #FFEBEE;
+        }
+        
+        .fail .test-result {
+            color: #d32f2f;
+            font-weight: bold;
+        }
+        
+        .pass .test-result {
+            color: #2e7d32;
+        }
+        
+        /* Test cases without clip values */
+        .test-1 { overflow: visible; }
+        .test-2 { overflow: hidden; }
+        .test-3 { overflow: scroll; }
+        .test-4 { overflow: auto; }
+        
+        /* Axis shorthand tests */
+        .test-5 { overflow: visible hidden; }
+        .test-6 { overflow: hidden visible; }
+        .test-7 { overflow: scroll auto; }
+        .test-8 { overflow: auto scroll; }
+        .test-9 { overflow: visible auto; }
+        .test-10 { overflow: auto hidden; }
+        
+        .summary {
+            background: #f5f5f5;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+        
+        .summary h3 {
+            margin-top: 0;
+        }
+        
+        .failures {
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        
+        .successes {
+            background: #e8f5e8;
+            border-left: 4px solid #4caf50;
+            padding: 10px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Overflow Shorthand Axis Test (Excluding Clip Values)</h1>
+    <p>This test verifies that the overflow shorthand property correctly handles axis-specific values without using "clip".</p>
+    
+    <div id="summary" class="summary">
+        <h3>Test Results Summary</h3>
+        <div id="summary-content">Running tests...</div>
+    </div>
+    
+    <h2>Single Value Tests (applied to both axes)</h2>
+    <div class="test-container test-1" data-test="single-visible">
+        <div class="test-label">overflow: visible</div>
+        <div class="test-content">Content</div>
+        <div class="test-result"></div>
+    </div>
+    
+    <div class="test-container test-2" data-test="single-hidden">
+        <div class="test-label">overflow: hidden</div>
+        <div class="test-content">Content</div>
+        <div class="test-result"></div>
+    </div>
+    
+    <div class="test-container test-3" data-test="single-scroll">
+        <div class="test-label">overflow: scroll</div>
+        <div class="test-content">Content</div>
+        <div class="test-result"></div>
+    </div>
+    
+    <div class="test-container test-4" data-test="single-auto">
+        <div class="test-label">overflow: auto</div>
+        <div class="test-content">Content</div>
+        <div class="test-result"></div>
+    </div>
+    
+    <h2>Axis Shorthand Tests (two values)</h2>
+    <div class="test-container test-5" data-test="axis-visible-hidden">
+        <div class="test-label">overflow: visible hidden</div>
+        <div class="test-content">Content</div>
+        <div class="test-result"></div>
+    </div>
+    
+    <div class="test-container test-6" data-test="axis-hidden-visible">
+        <div class="test-label">overflow: hidden visible</div>
+        <div class="test-content">Content</div>
+        <div class="test-result"></div>
+    </div>
+    
+    <div class="test-container test-7" data-test="axis-scroll-auto">
+        <div class="test-label">overflow: scroll auto</div>
+        <div class="test-content">Content</div>
+        <div class="test-result"></div>
+    </div>
+    
+    <div class="test-container test-8" data-test="axis-auto-scroll">
+        <div class="test-label">overflow: auto scroll</div>
+        <div class="test-content">Content</div>
+        <div class="test-result"></div>
+    </div>
+    
+    <div class="test-container test-9" data-test="axis-visible-auto">
+        <div class="test-label">overflow: visible auto</div>
+        <div class="test-content">Content</div>
+        <div class="test-result"></div>
+    </div>
+    
+    <div class="test-container test-10" data-test="axis-auto-hidden">
+        <div class="test-label">overflow: auto hidden</div>
+        <div class="test-content">Content</div>
+        <div class="test-result"></div>
+    </div>
+    
+    <h2>Expected Behavior</h2>
+    <ul>
+        <li><strong>Single values:</strong> Should apply the same value to both overflow-x and overflow-y</li>
+        <li><strong>Two values:</strong> First value applies to overflow-x, second to overflow-y</li>
+        <li><strong>visible:</strong> Content should be visible outside the container</li>
+        <li><strong>hidden:</strong> Content should be clipped at container boundaries</li>
+        <li><strong>scroll:</strong> Scrollbars should always be visible</li>
+        <li><strong>auto:</strong> Scrollbars should appear only when needed</li>
+    </ul>
+    
+    <script>
+        // Test verification
+        function verifyOverflowShorthand() {
+            const tests = [
+                { 
+                    selector: '.test-1', 
+                    expected: 'visible visible',
+                    description: 'Single value: visible',
+                    testType: 'single'
+                },
+                { 
+                    selector: '.test-2', 
+                    expected: 'hidden hidden',
+                    description: 'Single value: hidden',
+                    testType: 'single'
+                },
+                { 
+                    selector: '.test-3', 
+                    expected: 'scroll scroll',
+                    description: 'Single value: scroll',
+                    testType: 'single'
+                },
+                { 
+                    selector: '.test-4', 
+                    expected: 'auto auto',
+                    description: 'Single value: auto',
+                    testType: 'single'
+                },
+                { 
+                    selector: '.test-5', 
+                    expected: 'visible hidden',
+                    description: 'Axis shorthand: visible hidden',
+                    testType: 'axis'
+                },
+                { 
+                    selector: '.test-6', 
+                    expected: 'hidden visible',
+                    description: 'Axis shorthand: hidden visible',
+                    testType: 'axis'
+                },
+                { 
+                    selector: '.test-7', 
+                    expected: 'scroll auto',
+                    description: 'Axis shorthand: scroll auto',
+                    testType: 'axis'
+                },
+                { 
+                    selector: '.test-8', 
+                    expected: 'auto scroll',
+                    description: 'Axis shorthand: auto scroll',
+                    testType: 'axis'
+                },
+                { 
+                    selector: '.test-9', 
+                    expected: 'visible auto',
+                    description: 'Axis shorthand: visible auto',
+                    testType: 'axis'
+                },
+                { 
+                    selector: '.test-10', 
+                    expected: 'auto hidden',
+                    description: 'Axis shorthand: auto hidden',
+                    testType: 'axis'
+                }
+            ];
+            
+            let passedTests = 0;
+            let failedTests = [];
+            let passedTestsList = [];
+            
+            tests.forEach(test => {
+                const element = document.querySelector(test.selector);
+                if (element) {
+                    const computedStyle = window.getComputedStyle(element);
+                    const overflowX = computedStyle.overflowX;
+                    const overflowY = computedStyle.overflowY;
+                    const actual = `${overflowX} ${overflowY}`;
+                    const resultElement = element.querySelector('.test-result');
+                    
+                    // Debug: Log the raw computed values
+                    console.log(`${test.description}:`);
+                    console.log(`  overflowX: "${overflowX}"`);
+                    console.log(`  overflowY: "${overflowY}"`);
+                    console.log(`  Combined: "${actual}"`);
+                    console.log(`  Expected: "${test.expected}"`);
+                    
+                    if (actual === test.expected) {
+                        element.classList.add('pass');
+                        element.classList.remove('fail');
+                        resultElement.textContent = `✓ PASS: ${actual}`;
+                        passedTests++;
+                        passedTestsList.push(test.description);
+                    } else {
+                        element.classList.add('fail');
+                        element.classList.remove('pass');
+                        resultElement.textContent = `✗ FAIL: Expected "${test.expected}", got "${actual}"`;
+                        failedTests.push({
+                            description: test.description,
+                            expected: test.expected,
+                            actual: actual,
+                            testType: test.testType,
+                            overflowX: overflowX,
+                            overflowY: overflowY
+                        });
+                    }
+                }
+            });
+            
+            // Update summary
+            const summaryElement = document.getElementById('summary-content');
+            const totalTests = tests.length;
+            const successRate = Math.round((passedTests / totalTests) * 100);
+            
+            let summaryHTML = `
+                <strong>Total Tests:</strong> ${totalTests}<br>
+                <strong>Passed:</strong> ${passedTests}<br>
+                <strong>Failed:</strong> ${totalTests - passedTests}<br>
+                <strong>Success Rate:</strong> ${successRate}%<br><br>
+            `;
+            
+            if (failedTests.length > 0) {
+                summaryHTML += '<div class="failures"><strong>FAILED TESTS:</strong><br>';
+                failedTests.forEach(fail => {
+                    summaryHTML += `• ${fail.description}<br>`;
+                    summaryHTML += `  Expected: "${fail.expected}"<br>`;
+                    summaryHTML += `  Got: "${fail.actual}"<br>`;
+                    summaryHTML += `  overflowX: "${fail.overflowX}"<br>`;
+                    summaryHTML += `  overflowY: "${fail.overflowY}"<br><br>`;
+                });
+                summaryHTML += '</div>';
+            }
+            
+            if (passedTestsList.length > 0) {
+                summaryHTML += '<div class="successes"><strong>PASSED TESTS:</strong><br>';
+                passedTestsList.forEach(pass => {
+                    summaryHTML += `• ${pass}<br>`;
+                });
+                summaryHTML += '</div>';
+            }
+            
+            summaryElement.innerHTML = summaryHTML;
+            
+            // Log detailed results to console
+            console.log('\n=== OVERFLOW SHORTHAND TEST RESULTS ===');
+            console.log(`Total Tests: ${totalTests}`);
+            console.log(`Passed: ${passedTests}`);
+            console.log(`Failed: ${totalTests - passedTests}`);
+            console.log(`Success Rate: ${successRate}%`);
+            
+            if (failedTests.length > 0) {
+                console.log('\nFAILED TESTS:');
+                failedTests.forEach(fail => {
+                    console.log(`• ${fail.description}`);
+                    console.log(`  Expected: "${fail.expected}"`);
+                    console.log(`  Got: "${fail.actual}"`);
+                    console.log(`  overflowX: "${fail.overflowX}"`);
+                    console.log(`  overflowY: "${fail.overflowY}"`);
+                    console.log('');
+                });
+            }
+        }
+        
+        // Run verification after page load
+        window.addEventListener('load', verifyOverflowShorthand);
+    </script>
+</body>
+</html> 
