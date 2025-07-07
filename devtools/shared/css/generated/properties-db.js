@@ -1468,10 +1468,10 @@ exports.CSS_PROPERTIES = {
       "write-only"
     ]
   },
-  "-moz-user-select": {
+  "user-select": {
     "isInherited": false,
     "subproperties": [
-      "-moz-user-select"
+      "user-select"
     ],
     "supports": [],
     "values": [
@@ -2850,7 +2850,7 @@ exports.CSS_PROPERTIES = {
   "-webkit-user-select": {
     "isInherited": false,
     "subproperties": [
-      "-moz-user-select"
+      "user-select"
     ],
     "supports": [],
     "values": [
@@ -3244,7 +3244,7 @@ exports.CSS_PROPERTIES = {
       "-moz-user-focus",
       "-moz-user-input",
       "-moz-user-modify",
-      "-moz-user-select",
+      "user-select",
       "vector-effect",
       "vertical-align",
       "visibility",
