@@ -13,6 +13,7 @@
 
 #include <algorithm> // for std::stable_sort
 #include <limits> // for std::numeric_limits
+#include <cmath> // for std::abs
 
 #include "nsCSSParser.h"
 #include "nsAlgorithm.h"
@@ -4867,113 +4868,107 @@ CSSParserImpl::ParseSupportsSelector(bool& aConditionMet)
   nsAutoString selectorText;
   bool foundClosingParen = false;
   bool hasContent = false;
-  int32_t parenDepth = 0; // tracking nested parentheses
-
+  int32_t parenDepth = 0; 
+  
   while (true) { 
     if (!GetToken(true)) {
       return false; // fail unexpected EOF
     }
     
     if (mToken.IsSymbol(')')) {
-      if (parenDepth == 0) {
+      if (parenDepth == 0) { 
         foundClosingParen = true;
         break;
-      } else {
+      } else { 
         parenDepth--;
         selectorText.Append(mToken.mSymbol);
       }
     } else if (mToken.IsSymbol('(')) {
-      parenDepth++; 
+      parenDepth++;
       selectorText.Append(mToken.mSymbol);
     } else {
       hasContent = true;
-    }
-    hasContent = true;
-  
-    // add space before tokens that needs separation
-    bool needSpace = false;
-    if (!selectorText.IsEmpty()) {
-      char16_t lastChar = selectorText.Last();
       
-      // no spaces inside nth-child formulas
-      if (parenDepth > 0) { 
-        if (mToken.mType == eCSSToken_Ident && mToken.mIdent.LowerCaseEqualsLiteral("of")) { 
-          needSpace = true; 
-        } 
-        else if (mToken.mType != eCSSToken_Ident && lastChar != '(' && lastChar != ' ' && 
-                  selectorText.Length() >= 2) { 
-          nsAutoString lastTwo; 
-          if (selectorText.Length() >= 2) { 
-            lastTwo = Substring(selectorText, selectorText.Length() - 2, 2); 
-            if (lastTwo.EqualsLiteral("of")) { 
+      // simple spacing logic: add space before tokens that need separation
+      bool needSpace = false;
+      if (!selectorText.IsEmpty()) {
+        char16_t lastChar = selectorText.Last();
+        
+        if (parenDepth > 0) {
+          if (mToken.mType == eCSSToken_Ident && mToken.mIdent.LowerCaseEqualsLiteral("of")) {
+            needSpace = true;
+          }
+          else if (mToken.mType != eCSSToken_Ident && lastChar != '(' && lastChar != ' ' && 
+                   selectorText.Length() >= 2) { 
+            nsAutoString lastTwo; 
+            if (selectorText.Length() >= 2) {
+              lastTwo = Substring(selectorText, selectorText.Length() - 2, 2);
+              if (lastTwo.EqualsLiteral("of")) { 
+                needSpace = true;
+              }
+            }
+          }
+        } else { 
+          if ((mToken.mType == eCSSToken_Ident || mToken.mType == eCSSToken_Symbol) &&
+              lastChar != ' ' && lastChar != ':' && lastChar != '.' && lastChar != '#' &&
+              lastChar != '[' && lastChar != '(' && lastChar != '>' && lastChar != '+' &&
+              lastChar != '~' && lastChar != ',') {
+            if (mToken.mType == eCSSToken_Symbol && mToken.mSymbol == '.' &&
+                ((lastChar >= 'a' && lastChar <= 'z') || (lastChar >= 'A' && lastChar <= 'Z'))) { 
+              needSpace = true; 
+            } 
+            else if (mToken.mType == eCSSToken_Ident && 
+                     ((lastChar >= 'a' && lastChar <= 'z') || (lastChar >= 'A' && lastChar <= 'Z') || 
+                      (lastChar >= '0' && lastChar <= '9') || lastChar == ')')) { 
               needSpace = true; 
             } 
           } 
         } 
-      } else { 
-        // outside parentheses, we need spaces around certain tokens
-        if ((mToken.mType == eCSSToken_Ident || mToken.mType == eCSSToken_Symbol) && 
-            lastChar != ' ' && lastChar != ':' && lastChar != '.' && lastChar != '#' && 
-            lastChar != '[' && lastChar != '(' && lastChar != '>' && lastChar != '+' && 
-            lastChar != '~' && lastChar != ',') {
-          
-          // special case: add space beforoe '.' if it follows an identifier
-          if (mToken.mType == eCSSToken_Symbol && mToken.mSymbol == '.' && 
-              ((lastChar >= 'a' && lastChar <= 'z') || (lastChar >= 'A' && lastChar <= 'Z'))) { 
-            needSpace = true; 
-          } 
-          // add space between consecutive indentifiers
-          else if (mToken.mType == eCSSToken_Ident && 
-                    ((lastChar >= 'a' && lastChar <= 'z') || (lastChar >= 'A' && lastChar <= 'Z') || 
-                    (lastChar >= '0' && lastChar <= '9') || lastChar == ')')) { 
-            needSpace = true; 
-          } 
-        } 
-      } 
-    }
-    
-    switch (mToken.mType) {
-      case eCSSToken_Ident:
-        if (needSpace) selectorText.Append(' ');
-        selectorText.Append(mToken.mIdent);
-        break;
-        
-      case eCSSToken_AtKeyword:
-        if (needSpace) selectorText.Append(' ');
-        selectorText.Append('@');
-        selectorText.Append(mToken.mIdent);
-        break;
-        
-      case eCSSToken_Hash:
-        if (needSpace) selectorText.Append(' ');
-        selectorText.Append('#');
-        selectorText.Append(mToken.mIdent);
-        break;
-        
-      case eCSSToken_Symbol:
-        selectorText.Append(mToken.mSymbol);
-        break;
-        
-      case eCSSToken_String:
-        if (needSpace) selectorText.Append(' ');
-        selectorText.Append('"');
-        selectorText.Append(mToken.mIdent);
-        selectorText.Append('"');
-        break;
-        
-      case eCSSToken_Function:
-        if (needSpace) selectorText.Append(' ');
-        selectorText.Append(mToken.mIdent);
-        selectorText.Append('(');
-        break;
-        
-      default:
-        if (!mToken.mIdent.IsEmpty()) {
+      }
+      
+      switch (mToken.mType) {
+        case eCSSToken_Ident:
           if (needSpace) selectorText.Append(' ');
           selectorText.Append(mToken.mIdent);
-        }
-        break;
-    }
+          break;
+          
+        case eCSSToken_AtKeyword:
+          if (needSpace) selectorText.Append(' ');
+          selectorText.Append('@');
+          selectorText.Append(mToken.mIdent);
+          break;
+          
+        case eCSSToken_Hash:
+          if (needSpace) selectorText.Append(' ');
+          selectorText.Append('#');
+          selectorText.Append(mToken.mIdent);
+          break;
+          
+        case eCSSToken_Symbol:
+          selectorText.Append(mToken.mSymbol);
+          break;
+          
+        case eCSSToken_String:
+          if (needSpace) selectorText.Append(' ');
+          selectorText.Append('"');
+          selectorText.Append(mToken.mIdent);
+          selectorText.Append('"');
+          break;
+          
+        case eCSSToken_Function:
+          if (needSpace) selectorText.Append(' ');
+          selectorText.Append(mToken.mIdent);
+          selectorText.Append('(');
+          break;
+          
+        default:
+          if (!mToken.mIdent.IsEmpty()) {
+            if (needSpace) selectorText.Append(' ');
+            selectorText.Append(mToken.mIdent);
+          }
+          break;
+      }
+    } 
   }
   
   if (!foundClosingParen) {
@@ -4985,6 +4980,7 @@ CSSParserImpl::ParseSupportsSelector(bool& aConditionMet)
     return true;
   }
   
+  // Clean up multiple spaces but preserve single spaces around combinators
   selectorText.CompressWhitespace(true, true);
   
   if (selectorText.IsEmpty()) {
@@ -4992,7 +4988,8 @@ CSSParserImpl::ParseSupportsSelector(bool& aConditionMet)
     return true;
   }
 
-  int32_t parenDepth = 0;
+  // Check for multiple selectors at top level (commas outside of parentheses)
+  parenDepth = 0;
   for (uint32_t i = 0; i < selectorText.Length(); i++) {
     char16_t c = selectorText.CharAt(i);
     if (c == '(') {
@@ -5007,11 +5004,13 @@ CSSParserImpl::ParseSupportsSelector(bool& aConditionMet)
     }
   }
 
+  // Reject vendor-prefixed pseudo-elements
   if (selectorText.Find(NS_LITERAL_STRING("::-webkit-")) >= 0) {
     aConditionMet = false;
     return true;
   }
 
+  // Use the real CSS parser to validate the selector
   nsCSSScanner tempScanner(selectorText, 0);
   css::ErrorReporter tempReporter(tempScanner, mSheet, mChildLoader, mSheetURI);
   
@@ -5020,6 +5019,10 @@ CSSParserImpl::ParseSupportsSelector(bool& aConditionMet)
   
   mScanner = &tempScanner;
   mReporter = &tempReporter;
+  
+  // Debug: print what we're trying to parse
+  printf("DEBUG ParseSupportsSelector: Trying to parse selector: '%s'\n", 
+         NS_ConvertUTF16toUTF8(selectorText).get());
   
   nsCSSSelectorList* selectorList = nullptr;
   SelectorParsingFlags flags = SelectorParsingFlags::eNone;
@@ -5030,9 +5033,13 @@ CSSParserImpl::ParseSupportsSelector(bool& aConditionMet)
   
   if (parseSuccess && selectorList) {
     aConditionMet = true;
+    printf("DEBUG ParseSupportsSelector: Successfully parsed '%s' -> SUPPORTED\n", 
+           NS_ConvertUTF16toUTF8(selectorText).get());
     delete selectorList;
   } else {
     aConditionMet = false;
+    printf("DEBUG ParseSupportsSelector: Failed to parse '%s' -> NOT SUPPORTED\n", 
+           NS_ConvertUTF16toUTF8(selectorText).get());
   }
   
   return true;
