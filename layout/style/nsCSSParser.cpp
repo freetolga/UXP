@@ -4867,25 +4867,69 @@ CSSParserImpl::ParseSupportsSelector(bool& aConditionMet)
   nsAutoString selectorText;
   bool foundClosingParen = false;
   bool hasContent = false;
-  
+  int32_t parenDepth = 0; // tracking nested parentheses
+
   while (true) { 
     if (!GetToken(true)) {
       return false; // fail unexpected EOF
     }
     
     if (mToken.IsSymbol(')')) {
-      foundClosingParen = true;
-      break;
+      if (parenDepth == 0) {
+        foundClosingParen = true;
+        break;
+      } else {
+        parenDepth--;
+        selectorText.Append(mToken.mSymbol);
+      }
+    } else if (mToken.IsSymbol('(')) {
+      parenDepth++; 
+      selectorText.Append(mToken.mSymbol);
+    } else {
+      hasContent = true;
     }
-    
     hasContent = true;
-    
+  
+    // add space before tokens that needs separation
     bool needSpace = false;
     if (!selectorText.IsEmpty()) {
       char16_t lastChar = selectorText.Last();
-      if (lastChar != ':' && lastChar != '.' && lastChar != '#' && lastChar != '[' && lastChar != '(') {
-        needSpace = true;
-      }
+      
+      // no spaces inside nth-child formulas
+      if (parenDepth > 0) { 
+        if (mToken.mType == eCSSToken_Ident && mToken.mIdent.LowerCaseEqualsLiteral("of")) { 
+          needSpace = true; 
+        } 
+        else if (mToken.mType != eCSSToken_Ident && lastChar != '(' && lastChar != ' ' && 
+                  selectorText.Length() >= 2) { 
+          nsAutoString lastTwo; 
+          if (selectorText.Length() >= 2) { 
+            lastTwo = Substring(selectorText, selectorText.Length() - 2, 2); 
+            if (lastTwo.EqualsLiteral("of")) { 
+              needSpace = true; 
+            } 
+          } 
+        } 
+      } else { 
+        // outside parentheses, we need spaces around certain tokens
+        if ((mToken.mType == eCSSToken_Ident || mToken.mType == eCSSToken_Symbol) && 
+            lastChar != ' ' && lastChar != ':' && lastChar != '.' && lastChar != '#' && 
+            lastChar != '[' && lastChar != '(' && lastChar != '>' && lastChar != '+' && 
+            lastChar != '~' && lastChar != ',') {
+          
+          // special case: add space beforoe '.' if it follows an identifier
+          if (mToken.mType == eCSSToken_Symbol && mToken.mSymbol == '.' && 
+              ((lastChar >= 'a' && lastChar <= 'z') || (lastChar >= 'A' && lastChar <= 'Z'))) { 
+            needSpace = true; 
+          } 
+          // add space between consecutive indentifiers
+          else if (mToken.mType == eCSSToken_Ident && 
+                    ((lastChar >= 'a' && lastChar <= 'z') || (lastChar >= 'A' && lastChar <= 'Z') || 
+                    (lastChar >= '0' && lastChar <= '9') || lastChar == ')')) { 
+            needSpace = true; 
+          } 
+        } 
+      } 
     }
     
     switch (mToken.mType) {
