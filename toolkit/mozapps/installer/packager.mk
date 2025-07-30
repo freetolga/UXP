@@ -116,17 +116,17 @@ ifeq (bundle,$(MOZ_FS_LAYOUT))
 endif
 	$(NSINSTALL) -D $(DESTDIR)$(installdir)
 	(cd $(DIST)/$(MOZ_PKG_DIR) && $(TAR) --exclude=precomplete $(TAR_CREATE_FLAGS) - .) | \
-	  (cd $(DESTDIR)$(installdir) && tar -xf -)
+	  (cd $(DESTDIR)$(installdir) && gtar -xf -)
 	$(NSINSTALL) -D $(DESTDIR)$(bindir)
 	$(RM) -f $(DESTDIR)$(bindir)/$(MOZ_APP_NAME)
 	ln -s $(installdir)/$(MOZ_APP_NAME) $(DESTDIR)$(bindir)
 ifdef INSTALL_SDK # Here comes the hard part
 	$(NSINSTALL) -D $(DESTDIR)$(includedir)
 	(cd $(DIST)/include && $(TAR) $(TAR_CREATE_FLAGS) - .) | \
-	  (cd $(DESTDIR)$(includedir) && tar -xf -)
+	  (cd $(DESTDIR)$(includedir) && gtar -xf -)
 	$(NSINSTALL) -D $(DESTDIR)$(idldir)
 	(cd $(DIST)/idl && $(TAR) $(TAR_CREATE_FLAGS) - .) | \
-	  (cd $(DESTDIR)$(idldir) && tar -xf -)
+	  (cd $(DESTDIR)$(idldir) && gtar -xf -)
 # SDK directory is the libs + a bunch of symlinks
 	$(NSINSTALL) -D $(DESTDIR)$(sdkdir)/sdk/lib
 	$(NSINSTALL) -D $(DESTDIR)$(sdkdir)/sdk/bin
@@ -134,8 +134,8 @@ ifdef INSTALL_SDK # Here comes the hard part
 	  $(SYSINSTALL) $(IFLAGS1) $(DIST)/include/xpcom-config.h $(DESTDIR)$(sdkdir); \
 	fi
 	find $(DIST)/sdk -name '*.pyc' | xargs rm -f
-	(cd $(DIST)/sdk/lib && $(TAR) $(TAR_CREATE_FLAGS) - .) | (cd $(DESTDIR)$(sdkdir)/sdk/lib && tar -xf -)
-	(cd $(DIST)/sdk/bin && $(TAR) $(TAR_CREATE_FLAGS) - .) | (cd $(DESTDIR)$(sdkdir)/sdk/bin && tar -xf -)
+	(cd $(DIST)/sdk/lib && $(TAR) $(TAR_CREATE_FLAGS) - .) | (cd $(DESTDIR)$(sdkdir)/sdk/lib && gtar -xf -)
+	(cd $(DIST)/sdk/bin && $(TAR) $(TAR_CREATE_FLAGS) - .) | (cd $(DESTDIR)$(sdkdir)/sdk/bin && gtar -xf -)
 	$(RM) -f $(DESTDIR)$(sdkdir)/lib $(DESTDIR)$(sdkdir)/bin $(DESTDIR)$(sdkdir)/include $(DESTDIR)$(sdkdir)/include $(DESTDIR)$(sdkdir)/sdk/idl $(DESTDIR)$(sdkdir)/idl
 	ln -s $(sdkdir)/sdk/lib $(DESTDIR)$(sdkdir)/lib
 	ln -s $(installdir) $(DESTDIR)$(sdkdir)/bin
@@ -152,28 +152,28 @@ endif
 	$(NSINSTALL) -D $(DIST)/$(MOZ_APP_NAME)-sdk/bin
 ifdef SDK_UNIFY
 	(cd $(UNIFY_DIST)/sdk-stage && $(TAR) $(TAR_CREATE_FLAGS) - .) | \
-	  (cd $(DIST)/$(MOZ_APP_NAME)-sdk/bin && tar -xf -)
+	  (cd $(DIST)/$(MOZ_APP_NAME)-sdk/bin && gtar -xf -)
 else
 	(cd $(DIST)/sdk-stage && $(TAR) $(TAR_CREATE_FLAGS) - .) | \
-	  (cd $(DIST)/$(MOZ_APP_NAME)-sdk/bin && tar -xf -)
+	  (cd $(DIST)/$(MOZ_APP_NAME)-sdk/bin && gtar -xf -)
 endif
 	$(NSINSTALL) -D $(DIST)/$(MOZ_APP_NAME)-sdk/host/bin
 	(cd $(DIST)/host/bin && $(TAR) $(TAR_CREATE_FLAGS) - .) | \
-	  (cd $(DIST)/$(MOZ_APP_NAME)-sdk/host/bin && tar -xf -)
+	  (cd $(DIST)/$(MOZ_APP_NAME)-sdk/host/bin && gtar -xf -)
 	$(NSINSTALL) -D $(DIST)/$(MOZ_APP_NAME)-sdk/sdk
 	find $(DIST)/sdk -name '*.pyc' | xargs rm -f
 	(cd $(DIST)/sdk && $(TAR) $(TAR_CREATE_FLAGS) - .) | \
-	  (cd $(DIST)/$(MOZ_APP_NAME)-sdk/sdk && tar -xf -)
+	  (cd $(DIST)/$(MOZ_APP_NAME)-sdk/sdk && gtar -xf -)
 	$(NSINSTALL) -D $(DIST)/$(MOZ_APP_NAME)-sdk/include
 	(cd $(DIST)/include && $(TAR) $(TAR_CREATE_FLAGS) - .) | \
-	  (cd $(DIST)/$(MOZ_APP_NAME)-sdk/include && tar -xf -)
+	  (cd $(DIST)/$(MOZ_APP_NAME)-sdk/include && gtar -xf -)
 	$(NSINSTALL) -D $(DIST)/$(MOZ_APP_NAME)-sdk/idl
 	(cd $(DIST)/idl && $(TAR) $(TAR_CREATE_FLAGS) - .) | \
-	  (cd $(DIST)/$(MOZ_APP_NAME)-sdk/idl && tar -xf -)
+	  (cd $(DIST)/$(MOZ_APP_NAME)-sdk/idl && gtar -xf -)
 	$(NSINSTALL) -D $(DIST)/$(MOZ_APP_NAME)-sdk/lib
 # sdk/lib is the same as sdk/sdk/lib
 	(cd $(DIST)/sdk/lib && $(TAR) $(TAR_CREATE_FLAGS) - .) | \
-	  (cd $(DIST)/$(MOZ_APP_NAME)-sdk/lib && tar -xf -)
+	  (cd $(DIST)/$(MOZ_APP_NAME)-sdk/lib && gtar -xf -)
 	$(NSINSTALL) -D $(DIST)/$(SDK_PATH)
 ifndef PKG_SKIP_STRIP
 	USE_ELF_HACK= $(PYTHON) $(MOZILLA_DIR)/toolkit/mozapps/installer/strip.py $(DIST)/$(MOZ_APP_NAME)-sdk
