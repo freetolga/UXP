@@ -1,5 +1,10 @@
 # Unified XUL Platform (UXP)
 
+
+2 patches to make it build on openbsd without webrtc do not use this as your primary browser you have been warned
+
+
+
 This repository holds the code for a unified application platform for XUL-based
 applications. It is a hard fork from the Mozilla code repository (mozilla-central)
 with an ESR-52 fork point.
